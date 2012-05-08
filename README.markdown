@@ -1,4 +1,4 @@
-Last Updated : 2012/05/08 23:54:47 tkych
+Last Updated : 2012/05/09 00:07:48 tkych
 
 Donuts: Graph DSL for Common Lisp
 ======================================================================
@@ -8,6 +8,7 @@ Donuts: Graph DSL for Common Lisp
  Introduction
 ----------------------------------------------------------------------
 
+By donuts, the graph represented by s-expression is converted to image file.
 How to use Donuts is easy.
 <> creates a node.
 -> puts an edge between two nodes.
@@ -41,8 +42,8 @@ $$ outputs an image of a graph.
 ----------------------------------------------------------------------
 
 * Node-Constructor, <> makes node from node's identity.   `(<> label) => node`
-* Edge-Constructor, -> makes node from nodes.   `(-> node1 node2) => edge`
-* Graph-Constructor, && makes graph from nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
+* Edge-Constructor, -> makes node with nodes.   `(-> node1 node2) => edge`
+* Graph-Constructor, && makes graph with nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
 * Shell-Interface, $$ outputs graph to viewer.   `($$ graph) => NIL ;output image to viewer`
 
 For more details, see index.html(under translation) or index-j.html in doc directory.
