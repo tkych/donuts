@@ -1,5 +1,5 @@
 ;;; -*- Mode: LISP; Syntax: COMMON-LISP; Base: 10 -*-
-;;;     Last Updated : 2012/05/06 21:17:21 tkych
+;;;     Last Updated : 2012/05/09 07:47:51 tkych
 
 ;; ASDF system for donuts
 
@@ -52,7 +52,7 @@
 (defsystem :donuts
   :description "Graph DSL for common lisp"
   :name        "Donuts"
-  :version     "0.2.5"
+  :version     "0.2.6"
   :licence     "MIT licence"
   :author      "Takaya OCHIAI <tkych.repl@gmail.com>"
   :long-description
