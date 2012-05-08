@@ -1,4 +1,4 @@
-Last Updated : 2012/05/08 22:55:51 tkych
+Last Updated : 2012/05/08 23:54:47 tkych
 
 Donuts: Graph DSL for Common Lisp
 ======================================================================
@@ -8,7 +8,6 @@ Donuts: Graph DSL for Common Lisp
  Introduction
 ----------------------------------------------------------------------
 
-Donuts is converted into the dot language of graph structures that are described in the S-expression, are converted to images by Graphviz.
 How to use Donuts is easy.
 <> creates a node.
 -> puts an edge between two nodes.
