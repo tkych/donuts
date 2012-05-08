@@ -1,4 +1,4 @@
-Last Updated : 2012/05/09 00:31:36 tkych
+Last Updated : 2012/05/09 00:33:47 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -8,7 +8,7 @@ By donuts, the graph represented by s-expression is converted to image file.
 How to use donuts is easy.
 <> creates a node.
 -> puts an edge between two nodes.
-And && makes a graph by bundling the nodes and edges (and graphs).
+And && makes a graph by bundling the nodes, edges and graphs.
 $$ outputs an image of a graph.
 
 
