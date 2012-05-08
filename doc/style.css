@@ -1,0 +1,185 @@
+
+/* このCSSファイルはMORIMOTO Ken氏による「Org-mode による HTML 文書作成入門」を参考にしました。 */
+/* http://www.geocities.jp/km_pp1/org-mode/org-mode-document.css */
+
+html {
+    font-family: sans-serif;
+    font-size: medium;
+}
+body {
+    color: black;
+    background-color: white;
+    line-height: 1.3;
+    margin: 2%;
+}
+
+a:link {
+    color: #336699;
+}
+a:visited {
+    color: #400000;
+}
+a:active {
+    color: #ff0000;
+}
+a:hover {
+    color: #ff0000;
+}
+
+h1.title {
+    color: white;
+    background-color: #336699;
+    text-align: left;
+    border: 3px solid black;
+    padding: 0.1em 0.3em;
+}
+
+
+div#table-of-contents h2 {
+    display: none;
+}
+div#table-of-contents {
+    margin: 1em 4% 1em 2em;
+}
+div#text-table-of-contents {
+    background-color: #e8e8e8;
+    padding: 0.5em;
+    border: 1px dotted black;
+}
+
+h2, h3, h4 {
+    padding: 0.2em 0.3em;
+}
+h5, h6 {
+    margin: 0.5em;
+}
+h2 {
+    border-bottom: 3px solid #336699;;
+}
+h3 {
+    border-bottom: 2px dotted #336699;
+}
+h4 {
+    border-bottom: 1px solid #336699;
+}
+span.section-number-2, span.section-number-3, span.section-number-4 {
+    color: black;
+}
+
+
+div.outline-text-2, div.outline-text-3, div.outline-text-4 {
+    margin: 1em;
+}
+
+b {
+    color: black;
+}
+i {
+    color: black;
+}
+code {
+    color: #600000;
+}
+del {
+    color: #608080;
+}
+
+
+a img {
+    border: none;
+}
+img.figure {
+    display: block;
+    margin: 1em auto;
+    border: 1px dotted #c00000;
+}
+
+
+pre {
+    font-family: "ＭＳ Ｐゴシック", "Osaka-Mono", monospace;
+    font-size: medium;
+    margin: 0.5em;
+    padding: 0.5em;
+}
+pre.src {
+    color: #f0f0d0;
+    background-color: #27408B;
+    border-top: 2px solid #404040;
+    border-left: 2px solid #404040;
+    border-bottom: 2px solid #c0c0c0;
+    border-right: 2px solid #c0c0c0;
+}
+pre.example {
+    color: #202020;
+    background-color: #f0d0d0;
+    border-top: 2px solid #804040;
+    border-left: 2px solid #804040;
+    border-bottom: 2px solid #d0a0a0;
+    border-right: 2px solid #d0a0a0;
+}
+
+table {
+    margin: auto;
+}
+thead {
+    color: white;
+    background-color: #336699;
+}
+tbody {
+    background-color: #f0f0f0;
+}
+table, th, td {
+    border: 1px solid black;
+}
+th, td {
+    padding: 0.5em;
+}
+th {
+    font-weight: bold;
+}
+caption {
+    color: #c00000;
+    font-weight: bold;
+    font-size: smaller;
+    white-space: nowrap;
+}
+
+
+ol, ul {
+    padding-left: 2em;
+}
+ol li ol li{
+    border: none;
+    padding-left: 0em;
+}
+ul li {
+    border: none;
+}
+dt {
+    font-weight: normal;
+    border-left: 0.5em solid #336699;
+    border-bottom: 1px dotted #336699;
+    padding-left: 0.3em;
+    margin: 0.3em 0em;
+    width: 80%;
+}
+
+hr {
+    height: 1px;
+    background-color: #336699;
+    border-style: none;
+}
+
+
+div#postamble {
+    text-align: right;
+    font-size: smaller;
+    border-top: 2px solid #808080;
+    padding: 1em 0em;
+}
+div#postamble p {
+    margin: 0.2em 0em;
+}
+p.creator {
+    color: #a0a0a0;
+}
