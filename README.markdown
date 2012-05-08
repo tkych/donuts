@@ -1,4 +1,4 @@
-Last Updated : 2012/05/09 00:25:15 tkych
+Last Updated : 2012/05/09 00:27:31 tkych
 
 Donuts: Graph DSL for Common Lisp
 ======================================================================
@@ -25,6 +25,7 @@ $$ outputs an image of a graph.
 * [trivial-shell](http://www.quicklisp.org/) by Gary Warren King
 
 
+
  Installation
 ----------------------------------------------------------------------
 
@@ -36,6 +37,7 @@ $$ outputs an image of a graph.
  [quicklisp]: http://www.quicklisp.org/
 
 
+
  Usage
 ----------------------------------------------------------------------
 
@@ -45,6 +47,7 @@ $$ outputs an image of a graph.
 * Shell-Interface, $$ outputs graph to viewer.   `($$ graph) => NIL ;output image to viewer`
 
 For more details, see index.html(under translation) or index-j.html in doc directory.
+
 
 
  Examples
