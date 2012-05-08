@@ -1,4 +1,4 @@
-Last Updated : 2012/05/09 00:35:00 tkych
+Last Updated : 2012/05/09 00:40:44 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -55,20 +55,19 @@ For more details, see index.html(under translation) or index-j.html in doc direc
       }
       NIL
 
-      CL-USER> 
-      ;; from http://graphviz.org/content/cluster
-      ($ (:outfile "cluster.pdf")
-         (&& ([&] (:label "process #1" :style :filled :color :lightgrey)
-               (with-node (:style :filled :color :white)
-                 (--> "a0" "a1" "a2" "a3")))
-             ([&] (:label "process #2" :color :blue)
-               (with-node (:style :filled)
-                 (--> "b0" "b1" "b2" "b3")))
-             (->> (<> "start" :shape :Mdiamond) "a0" "b0")
-             (==> "a3" "b3" (<> "end" :shape :Msquare))
-             (->  "a1" "b3")
-             (->  "a3" "a0")
-             (->  "b2" "a3")))
+      CL-USER> ;; from http://graphviz.org/content/cluster
+               ($ (:outfile "cluster.pdf")
+                  (&& ([&] (:label "process #1" :style :filled :color :lightgrey)
+                        (with-node (:style :filled :color :white)
+                          (--> "a0" "a1" "a2" "a3")))
+                      ([&] (:label "process #2" :color :blue)
+                        (with-node (:style :filled)
+                          (--> "b0" "b1" "b2" "b3")))
+                      (->> (<> "start" :shape :Mdiamond) "a0" "b0")
+                      (==> "a3" "b3" (<> "end" :shape :Msquare))
+                      (->  "a1" "b3")
+                      (->  "a3" "a0")
+                      (->  "b2" "a3")))
 
        ;; make cluster.pdf and show it in viewer.
        NIL
