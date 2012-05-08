@@ -1,0 +1,95 @@
+Last Updated : 2012/05/08 22:55:51 tkych
+
+Donuts: Graph DSL for Common Lisp
+======================================================================
+
+
+----------------------------------------------------------------------
+ Introduction
+----------------------------------------------------------------------
+
+Donuts is converted into the dot language of graph structures that are described in the S-expression, are converted to images by Graphviz.
+How to use Donuts is easy.
+<> creates a node.
+-> puts an edge between two nodes.
+And && makes a graph by bundling the nodes and edges (and graphs).
+$$ outputs an image of a graph.
+
+----------------------------------------------------------------------
+ Dependency
+----------------------------------------------------------------------
+
+* [Graphviz](http://www.graphviz.org/) by AT&T Research Labs
+
+* [cl-ppcre](http://weitz.de/cl-ppcre/) by Dr. Edmund Weitz
+
+* [trivial-shell](http://www.quicklisp.org/) by Gary Warren King
+
+----------------------------------------------------------------------
+ Installation
+----------------------------------------------------------------------
+
+1.  CL-REPL> `(push #P"/path-to-your-donuts-directory/" asdf:*central-registry*)`
+2.  CL-REPL> `(ql:quickload :donuts)`
+3.  CL-USER> `(in-package :donuts)`
+4.  DONUTS> `($$ (&& (-> 1 2)))`  ;output graph image to viewer
+
+ [quicklisp]: http://www.quicklisp.org/
+
+
+----------------------------------------------------------------------
+ Usage
+----------------------------------------------------------------------
+
+* Node-Constructor, <> makes node from node's identity.   `(<> label) => node`
+* Edge-Constructor, -> makes node from nodes.   `(-> node1 node2) => edge`
+* Graph-Constructor, && makes graph from nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
+* Shell-Interface, $$ outputs graph to viewer.   `($$ graph) => NIL ;output image to viewer`
+
+For more details, see index.html(under translation) or index-j.html in doc directory.
+
+
+----------------------------------------------------------------------
+ Examples
+----------------------------------------------------------------------
+
+      CL-USER> (dot-output
+                 (& (:label "example")
+                   (-> (<> "a" :shape :box) "b" :color :red)))
+
+      digraph graph_T41 {
+        label="example";
+        node_T39 [label="a",shape=box];
+        node_T39 -> "b" [color=red];
+      }
+      NIL
+
+      CL-USER> 
+      ;; from http://graphviz.org/content/cluster
+      ($ (:outfile "cluster.pdf")
+         (&& ([&] (:label "process #1" :style :filled :color :lightgrey)
+               (with-node (:style :filled :color :white)
+                 (--> "a0" "a1" "a2" "a3")))
+             ([&] (:label "process #2" :color :blue)
+               (with-node (:style :filled)
+                 (--> "b0" "b1" "b2" "b3")))
+             (->> (<> "start" :shape :Mdiamond) "a0" "b0")
+             (==> "a3" "b3" (<> "end" :shape :Msquare))
+             (->  "a1" "b3")
+             (->  "a3" "a0")
+             (->  "b2" "a3")))
+
+       ;; make cluster.pdf and show it in viewer.
+       NIL
+
+----------------------------------------------------------------------
+ Author, License, Copyright
+----------------------------------------------------------------------
+
+* Takaya OCHIAI <tkych.repl@gmail.com>
+
+* Donuts distributed under the MIT License.
+
+* Copyright (C) 2012 Takaya OCHIAI
+
+----------------------------------------------------------------------
