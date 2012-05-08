@@ -1,11 +1,8 @@
-Last Updated : 2012/05/09 00:30:15 tkych
+Last Updated : 2012/05/09 00:31:36 tkych
 
 # Donuts: Graph DSL for Common Lisp
-======================================================================
-
 
 ## Introduction
-----------------------------------------------------------------------
 
 By donuts, the graph represented by s-expression is converted to image file.
 How to use donuts is easy.
@@ -16,7 +13,6 @@ $$ outputs an image of a graph.
 
 
 ## Dependency
-----------------------------------------------------------------------
 
 * [Graphviz](http://www.graphviz.org/) by AT&T Research Labs
 
@@ -25,9 +21,7 @@ $$ outputs an image of a graph.
 * [trivial-shell](http://www.quicklisp.org/) by Gary Warren King
 
 
-
 ## Installation
-----------------------------------------------------------------------
 
 1.  CL-REPL> `(push #P"/path-to-your-donuts-directory/" asdf:*central-registry*)`
 2.  CL-REPL> `(ql:quickload :donuts)`
@@ -37,9 +31,7 @@ $$ outputs an image of a graph.
  [quicklisp]: http://www.quicklisp.org/
 
 
-
 ## Usage
-----------------------------------------------------------------------
 
 * Node-Constructor, <> makes node from node's identity.   `(<> label) => node`
 * Edge-Constructor, -> makes node with nodes.   `(-> node1 node2) => edge`
@@ -51,7 +43,6 @@ For more details, see index.html(under translation) or index-j.html in doc direc
 
 
 ## Examples
-----------------------------------------------------------------------
 
       CL-USER> (dot-output
                  (& (:label "example")
@@ -84,7 +75,6 @@ For more details, see index.html(under translation) or index-j.html in doc direc
 
 
 ## Author, License, Copyright
-----------------------------------------------------------------------
 
 * Takaya OCHIAI <tkych.repl@gmail.com>
 
