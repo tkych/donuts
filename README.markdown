@@ -1,10 +1,9 @@
-Last Updated : 2012/05/09 00:09:57 tkych
+Last Updated : 2012/05/09 00:25:15 tkych
 
 Donuts: Graph DSL for Common Lisp
 ======================================================================
 
 
-----------------------------------------------------------------------
  Introduction
 ----------------------------------------------------------------------
 
@@ -15,7 +14,7 @@ How to use donuts is easy.
 And && makes a graph by bundling the nodes and edges (and graphs).
 $$ outputs an image of a graph.
 
-----------------------------------------------------------------------
+
  Dependency
 ----------------------------------------------------------------------
 
@@ -25,7 +24,7 @@ $$ outputs an image of a graph.
 
 * [trivial-shell](http://www.quicklisp.org/) by Gary Warren King
 
-----------------------------------------------------------------------
+
  Installation
 ----------------------------------------------------------------------
 
@@ -37,7 +36,6 @@ $$ outputs an image of a graph.
  [quicklisp]: http://www.quicklisp.org/
 
 
-----------------------------------------------------------------------
  Usage
 ----------------------------------------------------------------------
 
@@ -49,7 +47,6 @@ $$ outputs an image of a graph.
 For more details, see index.html(under translation) or index-j.html in doc directory.
 
 
-----------------------------------------------------------------------
  Examples
 ----------------------------------------------------------------------
 
@@ -82,7 +79,7 @@ For more details, see index.html(under translation) or index-j.html in doc direc
        ;; make cluster.pdf and show it in viewer.
        NIL
 
-----------------------------------------------------------------------
+
  Author, License, Copyright
 ----------------------------------------------------------------------
 
@@ -91,5 +88,3 @@ For more details, see index.html(under translation) or index-j.html in doc direc
 * Donuts distributed under the MIT License.
 
 * Copyright (C) 2012 Takaya OCHIAI
-
-----------------------------------------------------------------------
