@@ -1,7 +1,7 @@
 ;;; -*- Mode: LISP; Syntax: COMMON-LISP; Base: 10 -*-
-;;;     Last Updated : 2012/05/09 07:47:51 tkych
+;;;     Last Updated : 2012/05/09 20:57:35 tkych
 
-;; ASDF system for donuts
+;; System for donuts
 
 ;; Copyright (c) 2012 Takaya OCHIAI
 
