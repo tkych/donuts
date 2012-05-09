@@ -1,4 +1,4 @@
-Last Updated : 2012/05/09 07:52:49 tkych
+Last Updated : 2012/05/09 20:56:52 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -81,6 +81,6 @@ For more details, see index.html(under translation) or index-j.html in doc direc
 
 * Takaya OCHIAI <tkych.repl@gmail.com>
 
-* Donuts distributed under the MIT License.
+* MIT License
 
 * Copyright (C) 2012 Takaya OCHIAI
