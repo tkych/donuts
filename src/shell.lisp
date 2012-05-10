@@ -1,5 +1,4 @@
-;;; -*- Mode: LISP; Syntax: COMMON-LISP; Base: 10 -*-
-;;;     Last Updated : 2012/05/08 20:23:40 tkych
+;;;; Last Updated : 2012/05/10 20:58:10 tkych
 
 ;; Shell interface for donuts
 

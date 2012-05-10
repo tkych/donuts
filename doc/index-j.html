@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-08 23:22:38 JST"/>
+<meta name="generated" content="2012-05-10 21:55:08 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -133,12 +133,13 @@
 
 <div id="content">
 <h1 class="title">Donuts: Graph DSL for Common Lisp</h1>
-
-
+  
 <div align = "right">
-<p><a href="./index.html">English(under translation)</a>/日本語
+<p><a href="./index.html">English (under translation)</a>/日本語
 </p>
 </div>
+
+
 
 
 
@@ -154,9 +155,8 @@
 <li><a href="#sec-2">2 インストール</a>
 <ul>
 <li><a href="#sec-2-1">2.1 動作確認</a></li>
-<li><a href="#sec-2-2">2.2 ダウンロード</a></li>
-<li><a href="#sec-2-3">2.3 システム依存</a></li>
-<li><a href="#sec-2-4">2.4 開始設定</a></li>
+<li><a href="#sec-2-2">2.2 システム依存</a></li>
+<li><a href="#sec-2-3">2.3 開始設定</a></li>
 </ul>
 </li>
 <li><a href="#sec-3">3 Donutsの考え方 &mdash; &lt;&gt;, -&gt;, &amp;</a>
@@ -179,7 +179,8 @@
 <li><a href="#sec-4-8">4.8 レコード</a></li>
 <li><a href="#sec-4-9">4.9 ユーティリティ</a></li>
 <li><a href="#sec-4-10">4.10 無向グラフ、レイアウトアルゴリズム</a></li>
-<li><a href="#sec-4-11">4.11 小さなプログラム &mdash; 2分木、コンスセル、有限オートマトン</a></li>
+<li><a href="#sec-4-11">4.11 Html-Likeラベル</a></li>
+<li><a href="#sec-4-12">4.12 小さなプログラム &mdash; 2分木、コンスセル、有限オートマトン</a></li>
 </ul>
 </li>
 <li><a href="#sec-5">5 Examples from Graphviz manual</a>
@@ -194,11 +195,10 @@
 <li><a href="#sec-6-2">6.2 エッジ</a></li>
 <li><a href="#sec-6-3">6.3 グラフ</a></li>
 <li><a href="#sec-6-4">6.4 出力</a></li>
+<li><a href="#sec-6-5">6.5 HTML-LIKEラベル</a></li>
 </ul>
 </li>
-<li><a href="#sec-7">7 既知のバグ、不具合</a></li>
-<li><a href="#sec-8">8 Change Log</a></li>
-<li><a href="#sec-9">9 ToDo</a></li>
+<li><a href="#sec-7">7 ToDo</a></li>
 </ul>
 </div>
 </div>
@@ -224,7 +224,7 @@
 lispでちょっとしたグラフを描くことを目指し、Donutsは造られました。
 DonutsはS式で記述されたグラフ構造を<a href="http://www.graphviz.org/dot-language.html">Dot言語</a>に変換し、<a href="http://graphviz.org/">Graphviz</a>によって画像に変換します。
 ざっくりいうとDonutsはLispがDot言語を吸収したものです。
-Lisp組み込みの機能を用いることによって、Dot言語単体では困難だったことが容易に達成できるようになっています(<a href="#sec-4-11">小さなプログラム</a>)。
+Lisp組み込みの機能を用いることによって、Dot言語単体では困難だったことが容易に達成できるようになっています(<a href="#sec-4-12">小さなプログラム</a>)。
 </p>
 
 <p>
@@ -262,9 +262,9 @@ Donutsですぐにグラフを描くことができるように、<a href="#sec-
 ライセンスの正確な文言についてはソースコードのヘッダー部分をご確認ください。
 </p>
 <p>
-　 <b>Donutsの最新バージョンは0.2.6です。</b>
+　 <b>Donutsの最新バージョンは0.2.7です。</b>
 現在のところDonutsはベータ版です。
-今後の更新予定は<a href="#sec-9">ToDo</a>をご確認ください。
+今後の更新予定は<a href="#sec-7">ToDo</a>をご確認ください。
 </p>
 
 <p>
@@ -280,7 +280,7 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 およそいかなるグラフ構造もこれら3つの基本操作から作り上げることができます(グラフ画像の見た目やコーディングの手間を気にしなければ)。
 また、Donutsはなるべくlispとぶつからないことを重視して造られています。
 したがって、複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、
-ユーザが自分で好きなように追加できるはずです(具体例は<a href="#sec-4-11">小さなプログラム</a>の章を参照してください)。
+ユーザが自分で好きなように追加できるはずです(具体例は<a href="#sec-4-12">小さなプログラム</a>の章を参照してください)。
 </p>
 <p>
 　 <b>Donutsには実用的操作も加えられています。</b>
@@ -321,30 +321,15 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 </div>
 
 <div id="outline-container-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> ダウンロード</h3>
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> システム依存</h3>
 <div class="outline-text-3" id="text-2-2">
 
 
-<ul>
-<li><a href="http://github">http://github</a>
-</li>
-</ul>
-
-
 </div>
 
-</div>
-
-<div id="outline-container-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> システム依存</h3>
-<div class="outline-text-3" id="text-2-3">
-
-
-</div>
-
-<div id="outline-container-2-3-1" class="outline-4">
-<h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> 外部システム</h4>
-<div class="outline-text-4" id="text-2-3-1">
+<div id="outline-container-2-2-1" class="outline-4">
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> 外部システム</h4>
+<div class="outline-text-4" id="text-2-2-1">
 
 <ol>
 <li><a href="http://www.graphviz.org/">Graphviz</a> by AT&amp;T Research Labs
@@ -359,9 +344,9 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 
 </div>
 
-<div id="outline-container-2-3-2" class="outline-4">
-<h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> Common Lisp ライブラリ</h4>
-<div class="outline-text-4" id="text-2-3-2">
+<div id="outline-container-2-2-2" class="outline-4">
+<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> Common Lisp ライブラリ</h4>
+<div class="outline-text-4" id="text-2-2-2">
 
 
 <ol>
@@ -380,9 +365,9 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 
 </div>
 
-<div id="outline-container-2-4" class="outline-3">
-<h3 id="sec-2-4"><span class="section-number-3">2.4</span> 開始設定</h3>
-<div class="outline-text-3" id="text-2-4">
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> 開始設定</h3>
+<div class="outline-text-3" id="text-2-3">
 
 
 
@@ -521,7 +506,7 @@ Lisp（またはJava）コードを書いているプログラマがコーディ
 <p class="verse">
 ボトムアップで[プログラムを]書いたとき、たいてい最後には独特なプログラムに行き着く。<br/>
 単一でモノシリックなプログラムの替わりに、より抽象的なオペレータを持つ大きな言語と、<br/>
-それ[大きな言語]で書かれた<a href="#sec-4-11">小さなプログラム</a>を手に入れるはずだ。<br/>
+それ[大きな言語]で書かれた<a href="#sec-4-12">小さなプログラム</a>を手に入れるはずだ。<br/>
 &hellip;<br/>
 Lispは拡張可能なプログラムを書くために、とりわけみごとな言語である。<br/>
 なぜなら、Lispそれ自体が拡張可能なプログラムだからだ。<br/>
@@ -2221,6 +2206,23 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 <img src="./images/layout-sfdp.png"  alt="./images/layout-sfdp.png" />
 </p>
 
+</div>
+
+</div>
+
+<div id="outline-container-4-11" class="outline-3">
+<h3 id="sec-4-11"><span class="section-number-3">4.11</span> Html-Likeラベル</h3>
+<div class="outline-text-3" id="text-4-11">
+
+
+
+
+
+
+
+<p>
+　参考： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+</p>
 <p>
 　
 </p>
@@ -2228,9 +2230,9 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 
 </div>
 
-<div id="outline-container-4-11" class="outline-3">
-<h3 id="sec-4-11"><span class="section-number-3">4.11</span> 小さなプログラム &mdash; 2分木、コンスセル、有限オートマトン</h3>
-<div class="outline-text-3" id="text-4-11">
+<div id="outline-container-4-12" class="outline-3">
+<h3 id="sec-4-12"><span class="section-number-3">4.12</span> 小さなプログラム &mdash; 2分木、コンスセル、有限オートマトン</h3>
+<div class="outline-text-3" id="text-4-12">
 
 
 <p>
@@ -2241,9 +2243,9 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 
 </div>
 
-<div id="outline-container-4-11-1" class="outline-4">
-<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> 2分木</h4>
-<div class="outline-text-4" id="text-4-11-1">
+<div id="outline-container-4-12-1" class="outline-4">
+<h4 id="sec-4-12-1"><span class="section-number-4">4.12.1</span> 2分木</h4>
+<div class="outline-text-4" id="text-4-12-1">
 
 
 
@@ -2296,9 +2298,9 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 
 </div>
 
-<div id="outline-container-4-11-2" class="outline-4">
-<h4 id="sec-4-11-2"><span class="section-number-4">4.11.2</span> コンスセル</h4>
-<div class="outline-text-4" id="text-4-11-2">
+<div id="outline-container-4-12-2" class="outline-4">
+<h4 id="sec-4-12-2"><span class="section-number-4">4.12.2</span> コンスセル</h4>
+<div class="outline-text-4" id="text-4-12-2">
 
 
 
@@ -2385,9 +2387,9 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 </div>
 
-<div id="outline-container-4-11-3" class="outline-4">
-<h4 id="sec-4-11-3"><span class="section-number-4">4.11.3</span> 有限オートマトン</h4>
-<div class="outline-text-4" id="text-4-11-3">
+<div id="outline-container-4-12-3" class="outline-4">
+<h4 id="sec-4-12-3"><span class="section-number-4">4.12.3</span> 有限オートマトン</h4>
+<div class="outline-text-4" id="text-4-12-3">
 
 
 
@@ -2791,6 +2793,9 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
         (-&gt;  <span style="color: #90ee90;">"a1"</span> <span style="color: #90ee90;">"b3"</span>)
         (-&gt;  <span style="color: #90ee90;">"a3"</span> <span style="color: #90ee90;">"a0"</span>)
         (-&gt;  <span style="color: #90ee90;">"b2"</span> <span style="color: #90ee90;">"a3"</span>)))
+
+($ ()
+
 </pre>
 
 
@@ -2886,48 +2891,34 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <div class="outline-text-4" id="text-5-1-12">
 
 
-<p>
- <b>注：</b> 現在のところ、GraphvizのHTML-like label機能には未対応。
-</p>
 
 
-<pre class="src src-dot">digraph <span style="color: #00ee76; font-weight: bold;">html</span> {
-  abc [<span style="color: #ffb5c5;">shape=</span><span style="color: #ffb5c5;">none</span>, <span style="color: #ffb5c5;">margin=</span>0, <span style="color: #ffb5c5;">label=</span>&lt;
-       &lt;TABLE BORDER=<span style="color: #90ee90;">"0"</span> CELLBORDER=<span style="color: #90ee90;">"1"</span> CELLSPACING=<span style="color: #90ee90;">"0"</span> CELLPADDING=<span style="color: #90ee90;">"4"</span>&gt;
-       &lt;<span style="color: #ffb5c5;">TR</span>&gt;&lt;TD ROWSPAN=<span style="color: #90ee90;">"3"</span>&gt;&lt;FONT COLOR=<span style="color: #90ee90;">"red"</span>&gt;hello&lt;/FONT&gt;&lt;<span style="color: #ffb5c5;">BR</span>/&gt;world&lt;/TD&gt;
-           &lt;TD COLSPAN=<span style="color: #90ee90;">"3"</span>&gt;b&lt;/TD&gt;
-           &lt;TD ROWSPAN=<span style="color: #90ee90;">"3"</span> BGCOLOR=<span style="color: #90ee90;">"lightgrey"</span>&gt;g&lt;/TD&gt;
-           &lt;TD ROWSPAN=<span style="color: #90ee90;">"3"</span>&gt;h&lt;/TD&gt;&lt;/<span style="color: #ffb5c5;">TR</span>&gt;
-       &lt;<span style="color: #ffb5c5;">TR</span>&gt;&lt;TD&gt;c&lt;/TD&gt;
-           &lt;TD PORT=<span style="color: #90ee90;">"here"</span>&gt;d&lt;/TD&gt;
-           &lt;TD&gt;e&lt;/TD&gt; &lt;/<span style="color: #ffb5c5;">TR</span>&gt;
-       &lt;<span style="color: #ffb5c5;">TR</span>&gt;&lt;TD COLSPAN=<span style="color: #90ee90;">"3"</span>&gt;f&lt;/TD&gt;&lt;/<span style="color: #ffb5c5;">TR</span>&gt;&lt;/TABLE&gt;&gt;];
-     }
-</pre>
 
 
-<p>
- <b>注：</b> 現在のところ、Donutsで下のコードは動作しない。Donuts文法も未確定。
-</p>
 
 
-<pre class="src src-lisp">(&amp; (<span style="color: #00ee76;">:name</span> <span style="color: #90ee90;">"html"</span>)
-  (&lt;&gt; (table (<span style="color: #00ee76;">:border</span> 0 <span style="color: #00ee76;">:cellborder</span> 1 <span style="color: #00ee76;">:cellspacing</span> 0 <span style="color: #00ee76;">:cellpadding</span> 4)
-             (tr (td (font <span style="color: #90ee90;">"hello"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
-                     (br <span style="color: #90ee90;">"world"</span>) 
-                     <span style="color: #00ee76;">:rowspan</span> 3)
-                 (td <span style="color: #90ee90;">"b"</span> <span style="color: #00ee76;">:colspan</span> 3)
-                 (td <span style="color: #90ee90;">"g"</span> <span style="color: #00ee76;">:rowspan</span> 3 <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:lightgrey</span>)
-                 (td <span style="color: #90ee90;">"h"</span> <span style="color: #00ee76;">:rowspan</span> 3))
-             (tr (td <span style="color: #90ee90;">"c"</span>)
-                 (td <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:port</span> <span style="color: #90ee90;">"here"</span>)
-                 (td <span style="color: #90ee90;">"e"</span>))
-             (tr <span style="color: #90ee90;">"f"</span> <span style="color: #00ee76;">:colspan</span> 3))
-      <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:none</span> <span style="color: #00ee76;">:margin</span> 0))
+<pre class="src src-lisp">($$ (&amp; (<span style="color: #00ee76;">:name</span> <span style="color: #90ee90;">"html"</span>)
+      (&lt;&gt; (html
+            (table <span style="color: #00ee76;">:border</span> 0 <span style="color: #00ee76;">:cellborder</span> 1 <span style="color: #00ee76;">:cellspacing</span> 0 <span style="color: #00ee76;">:cellpadding</span> 4
+                   (tr (td (font <span style="color: #90ee90;">"hello"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
+                           (br)
+                           <span style="color: #90ee90;">"world"</span> <span style="color: #00ee76;">:rowspan</span> 3)
+                       (td <span style="color: #90ee90;">"b"</span> <span style="color: #00ee76;">:colspan</span> 3)
+                       (td <span style="color: #90ee90;">"g"</span> <span style="color: #00ee76;">:rowspan</span> 3 <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:lightgrey</span>)
+                       (td <span style="color: #90ee90;">"h"</span> <span style="color: #00ee76;">:rowspan</span> 3))
+                   (tr (td <span style="color: #90ee90;">"c"</span>)
+                       (td <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:port</span> <span style="color: #90ee90;">"here"</span>)
+                       (td <span style="color: #90ee90;">"e"</span>))
+                   (tr (td <span style="color: #90ee90;">"f"</span> <span style="color: #00ee76;">:colspan</span> 3))))
+          <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:none</span> <span style="color: #00ee76;">:margin</span> 0)))
 </pre>
 
 
 
+
+<p>
+<img src="./images/example12.png"  alt="./images/example12.png" />
+</p>
 
 
 </div>
@@ -3140,7 +3131,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 
 <p>
-Graphvizで使用できる属性は大概のものをサポートしている(URL関係とHTML-like-labelは未実装)。
+Graphvizで使用できる属性は大概のものをサポートしている(URL属性類は未実装)。
 レイアウトアルゴリズムごとにサポートしている属性が異なるので注意。
 </p>
 
@@ -3153,31 +3144,77 @@ Graphvizで使用できる属性は大概のものをサポートしている(UR
 
 
 <p>
-[Function]
- <b>&lt;&gt;</b> <i>label</i> &amp;rest <i>node-attributes</i> =&gt; node
+　
+</p>
+<dl>
+<dt><b>node</b></dt><dd>
+</dd>
+</dl>
+
+<p>　[Class]　
 </p>
 <p>
-[Function]
- <b>[]</b> <i>label</i> &amp;rest <i>node-attributes</i> =&gt; record
+　
+</p>
+<dl>
+<dt><b>&lt;&gt;</b> <i>label</i> &amp;rest <i>node-attributes</i> =&gt; node</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]　ノードを生成する。
 </p>
 <p>
-[Function]
- <b>@</b> <i>node</i> <i>port-keyword1</i> &amp;optional <i>port-keyword2</i> =&gt; pre-node, or node
+　
+</p>
+<dl>
+<dt><b>[]</b> <i>label</i> &amp;rest <i>node-attributes</i> =&gt; record</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]　レコードを生成する。
 </p>
 <p>
-[Function]
- <b>rank</b> <i>rank-keyward</i> &amp;rest <i>nodes</i> =&gt; NIL
+　
+</p>
+<dl>
+<dt><b>@</b> <i>node</i> <i>port-keyword1</i> &amp;optional <i>port-keyword2</i> =&gt; pre-node, or node</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]　
 </p>
 <p>
-[Function]
- <b>~</b> &amp;rest <i>nodes</i> =&gt; NIL
+　
+</p>
+<dl>
+<dt><b>rank</b> <i>rank-keyward</i> &amp;rest <i>nodes</i> =&gt; NIL</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]
 </p>
 <p>
-[Macro]
- <b>with-node</b> (&amp;rest <i>node-attributes</i>) &amp;body <i>body</i> =&gt; graph
+　
+</p>
+<dl>
+<dt><b>~</b> &amp;rest <i>nodes</i> =&gt; NIL</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]
 </p>
 <p>
-with-nodeはグラフコンストラクタ&amp;のbody内でのみ有効。
+　
+</p>
+<dl>
+<dt><b>with-node</b> (&amp;rest <i>node-attributes</i>) &amp;body <i>body</i> =&gt; graph</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　with-nodeは &amp;, &amp;&amp;, [&amp;]の引き数内で使うのが無難。
+</p>
+<p>
+　
 </p>
 
 
@@ -3191,59 +3228,147 @@ with-nodeはグラフコンストラクタ&amp;のbody内でのみ有効。
 
 
 <p>
-[Function]
- <b>-&gt;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; edge
+　
+</p>
+<dl>
+<dt><b>edge</b></dt><dd>
+</dd>
+</dl>
+
+<p>　[Class]　
 </p>
 <p>
-[Function]
- <b>&mdash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; path
+　
+</p>
+<dl>
+<dt><b>-&gt;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; edge</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]　
 </p>
 <p>
-[Function]
- <b>?</b>  <i>node</i> &amp;rest <i>edge-attributes</i> =&gt; edge
+　
+</p>
+<dl>
+<dt><b>&mdash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; path</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]　
 </p>
 <p>
-[Function]
- <b>&lt;-</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; edge
+　
+</p>
+<dl>
+<dt><b>?</b>  <i>node</i> &amp;rest <i>edge-attributes</i> =&gt; edge</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]　
 </p>
 <p>
-[Function]
- <b>&mdash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edges
+　
+</p>
+<dl>
+<dt><b>&lt;-</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; edge</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]　
 </p>
 <p>
-[Macro]
- <b>-&gt;&gt;</b>  &amp;rest <i>nodes</i> =&gt; graph
+　
+</p>
+<dl>
+<dt><b>&mdash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edges</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]　
 </p>
 <p>
-[Macro]
- <b>==&gt;</b>  &amp;rest <i>nodes</i> =&gt; graph
+　
+</p>
+<dl>
+<dt><b>-&gt;&gt;</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
 </p>
 <p>
-[Macro]
- <b>&lt;==</b>  &amp;rest <i>nodes</i> =&gt; graph
+　
+</p>
+<dl>
+<dt><b>==&gt;</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
 </p>
 <p>
-[Macro]
- <b>-&lt;</b>  &amp;rest <i>nodes</i> =&gt; graph
+　
+</p>
+<dl>
+<dt><b>&lt;==</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
 </p>
 <p>
-[Macro]
- <b>&gt;-</b>  &amp;rest <i>nodes</i> =&gt; graph
+　
+</p>
+<dl>
+<dt><b>-&lt;</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
 </p>
 <p>
-[Macro]
- <b>-&mdash;</b>  &amp;rest <i>nodes</i> =&gt; paths
+　
+</p>
+<dl>
+<dt><b>&gt;-</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
 </p>
 <p>
-[Macro]
- <b>O</b>  &amp;rest <i>nodes</i> =&gt; paths
+　
+</p>
+<dl>
+<dt><b>-&mdash;</b>  &amp;rest <i>nodes</i> =&gt; paths</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
 </p>
 <p>
-[Macro]
- <b>with-edge</b> (&amp;rest <i>edge-attributes</i>) &amp;body <i>body</i> =&gt; graph
+　
+</p>
+<dl>
+<dt><b>O</b>  &amp;rest <i>nodes</i> =&gt; paths</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
 </p>
 <p>
-with-edgeはグラフコンストラクタのbody内でのみ有効。
+　
+</p>
+<dl>
+<dt><b>with-edge</b> (&amp;rest <i>edge-attributes</i>) &amp;body <i>body</i> =&gt; graph</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　with-edgeは &amp;, &amp;&amp;, [&amp;]の引き数内で使うのが無難。
+</p>
+<p>
+　
 </p>
 
 
@@ -3258,25 +3383,57 @@ with-edgeはグラフコンストラクタのbody内でのみ有効。
 
 
 <p>
-[Macro]
- <b>&amp;</b>  (&amp;rest <i>graph-attributes</i>) &amp;body <i>nodes-edges-graphs</i> =&gt; graph
-</p>
-<p>
-[Macro]
- <b>&amp;&amp;</b>  &amp;body <i>nodes-edges-graphs</i> =&gt; graph
-</p>
-<p>
-[Macro]
- <b>[&amp;]</b>  (&amp;rest <i>graph-attributes</i>) &amp;body <i>nodes-edges-graphs</i> =&gt; cluster
-</p>
-
-<p>
-クラスター以外のグラフの属性値はトップレベルのもののみ有効。
+　クラスター以外のグラフの属性値はトップレベルのもののみ有効。
 つまり、クラスター以外のサブグラフの属性は無視される。
 :name、:strictを新たなグラフ属性として追加。
 :name値はトップレベルグラフの名前で、ビューアのタイトルとして使用されることがある。
 :strict値をtに設定すると、同じノード間に張れるエッジの数を1本に制限する（デフォルト値はnil）。
 </p>
+<p>
+　
+</p>
+<dl>
+<dt><b>graph</b></dt><dd>
+</dd>
+</dl>
+
+<p>　[Class]　
+</p>
+<p>
+　
+</p>
+<dl>
+<dt><b>&amp;</b>  (&amp;rest <i>graph-attributes</i>) &amp;body <i>nodes-edges-graphs</i> =&gt; graph</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
+</p>
+<p>
+　
+</p>
+<dl>
+<dt><b>&amp;&amp;</b>  &amp;body <i>nodes-edges-graphs</i> =&gt; graph</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
+</p>
+<p>
+　
+</p>
+<dl>
+<dt><b>[&amp;]</b>  (&amp;rest <i>graph-attributes</i>) &amp;body <i>nodes-edges-graphs</i> =&gt; cluster</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
+</p>
+<p>
+　
+</p>
+
+
 
 
 
@@ -3290,53 +3447,104 @@ with-edgeはグラフコンストラクタのbody内でのみ有効。
 
 
 <p>
-[Function]
- <b>dot-output</b>  <i>graph</i> =&gt; NIL
+　
 </p>
-<p>
-[Function]
- <b>dot-pprint</b>  <i>graph</i> =&gt; NIL
-</p>
-<p>
-[Macro]
- <b>$</b>  (&amp;rest <i>shell-proparties</i>) <i>graph</i> =&gt; NIL 
-</p>
-<p>
-[Macro]
- <b>$$</b>  <i>graph</i> =&gt; NIL 
-</p>
+<dl>
+<dt><b>dot-output</b>  <i>graph</i> =&gt; NIL</dt><dd>
+</dd>
+</dl>
 
+<p>　[Function]　
+</p>
+<p>
+　
+</p>
+<dl>
+<dt><b>dot-pprint</b>  <i>graph</i> =&gt; NIL</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]　
+</p>
+<p>
+　
+</p>
+<dl>
+<dt><b>$</b>  (&amp;rest <i>shell-proparties</i>) <i>graph</i> =&gt; NIL </dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
+</p>
+<p>
+　
+</p>
+<dl>
+<dt><b>$$</b>  <i>graph</i> =&gt; NIL </dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
+</p>
+<p>
+　
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-6-5" class="outline-3">
+<h3 id="sec-6-5"><span class="section-number-3">6.5</span> HTML-LIKEラベル</h3>
+<div class="outline-text-3" id="text-6-5">
+
+
+<p>
+　参考： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+</p>
+<p>
+　
+</p>
+<dl>
+<dt><b>tag</b></dt><dd>
+</dd>
+</dl>
+
+<p>　[Class]　
+</p>
+<p>
+　
+</p>
+<dl>
+<dt><b>タグ関数</b> &amp;rest <i>attrs-tag-body</i> =&gt; tag</dt><dd>
+</dd>
+</dl>
+
+<p>　[Function]　タグ関数: <b>br</b> <b>hr</b> <b>vr</b> <b>img</b> <b>font</b> <b>i</b> <b>b</b> <b>u</b> <b>sub</b> <b>sup</b> <b>table</b> <b>tr</b> <b>td</b>
+タグ関数は任意数の、タグ、タグボディ、タグ属性、タグ属性値を引数に取る。
+引数の順は任意。
+ただし、タグ属性の次には必ずタグ属性値を置かなければならない。
+</p>
+<p>
+　
+</p>
+<dl>
+<dt><b>html</b> <i>tag</i> =&gt; html-like-labels</dt><dd>
+</dd>
+</dl>
+
+<p>　[Macro]　
+</p>
+<p>
+　
+</p>
 </div>
 </div>
 
 </div>
 
 <div id="outline-container-7" class="outline-2">
-<h2 id="sec-7"><span class="section-number-2">7</span> 既知のバグ、不具合</h2>
+<h2 id="sec-7"><span class="section-number-2">7</span> ToDo</h2>
 <div class="outline-text-2" id="text-7">
-
-
-
-
-
-</div>
-
-</div>
-
-<div id="outline-container-8" class="outline-2">
-<h2 id="sec-8"><span class="section-number-2">8</span> Change Log</h2>
-<div class="outline-text-2" id="text-8">
-
-
-
-
-</div>
-
-</div>
-
-<div id="outline-container-9" class="outline-2">
-<h2 id="sec-9"><span class="section-number-2">9</span> ToDo</h2>
-<div class="outline-text-2" id="text-9">
 
 
 <ul>
@@ -3346,7 +3554,10 @@ with-edgeはグラフコンストラクタのbody内でのみ有効。
 <li><code>[&nbsp;]</code> 開発環境以外での動作確認(windows, macなど)。
 
 </li>
-<li><code>[&nbsp;]</code> URL属性、HTML-like-labelの実装。
+<li><code>[&nbsp;]</code> カスタムシェイプの実装。
+
+</li>
+<li><code>[&nbsp;]</code> URL属性。
 </li>
 </ul>
 
@@ -3358,6 +3569,7 @@ with-edgeはグラフコンストラクタのbody内でのみ有効。
 </li>
 <li><code>[&nbsp;]</code> 最適化のためのデータ収集。
       どのようなグラフを作成するときに実効速度が遅くなるか。
+      ホットスポットを探す。
 
 </li>
 <li><code>[&nbsp;]</code> エラー処理。
@@ -3446,7 +3658,9 @@ David S. Touretzkyによる素晴らしいLisp入門書、
 <a href="http://www.cs.cmu.edu/~dst/LispBook/">Common Lisp: A Gentle Introduction to Symbolic Computation</a>のAppendix AのSDRAWのコードが大変参考になりました。
 SDRAWは、ループ構造も含む任意のリストを引数に取り、そのコンスセル構造を標準出力にディスプレイするライブラリです。
 ただし、ここで紹介したマクロcons-cell-ofは、コードが複雑になってしまうため、ループ構造のリストには対応していません。
-</p></div>
+</p>
+
+</div>
 </div>
 
 </div>
@@ -3454,7 +3668,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-08 23:22:38 JST</p>
+<p class="date">Date: 2012-05-10 21:55:08 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

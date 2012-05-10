@@ -1,5 +1,4 @@
-;;; -*- Mode: LISP; Syntax: COMMON-LISP; Base: 10 -*-
-;;;     Last Updated : 2012/05/08 21:10:54 tkych
+;;;; Last Updated : 2012/05/10 20:57:46 tkych
 
 ;; Flesh in donuts
 

@@ -1,5 +1,4 @@
-;;; -*- Mode: LISP; Syntax: COMMON-LISP; Base: 10 -*-
-;;;     Last Updated : 2012/05/08 19:51:16 tkych
+;;;; Last Updated : 2012/05/10 20:58:04 tkych
 
 ;; Nuts in donuts
 
@@ -32,11 +31,11 @@
 (in-package :in-donuts)
 
 ;;--------------------------------------------------------------------
-;; Tag
+;; Sesame
 ;;--------------------------------------------------------------------
-(defun make-tag (tag content) (cons tag content))
-(defun tag? (x) (consp x))
-(defun tag-cont (tag) (cdr tag))
+(defun make-sesame (sesame content) (cons sesame content))
+(defun sesame? (x) (consp x))
+(defun sesame-cont (sesame) (cdr sesame))
 
 ;;--------------------------------------------------------------------
 ;; Node
@@ -99,7 +98,7 @@
                            :if (node? node) :collect (:name node)
                            :else :if (pre-node? node)
                            :collect (format nil "~S" node)))))
-        (make-tag 'rank rank-pos))))
+        (make-sesame 'rank rank-pos))))
 
 ;;--------------------------------------
 (defparameter *compass* '(:n :ne :e :se :s :sw :w :nw :c :_))
@@ -133,7 +132,7 @@
       (t (error "~A isn't node type." node)))))
 
 (defun port-proc1 (node ports)
-  (make-tag 'port
+  (make-sesame 'port
             (format nil "~S:~(~A~)" node (1st ports))))
 
 (defun port-proc2 (node ports)
@@ -277,10 +276,10 @@
 ;; With
 ;;--------------------------------------------------------------------
 (defmacro make-with (with-type attrs &body body)
-  (let ((start (make-tag 'with-start
+  (let ((start (make-sesame 'with-start
                          (format nil "~&  { ~(~A~) [~{~A=~A~^,~}];"
                                  with-type (escape-attrs attrs))))
-        (end (make-tag 'with-end (format nil "~&  };"))))
+        (end (make-sesame 'with-end (format nil "~&  };"))))
     `(& () ',start ,@body ',end)))
 
 (defmacro with-node ((&rest node-attrs) &body body)
@@ -319,7 +318,7 @@
 (defun output-buff (buff)
   (dolist (x buff)
     (cond ((edge? x)     (output-edge x))
-          ((tag? x)      (format t "~&~A" (tag-cont x)))
+          ((sesame? x)      (format t "~&~A" (sesame-cont x)))
           ((edges? x)    (output-edges x))
           ((cluster? x)  (output-cluster x))
           ((graph? x)    (output-subgraph x))
@@ -357,7 +356,7 @@
 
 (defun output-node (node)
   (cond ((pre-node? node) (format t "~S" node))
-        ((tag? node)      (format t "~A" (tag-cont node))) ;port
+        ((sesame? node)   (format t "~A" (sesame-cont node))) ;port
         ((node? node)     (format t "~A" (:name node)))
         (t                (error "Unknown type ~A" node))))
 
@@ -387,6 +386,9 @@
               '(:LR :RL :TB :BT :BL :BR :TL :TR :RB :RT :LB :LT))
 (defun upper-val? (x) (member x *upper-vals*))
 
+(defun html-like? (x)
+  (and (consp x) (eql :html-like-label (1st x))))
+
 (defun escape-attrs (alst)
   (let ((len (length alst)) (acc nil))
     (do ((i 0 (1+ i)))
@@ -394,10 +396,11 @@
       (let ((x (nth i alst)))
         (if (evenp i)
             (push (string-downcase (symbol-name x)) acc)
-            (push (cond ((stringp x)  (str "\"" x "\""))
-                        ((numberp x)  x)
-                        ((eql x t)    "true")
-                        ((eql x nil)  "false")
+            (push (cond ((html-like? x) (cdr x))
+                        ((stringp x)    (str "\"" x "\""))
+                        ((numberp x)    x)
+                        ((eql x t)      "true")
+                        ((eql x nil)    "false")
                         ((keywordp x)
                          (cond ((upper-val? x) (symbol-name x))
                                ((Mshape? x)    (string-capitalize

@@ -1,5 +1,4 @@
-;;; -*- Mode: LISP; Syntax: COMMON-LISP; Base: 10 -*-
-;;;     Last Updated : 2012/05/09 20:57:35 tkych
+;;;; Last Updated : 2012/05/10 20:56:39 tkych
 
 ;; System for donuts
 
@@ -37,6 +36,7 @@
 ;;   nuts.lisp  -- core
 ;;   flesh.lisp -- donuts utils
 ;;   shell.lisp -- shell interface
+;;   html-like-labels.lisp -- html like labels
 ;; doc/
 ;;   index-j.html -- Japanese version of donuts documentaion
 ;;   index.html   -- English version of donuts documentaion
@@ -52,7 +52,7 @@
 (defsystem :donuts
   :description "Graph DSL for common lisp"
   :name        "Donuts"
-  :version     "0.2.6"
+  :version     "0.2.7"
   :licence     "MIT licence"
   :author      "Takaya OCHIAI <tkych.repl@gmail.com>"
   :long-description
@@ -66,6 +66,7 @@ It requires the Graphviz system (http://www.graphviz.org/)."
                         :components ((:file "nuts")
                                      (:file "flesh")
                                      (:file "shell")
+                                     (:file "html-like-labels")
                                      ))
                (:file "api-package")))
 

@@ -1,5 +1,4 @@
-;;; -*- Mode: LISP; Syntax: COMMON-LISP; Base: 10 -*-
-;;;     Last Updated : 2012/05/08 20:35:26 tkych
+;;;; Last Updated : 2012/05/10 20:56:03 tkych
 
 ;; Application package for donuts
 
@@ -37,6 +36,8 @@
                            :-- :--- :-< :>- :O
                            :& :[&] :&& :with-graph
                            :dot-output :dot-pprint :$ :$$
+                           :html :br :hr :vr :img
+                           :font :i :b :u :sub :sup :table :tr :td
                            ))
 
 (pushnew :donuts *features*)
