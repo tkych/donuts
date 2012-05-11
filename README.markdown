@@ -1,4 +1,4 @@
-Last Updated : 2012/05/10 22:01:33 tkych
+Last Updated : 2012/05/11 18:50:38 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -16,7 +16,7 @@ $$ outputs an image of a graph.
 
 The Current version of the donuts is 0.2.7 (beta).
 
-## Dependency
+## Dependencies
 
 * [Graphviz](http://www.graphviz.org/) by AT&T Research Labs
 
