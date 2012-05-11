@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-10 21:38:21 JST"/>
+<meta name="generated" content="2012-05-11 17:34:02 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -100,11 +100,16 @@
 
 
 
+
+
+<div align = "right">
 <p>
 <a href="./index-j.html">日本語</a>/English(under translation)
 </p>
+</div>
+
 <p>
-<a href="http://www.lisperati.com/logo.html" title="English version document" align="right" alt="lisp-alien image" title="Alieeen!!!" align="left"><img src="./images/donuts-alien.png" alt="donuts-alien.png"/></a>
+<a href="http://www.lisperati.com/logo.html" alt="lisp-alien image" title="Alieeen!!!" align="left"><img src="./images/donuts-alien.png" alt="donuts-alien.png"/></a>
 </p>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
@@ -113,18 +118,17 @@
 <li><a href="#sec-1">1 Introduction</a></li>
 <li><a href="#sec-2">2 Installation</a>
 <ul>
-<li><a href="#sec-2-1">2.1 動作確認</a></li>
-<li><a href="#sec-2-2">2.2 Download</a></li>
-<li><a href="#sec-2-3">2.3 Dependency</a></li>
-<li><a href="#sec-2-4">2.4 Setting</a></li>
+<li><a href="#sec-2-1">2.1 Chacked Operational Environments</a></li>
+<li><a href="#sec-2-2">2.2 Dependency</a></li>
+<li><a href="#sec-2-3">2.3 Setting</a></li>
 </ul>
 </li>
 <li><a href="#sec-3">3 Idea of Donuts &mdash; &lt;&gt;, -&gt;, &amp;</a>
 <ul>
 <li><a href="#sec-3-1">3.1 The Goal of Donuts</a></li>
-<li><a href="#sec-3-2">3.2 Donutsの構築指針</a></li>
-<li><a href="#sec-3-3">3.3 "グラフ作成"の抽象化 &mdash; ユーザインターフェイスの設計1</a></li>
-<li><a href="#sec-3-4">3.4 図形的な関数名やマクロ名 &mdash; ユーザインターフェイスの設計2</a></li>
+<li><a href="#sec-3-2">3.2 Lodestar</a></li>
+<li><a href="#sec-3-3">3.3 Abstruction of "Create Graphes" &mdash; User Interface1</a></li>
+<li><a href="#sec-3-4">3.4 Pictorial name of functions and macros &mdash; User Interface2</a></li>
 </ul>
 </li>
 <li><a href="#sec-4">4 Tutorial</a>
@@ -153,7 +157,7 @@
 <li><a href="#sec-6-1">6.1 NODES</a></li>
 <li><a href="#sec-6-2">6.2 EDGES</a></li>
 <li><a href="#sec-6-3">6.3 GRAPHES</a></li>
-<li><a href="#sec-6-4">6.4 SHELL INTERFACE</a></li>
+<li><a href="#sec-6-4">6.4 OUTPUT-TOOLS</a></li>
 <li><a href="#sec-6-5">6.5 HTML-LIKE-LABELS</a></li>
 </ul>
 </li>
@@ -167,7 +171,7 @@
 
 
 <p>
-<a href="./images/reading-algorithm-big.png"><img src="./images/reading-algorithm.png" alt="reading-algorithm.png"/></a>
+<a href="./images/reading-algorithm-en-big.png"><img src="./images/reading-algorithm-en.png" alt="reading-algorithm-en.png"/></a>
 </p>
 
 
@@ -184,12 +188,12 @@
 
 
 
-<pre class="src src-lisp">($ () (<span style="color: #eeee00;">let</span> ((o (&lt;&gt; <span style="color: #90ee90;">"o"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:fillcolor</span> <span style="color: #00ee76;">:chocolate4</span>)))   <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12481;&#12519;&#12467;&#12489;&#12540;&#12490;&#12484;&#12434;&#20316;&#12427;</span>
-        (&amp; (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Hello, Donuts!"</span> <span style="color: #00ee76;">:labelloc</span> t <span style="color: #00ee76;">:size</span> <span style="color: #90ee90;">"3,3"</span>)      <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12464;&#12521;&#12501;&#12434;&#29983;&#25104;&#12377;&#12427;</span>
-          (--&gt; <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"n"</span>)                                         <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#38291;&#12395;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
-          (-&gt;  <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:dotted</span>)                            <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#28857;&#32218;&#12398;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
-          (--&gt; <span style="color: #90ee90;">"u"</span> <span style="color: #90ee90;">"t"</span> <span style="color: #90ee90;">"s"</span>)                                       <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#38291;&#12395;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
-          (~ <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"t"</span>) (~ <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span>))))                            <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#12398;&#39640;&#12373;&#12434;&#25539;&#12360;&#12427;</span>
+<pre class="src src-lisp">($ () (<span style="color: #eeee00;">let</span> ((o (&lt;&gt; <span style="color: #90ee90;">"o"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:fillcolor</span> <span style="color: #00ee76;">:chocolate4</span>)))   <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Make chocolate donut</span>
+        (&amp; (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Hello, Donuts!"</span> <span style="color: #00ee76;">:labelloc</span> t <span style="color: #00ee76;">:size</span> <span style="color: #90ee90;">"3,3"</span>)      <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Make graph</span>
+          (--&gt; <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"n"</span>)                                         <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Put edges through nodes</span>
+          (-&gt;  <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:dotted</span>)                            <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Put doted edge between "n" "u"</span>
+          (--&gt; <span style="color: #90ee90;">"u"</span> <span style="color: #90ee90;">"t"</span> <span style="color: #90ee90;">"s"</span>)                                       <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Put edges through nodes</span>
+          (~ <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"t"</span>) (~ <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span>))))                            <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Arrange nodes</span>
 </pre>
 
 
@@ -206,17 +210,15 @@
 </div>
 
 <div id="outline-container-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 動作確認</h3>
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Chacked Operational Environments</h3>
 <div class="outline-text-3" id="text-2-1">
 
 
-<p>
-動作確認済みの環境。
-</p>
+
 <dl>
 <dt>OS</dt><dd>linux-2.6.32-5-686
 </dd>
-<dt>CL処理系</dt><dd>sbcl-1.0.55
+<dt>CL Implementations</dt><dd>sbcl-1.0.55
 </dd>
 </dl>
 
@@ -226,36 +228,21 @@
 </div>
 
 <div id="outline-container-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Download</h3>
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Dependency</h3>
 <div class="outline-text-3" id="text-2-2">
 
 
-<ul>
-<li><a href="http://github">http://github</a>
-</li>
-</ul>
-
-
 </div>
 
-</div>
-
-<div id="outline-container-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Dependency</h3>
-<div class="outline-text-3" id="text-2-3">
-
-
-</div>
-
-<div id="outline-container-2-3-1" class="outline-4">
-<h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> Outer Systems</h4>
-<div class="outline-text-4" id="text-2-3-1">
+<div id="outline-container-2-2-1" class="outline-4">
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> Outer Systems</h4>
+<div class="outline-text-4" id="text-2-2-1">
 
 <ol>
 <li><a href="http://www.graphviz.org/">Graphviz</a>
 
 </li>
-<li>画像を見るための適当なビューア
+<li>Appropriate viewer
 </li>
 </ol>
 
@@ -264,9 +251,9 @@
 
 </div>
 
-<div id="outline-container-2-3-2" class="outline-4">
-<h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> Common Lisp Library</h4>
-<div class="outline-text-4" id="text-2-3-2">
+<div id="outline-container-2-2-2" class="outline-4">
+<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> Common Lisp Library</h4>
+<div class="outline-text-4" id="text-2-2-2">
 
 
 <ol>
@@ -285,9 +272,9 @@
 
 </div>
 
-<div id="outline-container-2-4" class="outline-3">
-<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Setting</h3>
-<div class="outline-text-3" id="text-2-4">
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Setting</h3>
+<div class="outline-text-3" id="text-2-3">
 
 
 
@@ -365,7 +352,7 @@ Hello World
 </div>
 
 <div id="outline-container-3-2" class="outline-3">
-<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Donutsの構築指針</h3>
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Lodestar</h3>
 <div class="outline-text-3" id="text-3-2">
 
 
@@ -391,7 +378,7 @@ you effectively get an extension language for free.<br/>
 </div>
 
 <div id="outline-container-3-3" class="outline-3">
-<h3 id="sec-3-3"><span class="section-number-3">3.3</span> "グラフ作成"の抽象化 &mdash; ユーザインターフェイスの設計1</h3>
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> Abstruction of "Create Graphes" &mdash; User Interface1</h3>
 <div class="outline-text-3" id="text-3-3">
 
 
@@ -417,8 +404,10 @@ whereas in computer science we are usually concerned with imperative (how to) de
 </div>
 
 <div id="outline-container-3-4" class="outline-3">
-<h3 id="sec-3-4"><span class="section-number-3">3.4</span> 図形的な関数名やマクロ名 &mdash; ユーザインターフェイスの設計2</h3>
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> Pictorial name of functions and macros &mdash; User Interface2</h3>
 <div class="outline-text-3" id="text-3-4">
+
+
 
 
 
@@ -426,17 +415,18 @@ whereas in computer science we are usually concerned with imperative (how to) de
 <caption></caption>
 <colgroup><col class="left" /><col class="left" /><col class="left" /><col class="left" />
 </colgroup>
+
 <thead>
-<tr><th scope="col" class="left"></th><th scope="col" class="left">コンストラクタ</th><th scope="col" class="left">オペレータ</th><th scope="col" class="left">ユーティティ</th></tr>
+<tr><th scope="col" class="left"></th><th scope="col" class="left">Constructors</th><th scope="col" class="left">Operators</th><th scope="col" class="left">Utilities</th></tr>
 </thead>
 <tbody>
-<tr><td class="left">グラフ</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">with-graph, &amp;&amp;</td></tr>
-<tr><td class="left">エッジ</td><td class="left">-&gt;, &mdash;</td><td class="left"></td><td class="left">with-edge, &mdash;&gt;, -&gt;&gt;, ==&gt;, &lt;-, &lt;==, ?, -&lt;, &gt;-, -&mdash;, O</td></tr>
-<tr><td class="left">ノード</td><td class="left">&lt;&gt;, []</td><td class="left">@, rank</td><td class="left">with-node, ~</td></tr>
+<tr><td class="left">Graphes</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">with-graph, &amp;&amp;</td></tr>
+<tr><td class="left">Edges</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, &lt;-, &lt;==, ?, -&lt;, &gt;-, &ndash;&ndash;&ndash;, O</td></tr>
+
+<tr><td class="left">Nodes</td><td class="left">&lt;&gt;, []</td><td class="left">@, rank</td><td class="left">with-node, ~</td></tr>
+<tr><td class="left">Miscellaneous</td><td class="left">dot-output, $</td><td class="left"></td><td class="left">dot-pprint, $$</td></tr>
 </tbody>
 </table>
-
-
 
 <p>
 　
@@ -647,12 +637,12 @@ whereas in computer science we are usually concerned with imperative (how to) de
 <colgroup><col class="left" /><col class="left" /><col class="left" />
 </colgroup>
 <thead>
-<tr><th scope="col" class="left">キーワード</th><th scope="col" class="left">指定できるもの</th><th scope="col" class="left">デフォルト値</th></tr>
+<tr><th scope="col" class="left">Keywords</th><th scope="col" class="left">To specify</th><th scope="col" class="left">Default</th></tr>
 </thead>
 <tbody>
-<tr><td class="left">:outfile</td><td class="left">生成する画像ファイル名</td><td class="left">"DONUTS-TMP.png"</td></tr>
-<tr><td class="left">:show</td><td class="left">ビューアを起動するかどうか</td><td class="left">t</td></tr>
-<tr><td class="left">:layout</td><td class="left">グラフ画像のレイアウトアルゴリズム</td><td class="left">:dot</td></tr>
+<tr><td class="left">:outfile</td><td class="left">image file name to create</td><td class="left">"DONUTS-TMP.png"</td></tr>
+<tr><td class="left">:show</td><td class="left">Boot viewer</td><td class="left">t</td></tr>
+<tr><td class="left">:layout</td><td class="left">layout algorithims</td><td class="left">:dot</td></tr>
 </tbody>
 </table>
 
@@ -2303,6 +2293,11 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <div class="outline-text-2" id="text-6">
 
 
+<p>
+Graphvizで使用できる属性は大方のものをサポートしている(URL属性類は未実装)。
+レイアウトアルゴリズムごとにサポートしている属性が異なるので注意。
+</p>
+
 
 </div>
 
@@ -2312,15 +2307,24 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 
 <p>
-　
+　ノードコンストラクタ&lt;&gt;によって生成されるオブジェクトはnode型のオブジェクトである。
+プレノード(数値、ストリング)、[]によって生成されるレコードもnodeのオブジェクト型とみなされる。
+これら以外のものはnode型のオブジェクトではない。
 </p>
-<dl>
-<dt><b>node</b></dt><dd>
-</dd>
-</dl>
+<p>
+ノード属性の種類については、下記のリンク先を参照せよ。
+</p><ul>
+<li>属性について： <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
+</li>
+<li>shape属性について： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+</li>
+<li>color属性について： <a href="http://www.graphviz.org/color-names.html">http://www.graphviz.org/color-names.html</a>
+</li>
+</ul>
 
-<p>　[Class]　
-</p>
+
+
+
 <p>
 　
 </p>
@@ -2395,16 +2399,23 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <div class="outline-text-3" id="text-6-2">
 
 
-<p>
-　
-</p>
-<dl>
-<dt><b>edge</b></dt><dd>
-</dd>
-</dl>
 
-<p>　[Class]　
+
+<p>
+　エッジコンストラクタ-&gt;とエッジユーティリティ(&mdash;,&lt;-,&mdash;&gt;,-&mdash;,?,O)によって生成されるオブジェクトのみがedge型のオブジェクトである。
 </p>
+<p>
+エッジ属性の種類については、下記のリンク先を参照せよ。
+</p><ul>
+<li>属性について： <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
+</li>
+<li>shape属性について： <a href="http://www.graphviz.org/arrow-shapes.html">http://www.graphviz.org/arrow-shapes.html</a>
+</li>
+<li>color属性について： <a href="http://www.graphviz.org/color-names.html">http://www.graphviz.org/color-names.html</a>
+</li>
+</ul>
+
+
 <p>
 　
 </p>
@@ -2418,13 +2429,20 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <p>
 　
 </p>
+
+
+</p>
 <dl>
-<dt><b>&mdash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; path</dt><dd>
+<dt><b>&ndash;&ndash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; path</dt><dd>
+
 </dd>
 </dl>
 
 <p>　[Function]　
 </p>
+<p>
+
+
 <p>
 　
 </p>
@@ -2448,13 +2466,19 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <p>
 　
 </p>
+
+
+</p>
 <dl>
-<dt><b>&mdash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edges</dt><dd>
+<dt><b>&ndash;&ndash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edges</dt><dd>
+
 </dd>
 </dl>
 
 <p>　[Function]　
 </p>
+<p>
+
 <p>
 　
 </p>
@@ -2508,13 +2532,18 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <p>
 　
 </p>
+
+
+</p>
 <dl>
-<dt><b>-&mdash;</b>  &amp;rest <i>nodes</i> =&gt; paths</dt><dd>
+<dt><b>&ndash;&ndash;&ndash;</b>  &amp;rest <i>nodes</i> =&gt; edges</dt><dd>
+
 </dd>
 </dl>
 
-<p>　[Macro]　
+<p>　[Function]　
 </p>
+<p>
 <p>
 　
 </p>
@@ -2551,22 +2580,28 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 
 <p>
-　クラスター以外のグラフの属性値はトップレベルのもののみ有効。
-つまり、クラスター以外のサブグラフの属性は無視される。
-:name、:strictを新たなグラフ属性として追加。
-:name値はトップレベルグラフの名前で、ビューアのタイトルとして使用されることがある。
-:strict値をtに設定すると、同じノード間に張れるエッジの数を1本に制限する（デフォルト値はnil）。
+　グラフコンストラクタ&amp; (or &amp;&amp;)によって生成されるオブジェクトはgraph型のオブジェクトである。
+with-系のユーティリティの返り値、エッジユーティリティ(-&gt;&gt;,==&gt;,&lt;==,-&lt;,&gt;-)の返り値、[&amp;]によって生成されるクラスタもgraphのオブジェクト型とみなされる。
+これら以外のものはgraph型のオブジェクトではない。
 </p>
 <p>
-　
+　クラスター以外のグラフ属性値はトップレベルのもののみ有効。
+クラスター以外のサブグラフのグラフ属性は無視される。
+Graphvizがサポートする属性に加え、:name、:strictもグラフ属性として追加されている。
+:name値はトップレベルグラフの名前で、ビューアのタイトルとして使用されることがある。
+:strict値をtに設定すると、同一のノード組に張ることのできるエッジの数が1本に制限される（デフォルト値はnil）。
 </p>
-<dl>
-<dt><b>graph</b></dt><dd>
-</dd>
-</dl>
+<p>
+グラフ属性の種類については、下記のリンク先を参照せよ。
+</p><ul>
+<li>属性について： <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
+</li>
+<li>クラスターのcolor属性について： <a href="http://www.graphviz.org/color-names.html">http://www.graphviz.org/color-names.html</a>
+</li>
+</ul>
 
-<p>　[Class]　
-</p>
+
+
 <p>
 　
 </p>
@@ -2575,7 +2610,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </dd>
 </dl>
 
-<p>　[Macro]　
+<p>　[Macro]　グラフ属性リストとグラフ構成要素(ノード、エッジ、グラフ)からグラフを生成する。
 </p>
 <p>
 　
@@ -2585,7 +2620,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </dd>
 </dl>
 
-<p>　[Macro]　
+<p>　[Macro]　グラフ属性リストがnilに指定されているグラフを生成する。
 </p>
 <p>
 　
@@ -2595,7 +2630,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </dd>
 </dl>
 
-<p>　[Macro]　
+<p>　[Macro]　グラフ属性リストとグラフ構成要素(ノード、エッジ、グラフ)からクラスターを生成する。
 </p>
 <p>
 　
@@ -2610,7 +2645,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </div>
 
 <div id="outline-container-6-4" class="outline-3">
-<h3 id="sec-6-4"><span class="section-number-3">6.4</span> SHELL INTERFACE</h3>
+<h3 id="sec-6-4"><span class="section-number-3">6.4</span> OUTPUT-TOOLS</h3>
 <div class="outline-text-3" id="text-6-4">
 
 
@@ -2652,7 +2687,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </dd>
 </dl>
 
-<p>　[Macro]　
+<p>　[Macro]　プロパティリストをnilに指定する以外、$と同様の動作を行う。
 </p>
 <p>
 　
@@ -2667,29 +2702,30 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 
 <p>
-　 <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+　HTML-LIKEラベルは古いヴァージョンのGraphvizではサポートしていない可能性がある。
+HTML-LIKEラベルはレコードに比べ、より詳細にノードの修飾を指定できる。
+HTML-LIKEラベルはエッジやグラフのラベル属性値としても用いることができる(動作未確認)。
+タグ関数(br, hr, vr, img, font, i, b, u, sub, sup, table, tr, td)によってのみtag型のオブジェクトは生成される。
+</p>
+<p>
+　参考： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
 </p>
 <p>
 　
 </p>
 <dl>
-<dt><b>tag</b></dt><dd>
+<dt><b>タグ関数</b> &amp;rest <i>attrs-tag-body</i> =&gt; tag</dt><dd>
 </dd>
 </dl>
 
-<p>　[Class]　
+<p>　[Function]　タグ関数: <b>br</b>, <b>hr</b>, <b>vr</b>, <b>img</b>, <b>font</b>, <b>i</b>, <b>b</b>, <b>u</b>, <b>sub</b>, <b>sup</b>, <b>table</b>, <b>tr</b>, <b>td</b>.
+タグ関数は任意数の、タグ、タグボディ、タグ属性、タグ属性値を引数に取る。
+引数の順は任意。
+ただし、タグ属性の次には必ずタグ属性値を置かなければならない。
 </p>
 <p>
 　
 </p>
-<dl>
-<dt><b>TAG-FN</b> &amp;rest <i>attrs-tag-body</i> =&gt; tag</dt><dd>
-</dd>
-</dl>
-
-<p>　[Function]　TAG-FN: <b>br</b> <b>hr</b> <b>vr</b> <b>img</b> <b>font</b> <b>i</b> <b>b</b> <b>u</b> <b>sub</b> <b>sup</b> <b>table</b> <b>tr</b> <b>td</b>
-</p>
-
 <dl>
 <dt><b>html</b> <i>tag</i> =&gt; html-like-labels</dt><dd>
 </dd>
@@ -2709,9 +2745,7 @@ David S. Touretzkyによる素晴らしいLisp入門書、
 <a href="http://www.cs.cmu.edu/~dst/LispBook/">Common Lisp: A Gentle Introduction to Symbolic Computation</a>のAppendix AのSDRAWのコードが大変参考になりました。
 SDRAWは、ループ構造も含む任意のリストを引数に取り、そのコンスセル構造を標準出力にディスプレイするライブラリです。
 ただし、ここで紹介したマクロcons-cell-ofは、コードが複雑になってしまうため、ループ構造のリストには対応していません。
-</p>
-
-</div>
+</p></div>
 </div>
 </div>
 
@@ -2720,7 +2754,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-10 21:38:21 JST</p>
+<p class="date">Date: 2012-05-11 17:34:02 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

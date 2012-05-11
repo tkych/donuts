@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/10 20:58:04 tkych
+;;;; Last Updated : 2012/05/11 17:41:50 tkych
 
 ;; Nuts in donuts
 
@@ -56,7 +56,7 @@
                name (escape-attrs attrs)))))
 
 (defun <> (label &rest node-attrs)
-  (make-inst 'node :name (format nil "node_~A" (gentemp))
+  (make-inst 'node :name (format nil "node_~A" (gentemp "ID_"))
                    :attrs (nconc `(:label ,label) node-attrs)))
 
 ;;--------------------------------------
@@ -79,7 +79,7 @@
     (rec 0 nil)))
 
 (defun [] (label &rest node-attrs)
-  (make-inst 'node :name  (format nil "record_~A" (gentemp))
+  (make-inst 'node :name  (format nil "record_~A" (gentemp "ID_"))
                    :ports (find-port label)
                    :attrs (append `(:shape :record
                                     :label ,(escape-port label))
@@ -158,7 +158,7 @@
                (if (node? node2) (:name node2) node2)))))
 
 (defun -> (node1 node2 &rest edge-attrs)
-  (make-inst 'edge :name (format nil "edge_~A" (gentemp))
+  (make-inst 'edge :name (format nil "edge_~A" (gentemp "ID_"))
              :node1 node1 :node2 node2 :attrs edge-attrs))
 
 ;;--------------------------------------
@@ -177,7 +177,7 @@
                      :else :collect node)))))
 
 (defun --> (&rest nodes)
-  (make-inst 'edges :name (format nil "edges_~A" (gentemp))
+  (make-inst 'edges :name (format nil "edges_~A" (gentemp "ID_"))
                     :nodes nodes))
 
 ;;--------------------------------------
@@ -196,7 +196,7 @@
 
 (defun -- (node1 node2 &rest path-attrs)
   (setf *directed?* nil)
-  (make-inst 'path :name (format nil "path_~A" (gentemp))
+  (make-inst 'path :name (format nil "path_~A" (gentemp "ID_"))
                    :node1 node1 :node2 node2 :attrs path-attrs))
 
 ;;--------------------------------------
@@ -214,7 +214,7 @@
 
 (defun --- (&rest nodes)
   (setf *directed?* nil)
-  (make-inst 'paths :name (format nil "paths_~A" (gentemp))
+  (make-inst 'paths :name (format nil "paths_~A" (gentemp "ID_"))
                     :nodes nodes))
 
 ;;--------------------------------------------------------------------
@@ -247,7 +247,7 @@
                :name (apply #'format nil
                             (if name
                                 `("~A" ,name)
-                                `("graph_~A" ,(gentemp)))))))
+                                `("graph_~A" ,(gentemp "ID_")))))))
 
 (defmacro & ((&rest graph-attrs) &body nodes-edges-graphs)
   `(let ((*directed?* t))
@@ -266,7 +266,7 @@
 (defun make-cluster (cluster-attrs &rest nodes-edges-graphs)
   (make-inst 'cluster :dir *directed?* :attrs cluster-attrs
                       :buff nodes-edges-graphs
-                      :name (format nil "cluster_~A" (gentemp))))
+                      :name (format nil "cluster_~A" (gentemp "ID_"))))
 
 (defmacro [&] ((&rest graph-attrs) &body nodes-edges-graphs)
   `(let ((*directed?* t))
