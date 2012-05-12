@@ -1,4 +1,4 @@
-Last Updated : 2012/05/11 19:37:06 tkych
+Last Updated : 2012/05/12 09:54:11 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -10,6 +10,8 @@ How to use donuts is easy.
 -> puts an edge between two nodes.
 && makes a graph by bundling some nodes, edges and graphs.
 $$ outputs an image of a graph.
+
+For more details, see [index.html(Under translation)](./doc/index.html) or [index-j.html(Japanease)](./doc/index-j.html) in doc directory.
 
 
 ## Version
@@ -25,14 +27,13 @@ The Current version of the donuts is 0.2.7 (beta).
 * [trivial-shell](http://www.quicklisp.org/) by Gary Warren King
 
 
-## Installation
+## Installation & Start
 
 1.  CL-REPL> `(push #P"/path-to-your-donuts-directory/" asdf:*central-registry*)`
 2.  CL-REPL> `(ql:quickload :donuts)`
 3.  CL-USER> `(in-package :donuts)`
-4.  DONUTS> `($$ (&& (-> 1 2)))`  ;output graph image to viewer
-
- [quicklisp]: http://www.quicklisp.org/
+4.  DONUTS> `(dot-output (&& (-> 1 2)))`  ;output dot code in standard-output
+5.  DONUTS> `($$ (&& (-> 1 2)))`  ;output graph image to viewer
 
 
 ## Usage
@@ -41,39 +42,36 @@ The Current version of the donuts is 0.2.7 (beta).
 * Edge-Constructor, -> makes node with nodes.   `(-> node1 node2) => edge`
 * Graph-Constructor, && makes graph with nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
 * Shell-Interface, $$ outputs graph to viewer.   `($$ graph) => NIL ;output image to viewer`
-
-For more details, see index.html(under translation) or index-j.html in doc directory.
-
+* dot-output outputs dot code in standart-output.   `(dot-output graph) => NIL ;output dot code`
 
 
 ## Examples
 
-      CL-USER> (dot-output
-                 (& (:label "example")
-                   (-> (<> "a" :shape :box) "b" :color :red)))
+      DONUTS> (dot-output
+                (& (:label "example")
+                  (-> (<> "a" :shape :box) "b" :color :red)))
 
-      digraph graph_T41 {
+      digraph graph_ID_41 {
         label="example";
-        node_T39 [label="a",shape=box];
-        node_T39 -> "b" [color=red];
+        node_ID_39 [label="a",shape=box];
+        node_ID_39 -> "b" [color=red];
       }
       NIL
 
-      CL-USER> ;; from http://graphviz.org/content/cluster
-               ($ (:outfile "cluster.pdf")
-                  (&& ([&] (:label "process #1" :style :filled :color :lightgrey)
-                        (with-node (:style :filled :color :white)
-                          (--> "a0" "a1" "a2" "a3")))
-                      ([&] (:label "process #2" :color :blue)
-                        (with-node (:style :filled)
-                          (--> "b0" "b1" "b2" "b3")))
-                      (->> (<> "start" :shape :Mdiamond) "a0" "b0")
-                      (==> "a3" "b3" (<> "end" :shape :Msquare))
-                      (->  "a1" "b3")
-                      (->  "a3" "a0")
-                      (->  "b2" "a3")))
-
-       ;; make cluster.pdf and show it in viewer.
+      DONUTS> ;; example from http://graphviz.org/content/cluster
+              ;; create cluster.pdf and show it in viewer
+              ($ (:outfile "cluster.pdf")
+                 (&& ([&] (:label "process #1" :style :filled :color :lightgrey)
+                       (with-node (:style :filled :color :white)
+                         (--> "a0" "a1" "a2" "a3")))
+                     ([&] (:label "process #2" :color :blue)
+                       (with-node (:style :filled)
+                         (--> "b0" "b1" "b2" "b3")))
+                     (->> (<> "start" :shape :Mdiamond) "a0" "b0")
+                     (==> "a3" "b3" (<> "end" :shape :Msquare))
+                     (->  "a1" "b3")
+                     (->  "a3" "a0")
+                     (->  "b2" "a3")))
        NIL
 
 
