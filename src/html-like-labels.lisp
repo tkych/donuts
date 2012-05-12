@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/10 20:57:59 tkych
+;;;; Last Updated : 2012/05/12 16:12:43 tkych
 
 ;; Html-like-labels topping for donuts
 
@@ -56,7 +56,7 @@
   (with-slots (name body attrs pair?) tag
      (if pair?
          (progn
-           (format t "~&    <~A~{ ~A=\"~(~A~)\"~}>" name attrs)
+           (format t "<~A~{ ~A=\"~(~A~)\"~}>" name attrs)
            (dolist (elt body)
              (if (tag? elt)
                  (print-tag elt)
@@ -66,10 +66,11 @@
 
 (defmacro html (tag)
   (with-gensyms (s)
-    `(cons :html-like-label
-           (with-output-to-string (,s)
-             (let ((*standard-output* ,s))
-               (princ "<") (print-tag ,tag) (format t ">~&    "))))))
+    `(make-sesame
+      :html-like-label
+      (with-output-to-string (,s)
+        (let ((*standard-output* ,s))
+          (princ "<") (print-tag ,tag) (format t ">~&    "))))))
 
 (defmacro def-tag (tag-name &optional (pair? t))
   (let ((body (gensym "attrs-tag-body-")))
