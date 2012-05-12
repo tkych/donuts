@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/11 17:41:50 tkych
+;;;; Last Updated : 2012/05/12 16:20:38 tkych
 
 ;; Nuts in donuts
 
@@ -24,7 +24,6 @@
 ;; CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ;; SOFTWARE.
 
-
 ;;====================================================================
 ;; Nuts
 ;;====================================================================
@@ -33,7 +32,7 @@
 ;;--------------------------------------------------------------------
 ;; Sesame
 ;;--------------------------------------------------------------------
-(defun make-sesame (sesame content) (cons sesame content))
+(defun make-sesame (tag content) (cons tag content))
 (defun sesame? (x) (consp x))
 (defun sesame-cont (sesame) (cdr sesame))
 
@@ -98,7 +97,7 @@
                            :if (node? node) :collect (:name node)
                            :else :if (pre-node? node)
                            :collect (format nil "~S" node)))))
-        (make-sesame 'rank rank-pos))))
+        (make-sesame :rank rank-pos))))
 
 ;;--------------------------------------
 (defparameter *compass* '(:n :ne :e :se :s :sw :w :nw :c :_))
@@ -132,8 +131,8 @@
       (t (error "~A isn't node type." node)))))
 
 (defun port-proc1 (node ports)
-  (make-sesame 'port
-            (format nil "~S:~(~A~)" node (1st ports))))
+  (make-sesame :port
+               (format nil "~S:~(~A~)" node (1st ports))))
 
 (defun port-proc2 (node ports)
   (make-inst 'node :attrs (:attrs node)
@@ -276,10 +275,10 @@
 ;; With
 ;;--------------------------------------------------------------------
 (defmacro make-with (with-type attrs &body body)
-  (let ((start (make-sesame 'with-start
-                         (format nil "~&  { ~(~A~) [~{~A=~A~^,~}];"
-                                 with-type (escape-attrs attrs))))
-        (end (make-sesame 'with-end (format nil "~&  };"))))
+  (let ((start (make-sesame :with-start
+                            (format nil "~&  { ~(~A~) [~{~A=~A~^,~}];"
+                                    with-type (escape-attrs attrs))))
+        (end (make-sesame :with-end (format nil "~&  };"))))
     `(& () ',start ,@body ',end)))
 
 (defmacro with-node ((&rest node-attrs) &body body)
@@ -386,9 +385,6 @@
               '(:LR :RL :TB :BT :BL :BR :TL :TR :RB :RT :LB :LT))
 (defun upper-val? (x) (member x *upper-vals*))
 
-(defun html-like? (x)
-  (and (consp x) (eql :html-like-label (1st x))))
-
 (defun escape-attrs (alst)
   (let ((len (length alst)) (acc nil))
     (do ((i 0 (1+ i)))
@@ -396,11 +392,11 @@
       (let ((x (nth i alst)))
         (if (evenp i)
             (push (string-downcase (symbol-name x)) acc)
-            (push (cond ((html-like? x) (cdr x))
-                        ((stringp x)    (str "\"" x "\""))
-                        ((numberp x)    x)
-                        ((eql x t)      "true")
-                        ((eql x nil)    "false")
+            (push (cond ((sesame? x)  (sesame-cont x))
+                        ((stringp x)  (str "\"" x "\""))
+                        ((numberp x)  x)
+                        ((eql x t)    "true")
+                        ((eql x nil)  "false")
                         ((keywordp x)
                          (cond ((upper-val? x) (symbol-name x))
                                ((Mshape? x)    (string-capitalize
