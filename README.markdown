@@ -1,4 +1,4 @@
-Last Updated : 2012/05/12 09:54:11 tkych
+Last Updated : 2012/05/12 09:59:30 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -11,7 +11,7 @@ How to use donuts is easy.
 && makes a graph by bundling some nodes, edges and graphs.
 $$ outputs an image of a graph.
 
-For more details, see [index.html(Under translation)](./doc/index.html) or [index-j.html(Japanease)](./doc/index-j.html) in doc directory.
+For more details, see [index.html(Under translation)](./donuts/doc/index.html) or [index-j.html(Japanease)](./donuts/doc/index-j.html) in doc directory.
 
 
 ## Version
