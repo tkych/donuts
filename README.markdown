@@ -1,4 +1,4 @@
-Last Updated : 2012/05/12 10:01:45 tkych
+Last Updated : 2012/05/13 19:10:30 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -16,7 +16,7 @@ For more details, see index.html(Under translation) or index-j.html(Japanease) i
 
 ## Version
 
-The Current version of the donuts is 0.2.7 (beta).
+The Current version of the donuts is 0.2.8 (beta).
 
 ## Dependencies
 

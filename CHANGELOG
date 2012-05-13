@@ -1,6 +1,10 @@
+Version 0.2.8
+2012-05-13
+Fix bug: macro HTML in src/html-like-labels.lisp
+
 Version 0.2.7
 2012-05-10
-Added file: src/HTML-LIKE-LABELS.LISP
+Add: src/HTML-LIKE-LABELS.LISP
 
 Version 0.2.6
 2012-05-08

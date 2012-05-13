@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/10 20:56:39 tkych
+;;;; Last Updated : 2012/05/13 19:13:37 tkych
 
 ;; System for donuts
 
@@ -52,7 +52,7 @@
 (defsystem :donuts
   :description "Graph DSL for common lisp"
   :name        "Donuts"
-  :version     "0.2.7"
+  :version     "0.2.8"
   :licence     "MIT licence"
   :author      "Takaya OCHIAI <tkych.repl@gmail.com>"
   :long-description

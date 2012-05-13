@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/12 16:20:38 tkych
+;;;; Last Updated : 2012/05/13 22:30:26 tkych
 
 ;; Nuts in donuts
 
@@ -34,7 +34,7 @@
 ;;--------------------------------------------------------------------
 (defun make-sesame (tag content) (cons tag content))
 (defun sesame? (x) (consp x))
-(defun sesame-cont (sesame) (cdr sesame))
+(defun open-sesame (sesame) (cdr sesame))
 
 ;;--------------------------------------------------------------------
 ;; Node
@@ -59,6 +59,11 @@
                    :attrs (nconc `(:label ,label) node-attrs)))
 
 ;;--------------------------------------
+(defclass record (node)
+  ((ports :accessor :ports :initarg :ports :initform nil)))
+
+(defun record? (x) (typep x 'record))
+
 (defun escape-port (label)
   (ppcre:regex-replace-all
    "(^|{|\\|):(\\S+?)(?=\\b|}|\\|)" label "\\1<\\2>" :preserve-case t))
@@ -77,27 +82,12 @@
                               acc))))))
     (rec 0 nil)))
 
-(defun [] (label &rest node-attrs)
-  (make-inst 'node :name  (format nil "record_~A" (gentemp "ID_"))
-                   :ports (find-port label)
-                   :attrs (append `(:shape :record
-                                    :label ,(escape-port label))
-                                  node-attrs)))
-
-;;--------------------------------------
-(defparameter *rank-pos* '(:same :min :max :source :sink))
-
-(defun rank (pos &rest nodes)
-  (if (not (member pos *rank-pos*))
-      (error "~A is not a rank position." pos)
-      (let ((rank-pos
-             (format nil "~&  {rank=~(~A~);~{ ~A~^;~}};"
-                     pos
-                     (loop :for node :in nodes
-                           :if (node? node) :collect (:name node)
-                           :else :if (pre-node? node)
-                           :collect (format nil "~S" node)))))
-        (make-sesame :rank rank-pos))))
+(defun [] (label &rest record-attrs)
+  (make-inst 'record :name  (format nil "record_~A" (gentemp "ID_"))
+                     :ports (find-port label)
+                     :attrs (append `(:shape :record
+                                      :label ,(escape-port label))
+                                    record-attrs)))
 
 ;;--------------------------------------
 (defparameter *compass* '(:n :ne :e :se :s :sw :w :nw :c :_))
@@ -116,7 +106,7 @@
              ((not (compass-port? (1st ports)))
               (error "Node ~S hasn't port :~(~A~)." node (1st ports)))
              (t (port-proc1 node ports))))
-      ((node? node)
+      ((record? node)
        (cond ((<= 3 port-num)
               (error "Too match port ~A" node))
              ((and (= 2 port-num)
@@ -128,6 +118,10 @@
                    (not (compass-port? (1st ports))))
               (error "Node ~S hasn't port :~(~A~)." node (1st ports)))
              (t (port-proc2 node ports))))
+      ((node? node)
+       (cond ((<= 3 port-num)
+              (error "Too match port ~A" node))
+             (t (port-proc2 node ports))))
       (t (error "~A isn't node type." node)))))
 
 (defun port-proc1 (node ports)
@@ -137,6 +131,21 @@
 (defun port-proc2 (node ports)
   (make-inst 'node :attrs (:attrs node)
              :name (format nil "~A~{:~(~A~)~}" (:name node) ports)))
+
+;;--------------------------------------
+(defparameter *rank-pos* '(:same :min :max :source :sink))
+
+(defun rank (pos &rest nodes)
+  (if (not (member pos *rank-pos*))
+      (error "~A is not a rank position." pos)
+      (let ((rank-pos
+             (format nil "~&  {rank=~(~A~);~{ ~A~^;~}};"
+                     pos
+                     (loop :for node :in nodes
+                           :if (node? node) :collect (:name node)
+                           :else :if (pre-node? node)
+                           :collect (format nil "~S" node)))))
+        (make-sesame :rank rank-pos))))
 
 ;;--------------------------------------------------------------------
 ;; Edge
@@ -317,7 +326,7 @@
 (defun output-buff (buff)
   (dolist (x buff)
     (cond ((edge? x)     (output-edge x))
-          ((sesame? x)      (format t "~&~A" (sesame-cont x)))
+          ((sesame? x)   (format t "~&~A" (open-sesame x)))
           ((edges? x)    (output-edges x))
           ((cluster? x)  (output-cluster x))
           ((graph? x)    (output-subgraph x))
@@ -355,7 +364,7 @@
 
 (defun output-node (node)
   (cond ((pre-node? node) (format t "~S" node))
-        ((sesame? node)   (format t "~A" (sesame-cont node))) ;port
+        ((sesame? node)   (format t "~A" (open-sesame node))) ;port
         ((node? node)     (format t "~A" (:name node)))
         (t                (error "Unknown type ~A" node))))
 
@@ -378,34 +387,40 @@
   (with-slots (name attrs) node
      (format t "~&  ~A [~{~A=~A~^,~}];" name (escape-attrs attrs))))
 
-(defparameter *Mshape* '(:Mdiamond :Msquare :Mcircle :Mrecord))
-(defun Mshape? (x) (member x *Mshape*))
+(defparameter *capital-vals* '(:Mdiamond :Msquare :Mcircle :Mrecord))
+(defun capital-val? (x) (member x *capital-vals*))
 
 (defparameter *upper-vals*
               '(:LR :RL :TB :BT :BL :BR :TL :TR :RB :RT :LB :LT))
 (defun upper-val? (x) (member x *upper-vals*))
+
+(defparameter *URL-attrs* '(:URL :headURL :tailURL :labelURL :edgeURL))
+(defun URL-attr? (x) (member x *URL-attrs*))
 
 (defun escape-attrs (alst)
   (let ((len (length alst)) (acc nil))
     (do ((i 0 (1+ i)))
         ((<= len i) (nreverse acc))
       (let ((x (nth i alst)))
-        (if (evenp i)
-            (push (string-downcase (symbol-name x)) acc)
-            (push (cond ((sesame? x)  (sesame-cont x))
-                        ((stringp x)  (str "\"" x "\""))
-                        ((numberp x)  x)
-                        ((eql x t)    "true")
-                        ((eql x nil)  "false")
-                        ((keywordp x)
-                         (cond ((upper-val? x) (symbol-name x))
-                               ((Mshape? x)    (string-capitalize
-                                                (symbol-name x)))
-                               (t              (string-downcase
-                                                (symbol-name x)))))
-                        ((cluster? x) (:name x))
-                        (t (error "~A is not an attribute value type."
-                                  x)))
-                  acc))))))
+         (push
+          (if (evenp i)
+              (cond ((URL-attr? x) (if (eql x :URL)
+                                       "URL" "URL")) ;!!! ~URL
+                    (t             (string-downcase (symbol-name x))))
+              (cond ((sesame? x)  (open-sesame x)) ;for html-like-label
+                    ((stringp x)  (str "\"" x "\""))
+                    ((numberp x)  x)
+                    ((eql x t)    "true")
+                    ((eql x nil)  "false")
+                    ((keywordp x)
+                     (cond ((upper-val? x)   (symbol-name x))
+                           ((capital-val? x) (string-capitalize
+                                              (symbol-name x)))
+                           (t                (string-downcase
+                                              (symbol-name x)))))
+                    ((cluster? x) (:name x))
+                    (t (error "~A is not an attribute value type."
+                              x))))
+          acc)))))
 
 ;;====================================================================
