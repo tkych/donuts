@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-11 17:39:57 JST"/>
+<meta name="generated" content="2012-05-13 11:20:28 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -172,9 +172,6 @@
 
 
 <p>
-<img src="./images/reading-algorithm-big.png"  alt="./images/reading-algorithm-big.png" />
-</p>
-<p>
 <a href="./images/reading-algorithm-big.png"><img src="./images/reading-algorithm.png" alt="reading-algorithm.png"/></a>
 </p>
 
@@ -189,7 +186,7 @@
 　 <b>DonutsはCommon Lispのためのグラフ作成ドメイン固有言語（DSL）です。</b>
 lispでちょっとしたグラフを描くことを目指し、Donutsは造られました。
 DonutsはS式で記述されたグラフ構造を<a href="http://www.graphviz.org/dot-language.html">Dot言語</a>に変換し、<a href="http://graphviz.org/">Graphviz</a>によって画像に変換します。
-ざっくりいうとDonutsはLispがDot言語を吸収したものです。
+ざっくりいうとDonutsはLispがDot言語を吸収した言語です。
 Lisp組み込みの機能を用いることによって、Dot言語単体では困難だったことが容易に達成できるようになっています(ex.<a href="#sec-4-12">小さなプログラム</a>)。
 </p>
 
@@ -342,7 +339,8 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 <pre class="src src-lisp">CL-USER&gt; (push #P<span style="color: #90ee90;">"/path-to-your-donuts-directory/"</span> asdf:*central-registry*)
 CL-USER&gt; (ql:quickload <span style="color: #00ee76;">:donuts</span>)
 CL-USER&gt; (<span style="color: #eeee00;">in-package</span> <span style="color: #00ee76;">:donuts</span>)
-DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12499;&#12517;&#12540;&#12450;&#12364;&#36215;&#21205;&#12375;&#12289;&#19979;&#12398;&#30011;&#20687;&#12364;&#20986;&#21147;&#12373;&#12428;&#12383;&#12425;OK&#12391;&#12377;</span>
+DONUTS&gt; (dot-output (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">dot code &#12364;&#27161;&#28310;&#20986;&#21147;&#12395;&#34920;&#31034;&#12373;&#12428;&#12383;&#12425;OK</span>
+DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12499;&#12517;&#12540;&#12450;&#12364;&#36215;&#21205;&#12375;&#12289;&#19979;&#12398;&#30011;&#20687;&#12364;&#20986;&#21147;&#12373;&#12428;&#12383;&#12425;OK</span>
 </pre>
 
 
@@ -440,7 +438,7 @@ Hello World
 </p>
 <p>
 　私が <span style="text-decoration:underline;">生産性に大きく影響する</span> という言葉で表したい意味は次のことです。
-Lisp（またはJava）コードを書いているプログラマがコーディング途中でJava（またはLisp）でコードを書きはじめるには、文法の切り替え以前に思考の枠組の切り替えが必要です。
+あるプログラミング言語でコーディング中のプログラマが、別なプログラミング言語に切り替えコードを書きはじめるには、文法の切り替え以前に思考の枠組の切り替えが必要です。
 そして思考の枠組の切り替えは脳をかなり疲れさせるものであり、 <b>思考の枠組を切り替える度に疲労のため生産性が落ちていく</b> という意味です。
 </p>
 
@@ -448,7 +446,7 @@ Lisp（またはJava）コードを書いているプログラマがコーディ
 　ではなぜ、コーディング途中で言語を換え、思考の枠組を切り換えねばならないのでしょうか？
 </p>
 <p>
-　ある言語Aのコードを書きながら途中で別な言語Bを書くことの一番大きな理由は、言語Aの備えていない機能や利点を言語Bが備えているからです。
+　ある言語Aのコードを書きながら途中で別な言語Bのコードを書くことの一番大きな理由は、言語Aの備えていない利点や機能を言語Bが備えているからです。
 例えば、cffiを使うのはLispよりCの方が実効速度が早いという利点があるからです。
 同じように、Lispでコードを書きながらPostScriptを使うとしたら、Lispには画像を作成し出力する機能がないからです。
 </p>
@@ -512,9 +510,9 @@ Lispは拡張可能なプログラムを書くために、とりわけみごと�
 <p>
 　1&ndash;3はボトムアップデザインを行うためのガイドライン、4はボトムアップデザインの利点です。
 いずれの項目もLispでプログラムを書いたことのある方なら、当たり前だと感じるものでしょう。
-しかし、4の拡張可能性について、もう少し掘り下げて考察していきたいと思います。
+しかし、ここで4の拡張可能性について、もう少し掘り下げて考察していきたいと思います。
 なぜなら、4こそがLispを他の言語と、まったく異質なものにしていると私は考えているからです。
-そして、この利点をアプリケーションに与えることで、「なめらかな」アプリケーションを造ることができると私は考えているからです。
+そして、この拡張可能性をアプリケーションに与えることで、「なめらかな」アプリケーションを造ることができると私は考えているからです。
 </p>
 <p>
 　重要なことは「他の言語の機能をLispで実現するということは、単にその機能のみがLispで実現されるということにとどまらない」ことです。
@@ -536,8 +534,7 @@ Lispの拡張可能性を支える一番の機能はマクロ機能です(他に
 　今、議論のために取り上げたのは、マクロ機能だけです。
 しかし実際は、関数を定義すること、REPL、CLOS、入出力機能など、ありとあらゆるLisp機能のもとで、グラフ作成ができるようになるのです。
 これらの機能はDot言語が備えていないものであり、Dot言語でグラフを作成する際には利用できなかった機能です。
-これをスローガン的にまとめると <b>Lispに吸収されたものは、またLispとなる</b> と言えるでしょう。
-(まるで映画「遊星からの物体X」に出てくるエイリアンみたいでワクワクしますね。)
+これをスローガン的にまとめると <b>Lispに吸収されたものは、またLispとなる</b> と言えるでしょう(まるで映画「遊星からの物体X」に出てくるエイリアンみたいでワクワクしますね)。
 </p>
 <p>
 　何かの作業中に「この言語のこの機能、便利なんだけど、もう少し自由に拡張することができたらな」と思うことがあるかもしれません。
@@ -844,7 +841,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 
 
 <p>
-　上の行で、変数hにエッジHello-&gt;Worldで構成されるグラフを束縛しています。
+　上の行で、変数hにエッジ'Hello-&gt;World'で構成されるグラフを束縛しています。
 下の行で、hに束縛されたグラフと、'こんにちは-&gt;World'で構成される新たなグラフを生成しています。
 結果、新しいグラフは下のように、'こんにちは-&gt;World'がグラフhに追加されたものとなります。
 </p>
@@ -863,7 +860,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <h3 id="sec-4-2"><span class="section-number-3">4.2</span> ラベル</h3>
 <div class="outline-text-3" id="text-4-2">
 
-<p>ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.7" href="#fn.7">7</a></sup>。
+<p>　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.7" href="#fn.7">7</a></sup>。
 </p>
 <ul>
 <li><code>\\無</code>  空白が印字される<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>('無'はスペースを表す)。
@@ -876,13 +873,15 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </li>
 <li><code>\\N</code>  そのノードの内部名(ノードのアイデンティティ)が印字される。
 </li>
+<li><code>\\\\</code>  '\'が印字される('\'を印字するにはこの方法しかありません)。
+</li>
 </ul>
 
 
 
 
 
-<pre class="src src-lisp">(<span style="color: #eeee00;">&amp;&amp;</span> (&lt;&gt; <span style="color: #90ee90;">"12\\ 34\\n56\\l78\\r\\N"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:note</span>))
+<pre class="src src-lisp">(<span style="color: #eeee00;">&amp;&amp;</span> (&lt;&gt; <span style="color: #90ee90;">"12\\ 34\\n56\\l78\\r\\N\\\\"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:note</span>))
 </pre>
 
 
@@ -904,9 +903,8 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 
 
 <p>
-　 <b>属性</b> とは、形や色、大きさなど様々な性質のことです。
+　 <b>属性</b> とは、色や形など様々な性質のことで、それぞれのグラフ、ノード、エッジに付随するものです。
 前節までで扱ってきたラベルも実は属性の一つです。
-属性はグラフ、ノード、エッジのそれぞれに付随します。
 属性の値を指定することで、グラフの見えをさまざまに変化させることができます。
 </p>
 
@@ -950,14 +948,14 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 
 <p>
 　次に、2行目を見ていきましょう。
-エッジコンストラクタ <code>-&gt;</code> は、略記として、ノードの代わりに文字列や数値も引数に取れたことを思い出してください。
+エッジコンストラクタ <code>-&gt;</code> は、文字列や数値もノードオブジェクトとして引数に取れたことを思い出してください。
 その場合、文字列や数値をラベルとしたノードが自動的に生成されるのでした。
 この行では <code>-&gt;</code> にエッジの色属性を指定するキーワード <code>:color</code> とその値 <code>:red</code> が与えられています。
 したがって2行目の意味は、 <i>aとラベルづけされたノードとbとラベルされたノードの間を、赤い矢印で結んだエッジを生成せよ</i> というものです。
 </p>
 <p>
 　一般的に、属性の値は数値、キーワード、文字列のいずれかになります。
-属性の値を指定する文字列で、空白などのエスケープ文字がないものは、キーワードでも同じ値が指定できます。
+属性の値を指定する文字列で、内部に空白や'-'がないものは、キーワードでも同じ値が指定できます。
 つまり、2行目の色属性値 <code>:red</code> は、"red"でも同じ値が指定できるのです。
 しかしながら、1行目のlabel属性値"Example 2"には空白が含まれていますので、キーワード <code>:Example 2</code> を用いて同様の値を指定することはできません。
 </p>
@@ -1029,7 +1027,9 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <div class="outline-text-4" id="text-4-4-1">
 
 
-
+<p>
+　dot-output, dot-pprintは引数にグラフオブジェクトを取り、標準出力にそのグラフオブジェクトのdotコードを表示します。
+</p>
 
 
 <pre class="src src-lisp">(dot-output
@@ -1117,7 +1117,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <p>
 　例えば、上の例では、ファイル名diamond.pngの <span style="text-decoration:underline;">pngファイル</span> が生成されました。
 もし、:outfileを"diamond.ps"に指定すると、ファイル名diamond.psの <span style="text-decoration:underline;">psファイル</span> が生成されます。
-また、出力ファイルの <b>拡張子をdotにした場合</b> 、Graphvizライブラリのnopによって整形されたdotファイルが生成されます。
+また、出力ファイルの <b>拡張子がdotの場合</b> 、Graphvizライブラリのnopによって整形されたdotファイルが生成されます。
 </p>
 <p>
 　生成できる画像ファイルの種類については、次のGraphvizマニュアルをご確認ください。
@@ -1200,7 +1200,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 <pre class="src src-lisp"><span class="linenr">1:  </span>(&amp; (<span style="color: #00ee76;">:rankdir</span> <span style="color: #00ee76;">:LR</span>)
-<span class="linenr">2:  </span>  ([&amp;] (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Here is in the cluster!"</span>)       <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12463;&#12521;&#12473;&#12479;&#12399;&#37096;&#20998;&#12464;&#12521;&#12501;&#12384;&#12364;&#23646;&#24615;&#12399;&#12388;&#12397;&#12395;&#26377;&#21177;&#65281;&#65281;</span>
+<span class="linenr">2:  </span>  ([&amp;] (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Here is in the cluster!"</span>)  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12463;&#12521;&#12473;&#12479;&#12399;&#37096;&#20998;&#12464;&#12521;&#12501;&#12384;&#12364;&#23646;&#24615;&#12399;&#12388;&#12397;&#12395;&#26377;&#21177;&#65281;&#65281;</span>
 <span class="linenr">3:  </span>    (-&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>)
 <span class="linenr">4:  </span>    (-&gt; <span style="color: #90ee90;">"b"</span> <span style="color: #90ee90;">"c"</span>))
 <span class="linenr">5:  </span>  (-&gt; <span style="color: #90ee90;">"Out of the cluster"</span> <span style="color: #90ee90;">"c"</span>))
@@ -1236,8 +1236,9 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <p>
 　 <b>ランク</b> とは、ノードの（グラフ中の）配置のことです。
 ノードのランクを指定するには <b>ランクオペレータ</b> <code>rank</code> を用います。
- <code>rank</code> は、副作用のために用いる関数で、グラフ内の配置を指定するランクキーワードと複数のノードを引数に取ります。
+ <code>rank</code> は、副作用のために用いる関数で、グラフ内の配置方法を指定するランクキーワードと複数のノードを引数に取ります。
 ランクキーワードは、 <code>:same</code>, <code>:min</code>, <code>:max</code>, <code>:source</code>, <code>:sink</code> のいずれかです。
+ランクは同値関係です(例えば、ノードaとb、bとcが同じランクならば、aとcも同じランクです)。
 </p>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption></caption>
@@ -1245,7 +1246,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 </colgroup>
 <tbody>
 <tr><td class="left">rank-keyword</td><td class="left">:same</td><td class="left">:min</td><td class="left">:max</td><td class="left">:source</td><td class="left">:sink</td></tr>
-<tr><td class="left">指定される配置</td><td class="left">同じ高さ</td><td class="left">左上</td><td class="left">右下</td><td class="left">左上</td><td class="left">右下</td></tr>
+<tr><td class="left">配置方法</td><td class="left">同じ高さ</td><td class="left">左上</td><td class="left">右下</td><td class="left">左上</td><td class="left">右下</td></tr>
 </tbody>
 </table>
 
@@ -1276,7 +1277,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <img src="./images/rank.png"  alt="./images/rank.png" />
 </p>
 <p>
-(ノードの高さを揃える操作は使用頻度が高いので、ユーティリティとして再定義しています。<a href="#sec-4-9-3-3">ユーティリティ：~</a>)
+(ノードの高さを揃える操作は使用頻度が高いので、ユーティリティとして再定義しています。cf.<a href="#sec-4-9-3-3">ユーティリティ：~</a>)
 </p>
 
 <p>
@@ -1294,7 +1295,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <p>
 　 <b>ポート</b> とは、エッジの始点や終点となるノードの出入り口のことです。
 エッジコンストラクタ <code>-&gt;</code> でエッジを生成する際に、 <b>ポートオペレータ</b> <code>@</code> によって、ポートを指定することができます。
- <code>(@ node compass-keyword)</code> によって、 <i>compass-keyword</i> と対応する <b>方位ポート</b> が指定されたnodeが返されます。
+ <code>(@ node compass-keyword)</code> によって、 <i>compass-keyword</i> と対応する方位のポートが指定されたnodeが返されます。
  <i>compass-keyword</i> と方位の対応は次の表のようになっています。
 </p>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
@@ -1311,7 +1312,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 <hr/>
 <p>
-　ポートの使い方を下の例で見ていきましょう。
+　ポートの使い方を次の例で見ていきましょう。
 </p>
 
 
@@ -1346,7 +1347,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 <p>
 　次の節では、特別なノードであるレコードを導入します。
-レコードでは、ポート（フィールドポート）を自分で設定することができます。
+レコードでは、ポート（フィールドポート）の場所を自分で設定することができます。
 </p>
 
 
@@ -1364,7 +1365,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 <p>
 　 <b>レコード</b> とは、内部構造を持つ特別なノードです。
-レコードを用いることで、<a href="#sec-5-1-6">例6 Binary search tree using records</a>や、<a href="#sec-5-1-8">例8 Hash table</a>のようなグラフを描くことができます。
+レコードを用いることで、<a href="#sec-5-1-6">例6 Binary search tree using records</a>や、<a href="#sec-5-1-8">例8 Hash table</a>のような複雑なグラフを描くことができます。
 レコードを生成するには、 <code>&lt;&gt;</code> の代わりに <b>レコードコンストラクタ</b> <code>[]</code> を使用します。
  <code>[]</code> の使用方法は <code>&lt;&gt;</code> とほとんど変わりませんが、ラベル中で特別な意味を持つ文字 <code>|</code>, <code>{</code>, <code>}</code> , <code>:</code> を使用することができます。
 </p>
@@ -1444,7 +1445,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 <p>
-　前節<a href="#sec-4-7">ポート</a>で導入した方位ポートは、いくつかの方位に限られていました。
+　前節<a href="#sec-4-7">ポート</a>で導入したポートの場所は、いくつかの方位に限られていました。
 レコードでは <b>フィールドポート</b> と呼ばれる新たなポートを設定することができます。
 フィールドポートは各フィールドごとに設定することができます。
 </p>
@@ -1512,6 +1513,14 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <p>
 　
 </p>
+<p>
+　(もし、レコードでは表現できないような複雑なノードや、複雑なラベルを持つエッジを生成したいのなら、
+<a href="#Html-like">html-likeラベル</a>によって達成することができるかもしれません。)
+</p>
+
+<p>
+　
+</p>
 </div>
 </div>
 
@@ -1524,7 +1533,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 <p>
 　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティです。
-この章で導入される、with-node, with-edge以外のユーティリティはすべて、いままで解説した関数やマクロを組み合わせたものです。
+この章で導入される、with-node, with-edge以外のユーティリティはすべて、コンストラクタなどを組み合わせたものです。
 </p>
 
 
@@ -1560,7 +1569,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <h4 id="sec-4-9-2"><span class="section-number-4">4.9.2</span> コンテキストを作り出すもの</h4>
 <div class="outline-text-4" id="text-4-9-2">
 
-<p>　with-node, with-edgeは、ノードやエッジの属性値のデフォルトの値が変更されたコンテキストを生成することができます。
+<p>　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
 コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
  with-node,  with-edgeをネストした場合、属性値は上書きされます。
 </p>
@@ -1619,7 +1628,7 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 2行目、ノードaはデフォルトの属性値を持ったノードとして生成されます。
 </p>
 <p>
-3行目、ノードの色属性のデフォルト値が赤のコンテキストがwith-nodeによって生成されます。
+3行目、ノードの色属性のデフォルト値が赤のコンテキストがwith-nodeによって作り出されます。
 これより深いコンテキストで生成されるノードのデフォルト色は赤になります。
 </p>
 <p>
@@ -1627,14 +1636,14 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 ノードbの色は赤です。
 </p>
 <p>
-5行目、ノードの形属性のデフォルトがboxのコンテキストがwith-nodeによって生成されます。
+5行目、ノードの形属性のデフォルトがboxのコンテキストがwith-nodeによって作り出されます。
 これより深いコンテキストで生成されるノードは、デフォルトで形がbox、色が赤のものになります。
 </p>
 <p>
 6行目、色が赤、形がboxのノードcが生成され、エッジb-&gt;cが生成されます。
 </p>
 <p>
-7行目、青がノードの色属性のデフォルトである、コンテキストがwith-nodeによって生成されます。
+7行目、青がノードの色属性のデフォルトである、コンテキストがwith-nodeによって作り出されます。
 これより深いコンテキストで生成されるノードは、デフォルトで形がbox、色が青のものとなります。
 ここで、注目してもらいたいことは、 <span style="text-decoration:underline;">デフォルトの色属性値が、(3行目で指定された)赤から青に上書きされた</span> ということです。
 </p>
@@ -1646,17 +1655,17 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 ここで、注目して欲しいことは、 <span style="text-decoration:underline;">デフォルトの属性値が変更されているコンテキスト内でも、生成するノードの属性値を自由に指定するができる</span> ということです。
 </p>
 <p>
-以上をまとめると、with-nodeコンテキスト用いる場合に注意することは：
+以上をまとめると、with-nodeコンテキスト用いる際に注意することは、次の3点：
 </p><ol>
 <li>属性のデフォルト値がすべて変更されること、
 </li>
 <li>ネストした場合、デフォルト値が上書きされていくこと、
 </li>
-<li>コンテキスト内でも、通常のようにコンストラクタで属性値を指定することができること、
+<li>with-nodeコンテキスト内でも、通常のようにコンストラクタで属性値を指定することができること、
 </li>
 </ol>
 
-<p>の3点です（これは次に見るwith-edgeでも同様です）。
+<p>です（これは次に見るwith-edgeでも同様です）。
 </p>
 
 <hr/>
@@ -2031,10 +2040,12 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 　今までは <b>有向</b> グラフの描き方のみを見てきました。
 しかし、Donutsでは <b>無向</b> グラフを描くこともできます。
 無向グラフを描くには、いくつかの方法があります。
-手っ取り早い方法は、エッジの属性:shapeを:noneに指定することです。
-もう一つの方法は、 <code>-&gt;</code> をすべて <code>--</code> に置き換えることです<sup><a class="footref" name="fnr.13" href="#fn.13">13</a></sup>。
-（ <b>注：</b> 1つのグラフ中で <code>-&gt;</code> と <code>--</code> を併用することはできません。）
+手っ取り早い方法は、 <b>エッジの属性:shapeを:noneに指定すること</b> です。
+もう一つの方法は、
+<b>-&gt;をすべて&ndash;&ndash;に置き換えること</b>です
+（ <b>注：</b> 1つのグラフ中で <code>-&gt;</code> と <code>--</code> を併用することはできません<sup><a class="footref" name="fnr.13" href="#fn.13">13</a></sup>）。
 </p>
+
 <p>
 　両者の方法の違いは、 <span style="text-decoration:underline;">後者の場合、無向グラフのレイアウトアルゴリズムを選択できる</span> ことです。
 </p>
@@ -2180,6 +2191,20 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 <div class="outline-text-3" id="text-4-11">
 
 
+<p>
+　 <b>html-likeラベル</b> は通常のラベルに比べ、表現力の優れた特別なラベルです( <b>注：</b> 古いバージョンのGraphvizではサポートされてません)。
+html-likeラベルは、コード <code>(html tag-object)</code> によって生成され、エッジやノードのラベルとして用いることができます。
+Graphvizではhtmlタグのような形式なので、html-likeラベルと呼ばれています。
+Donutsではhtmlタグの冗長性を排した <b>タグ関数</b> によってタグオブジェクトを生成し、 <b>マクロhtml</b> によってタグオブジェクトをhtml-likeラベルに変換します。
+</p>
+<p>
+　すべてのタグ関数は、引数として任意数の、属性と属性値、タグ本体(数値や文字列、タグオブジェクト)を取り、タグを生成します。
+次のものがタグ関数です。
+</p>
+<dl>
+<dt><b>タグ関数</b>  &amp;rest <i>attrs-bodies</i></dt><dd>タグ関数 : <b>br</b>, <b>hr</b>, <b>vr</b>, <b>img</b>, <b>font</b>, <b>i</b>, <b>b</b>, <b>u</b>, <b>sub</b>, <b>sup</b>, <b>table</b>, <b>tr</b>, <b>td</b>
+</dd>
+</dl>
 
 
 
@@ -2204,7 +2229,9 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 　描きたいグラフに規則性が存在するなら、lisp組み込みの機能を使うことで簡単に描ける場合があります。
 この節では、Donutsによる小さなプログラムを3つ紹介します。
 2分木を描くための関数binary-tree-graph、ツリーのコンスセル構造を描くためのマクロcons-cell-of、有限オートマトンの遷移図を描くためのマクロtrans-diagramです。
+ざっくり言うと、これらのプログラムは言語Donutsで書かれたプログラムです。
 </p>
+
 
 </div>
 
@@ -3125,8 +3152,6 @@ Graphvizで使用できる属性は大方のものをサポートしている(UR
 </ul>
 
 
-
-
 <p>
 　
 </p>
@@ -3506,7 +3531,7 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 <p>
 　HTML-LIKEラベルは古いヴァージョンのGraphvizではサポートしていない可能性がある。
 HTML-LIKEラベルはレコードに比べ、より詳細にノードの修飾を指定できる。
-HTML-LIKEラベルはエッジやグラフのラベル属性値としても用いることができる(動作未確認)。
+HTML-LIKEラベルはエッジのラベル属性値としても用いることができる(動作未確認)。
 タグ関数(br, hr, vr, img, font, i, b, u, sub, sup, table, tr, td)によってのみtag型のオブジェクトは生成される。
 </p>
 <p>
@@ -3548,36 +3573,92 @@ HTML-LIKEラベルはエッジやグラフのラベル属性値としても用�
 <div class="outline-text-2" id="text-7">
 
 
+<p>
+優先度順
+</p>
+
 <ul>
-<li><code>[&nbsp;]</code> ドキュメントの英訳。日本語版完成後。
+<li>日本語版ドキュメントの完成。
+<ul>
+<li>チュートリアル：html-likeラベル。
+</li>
+<li>リファレンスマニュアル。
+</li>
+</ul>
 
 </li>
-<li><code>[&nbsp;]</code> 開発環境以外での動作確認(windows, macなど)。
+</ul>
+
+
+
+<ul>
+<li>開発環境以外での動作確認(windows, macなど)。
+<ul>
+<li>windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じる。-&gt; trivial-shellとの相性か？
+</li>
+</ul>
 
 </li>
-<li><code>[&nbsp;]</code> カスタムシェイプの実装。
+</ul>
+
+
+
+<ul>
+<li>Graphviz機能の実装。
+<ul>
+<li>カスタムシェイプの実装。
+</li>
+<li>URL属性類の実装。
+</li>
+</ul>
 
 </li>
-<li><code>[&nbsp;]</code> コードにコメントを付属させる。
-      もう少し実装が固まってから。
+</ul>
 
-</li>
-<li><code>[&nbsp;]</code> 最適化のためのデータ収集。
-      どのようなグラフを作成するときに実効速度が遅くなるか。
-      ホットスポットを探す。
 
+
+<ul>
+<li>コードにコメントを付属させる。
+      コードが読みづらくなるので、もう少し実装が固まってから。
 </li>
-<li><code>[&nbsp;]</code> エラー処理。
+</ul>
+
+
+
+<ul>
+<li>ドキュメントの英訳。日本語版ドキュメントの完成後。
+</li>
+</ul>
+
+
+
+<ul>
+<li>エラー処理。
       どこまでlispでエラーチェックするか？
       Graphvizに任せてもいい部分はGraphvizに。
-
 </li>
-<li><code>[&nbsp;]</code> セキュリティ。
+</ul>
+
+
+
+<ul>
+<li>セキュリティ。
       現在のところ知識不足。要勉強。
       少なくとも任意のコマンドはshellに打ち込めないように。
-
 </li>
-<li><code>[&nbsp;]</code> URL属性。
+</ul>
+
+
+
+<ul>
+<li>最適化。
+<ul>
+<li>ホットスポットの発見。
+</li>
+<li>cons使用量の調査。
+</li>
+</ul>
+
 </li>
 </ul>
 
@@ -3618,7 +3699,7 @@ HTML-LIKEラベルはエッジやグラフのラベル属性値としても用�
 したがって、 <code>(-&gt; "a" "a")</code> は自己ループを生成します。
 一方、 <code>(-&gt; (&lt;&gt; "a") (&lt;&gt; "a"))</code> は、aとラベルされた2つの異なるノードを生成し、それらの間にエッジを張ります。
 したがって、 <code>(-&gt; (&lt;&gt; "a") (&lt;&gt; "a"))</code> は、ノードaと別なノードaの間に張られたエッジを生成します。
- <code>(&lt;&gt; "a" :color :red)</code> に自己ループを張るには、 <code>(let ((n (&lt;&gt; "a" :color :red))) (-&gt; n n))</code> とするか、またはユーティリティ<a href="#sec-4-9-3-2">?</a>を使って <code>(? (&lt;&gt; "a" :color :red))</code> とする必要があります。
+コード <code>(&lt;&gt; "a" :color :red)</code> により生成されるノードに自己ループを張るには、 <code>(let ((n (&lt;&gt; "a" :color :red))) (-&gt; n n))</code> とするか、またはユーティリティ<a href="#sec-4-9-3-2">?</a>を使って <code>(? (&lt;&gt; "a" :color :red))</code> とする必要があります。
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.7" href="#fnr.7">7</a></sup> Dot言語に詳しい方のための補足です。
@@ -3646,14 +3727,14 @@ dot-outputによってdotファイルを出力し、そのdotファイルをGrap
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.13" href="#fnr.13">13</a></sup> Dot言語に詳しい方のための補足です。
-グラフ中で1つでも <code>--</code> または <code>---</code> を使用した場合、Donutsで出力されるdotコードの宣言は自動的に <code>digraph</code> ではなく <code>graph</code> になります。
+グラフ中で1つでも <code>--</code> または <code>---</code> を使用した場合、Donutsで出力されるdotコードの宣言が自動的に <code>digraph</code> ではなく <code>graph</code> になります。
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> マクロcons-cell-ofを書く際に、
 David S. Touretzkyによる素晴らしいLisp入門書、
 <a href="http://www.cs.cmu.edu/~dst/LispBook/">Common Lisp: A Gentle Introduction to Symbolic Computation</a>のAppendix AのSDRAWのコードが大変参考になりました。
 SDRAWは、ループ構造も含む任意のリストを引数に取り、そのコンスセル構造を標準出力にディスプレイするライブラリです。
-ただし、ここで紹介したマクロcons-cell-ofは、コードが複雑になってしまうため、ループ構造のリストには対応していません。
+ただし、ここで紹介したマクロcons-cell-ofは、コードが煩雑になってしまうため、ループ構造のリストには対応していません。
 </p>
 
 </div>
@@ -3664,7 +3745,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-11 17:39:57 JST</p>
+<p class="date">Date: 2012-05-13 11:20:28 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
