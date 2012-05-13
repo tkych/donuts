@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-13 11:20:28 JST"/>
+<meta name="generated" content="2012-05-13 22:46:29 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -225,7 +225,7 @@ Donutsですぐにグラフを描くことができるように、<a href="#sec-
 ライセンスの正確な文言についてはソースコードのヘッダー部分をご確認ください。
 </p>
 <p>
-　 <b>Donutsの最新バージョンは0.2.7です。</b>
+　 <b>Donutsの最新バージョンは0.2.8です。</b>
 現在のところDonutsはベータ版です。
 今後の更新予定は<a href="#sec-7">ToDo</a>をご確認ください。
 </p>
@@ -2210,8 +2210,42 @@ Donutsではhtmlタグの冗長性を排した <b>タグ関数</b> によって�
 
 
 
+
+<hr/>
+
 <p>
-　参考： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+　html-likeラベルによって、次のようなグラフを作成することができる。
+</p>
+
+
+<pre class="src src-lisp">($$ (<span style="color: #eeee00;">&amp;&amp;</span> (&lt;&gt; (html
+             (table (tr (td <span style="color: #90ee90;">"WANDED"</span>))
+                    (tr (td (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"10"</span> <span style="color: #90ee90;">"Dead or Alive"</span>)))
+                    (tr (td (img <span style="color: #00ee76;">:src</span> <span style="color: #90ee90;">"/home/tkych/lisplogo_alien_128.png"</span>)))
+                    (tr (td <span style="color: #90ee90;">"$1,000,000"</span> (br) <span style="color: #90ee90;">"REWARD"</span>))))
+            <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:plaintext</span>)))
+</pre>
+
+
+
+
+<p>
+<img src="./images/html-like-label1.png"  alt="./images/html-like-label1.png" />
+</p>
+
+<ul>
+<li>lispエイリアン目撃情報！！： <a href="http://www.lisperati.com/logo.html">http://www.lisperati.com/logo.html</a>
+</li>
+</ul>
+
+
+
+<ul>
+<li>html-likeラベルについて： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+</li>
+</ul>
+
+<p>　
 </p>
 <p>
 　
@@ -2911,6 +2945,81 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <p>
 <img src="./images/example12.png"  alt="./images/example12.png" />
 </p>
+
+<p>
+from html3.gv
+</p>
+
+
+
+
+<pre class="src src-lisp">($$ (<span style="color: #eeee00;">&amp;&amp;</span>
+  (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:plaintext</span>)
+    (&lt;&gt; (html
+         (table
+          (tr (td <span style="color: #90ee90;">"line 1"</span>)
+              (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:blue</span> (font <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:white</span> <span style="color: #90ee90;">"line 2"</span>))
+              (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:gray</span> (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"24.0"</span> <span style="color: #90ee90;">"line 3"</span>))
+              (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span>
+                  (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"24.0"</span> <span style="color: #00ee76;">:face</span> <span style="color: #90ee90;">"ambrosia"</span>
+                        <span style="color: #90ee90;">"line 4"</span>))
+              (td (table <span style="color: #00ee76;">:colorpadding</span> 0 <span style="color: #00ee76;">:border</span> 0 <span style="color: #00ee76;">:cellspacing</span> 0
+                         (tr (td (font <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span> <span style="color: #90ee90;">"Mixed"</span>))
+                             (td (font <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span> <span style="color: #90ee90;">"fonts"</span>))))))))))))
+</pre>
+
+
+
+
+<p>
+<img src="./images/example12-2.png"  alt="./images/example12-2.png" />
+</p>
+
+
+<p>
+from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org/doc/info/html2.gv</a>
+</p>
+
+
+<pre class="src src-lisp">($$ (&amp; (<span style="color: #00ee76;">:rankdir</span> <span style="color: #00ee76;">:LR</span>)
+  (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:plaintext</span>)
+    (<span style="color: #eeee00;">let</span> ((a (&lt;&gt; (html (table <span style="color: #00ee76;">:border</span> 0 <span style="color: #00ee76;">:cellborder</span> 1 <span style="color: #00ee76;">:cellspacing</span> 0
+                              (tr (td <span style="color: #00ee76;">:rowspan</span> 3 <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span>
+                                      <span style="color: #90ee90;">"class"</span>))
+                              (tr (td <span style="color: #00ee76;">:port</span> <span style="color: #90ee90;">"here"</span> <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:lightblue</span> <span style="color: #90ee90;">"qualfier"</span>))))))
+          (b (&lt;&gt; (html (table <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:bisque</span>
+                              (tr (td <span style="color: #00ee76;">:colspan</span> 3 <span style="color: #90ee90;">"elephant"</span>)
+                                  (td <span style="color: #00ee76;">:rowspan</span> 2 <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:chartreuse</span>
+                                      <span style="color: #00ee76;">:valign</span> <span style="color: #00ee76;">:bottom</span> <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:right</span> <span style="color: #90ee90;">"two"</span>))
+                              (tr (td <span style="color: #00ee76;">:colspan</span> 2 <span style="color: #00ee76;">:rowspan</span> 2
+                                      (table <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:grey</span>
+                                             (tr (td <span style="color: #90ee90;">"corn"</span>))
+                                             (tr (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span>
+                                                     <span style="color: #90ee90;">"c"</span>))
+                                             (tr (td <span style="color: #90ee90;">"f"</span>))))
+                                  (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:white</span> <span style="color: #90ee90;">"penguin"</span>))
+                              (tr (td <span style="color: #00ee76;">:colspan</span> 2 <span style="color: #00ee76;">:border</span> 4 <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:right</span> <span style="color: #00ee76;">:port</span> <span style="color: #90ee90;">"there"</span> <span style="color: #90ee90;">"4"</span>))))
+                        <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:ellipse</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
+          (c (&lt;&gt; (html <span style="color: #90ee90;">"long line 1"</span> (br) <span style="color: #90ee90;">"line 2"</span> (br <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:left</span>)
+                       <span style="color: #90ee90;">"line 3"</span> (br <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:right</span>))))
+          (d (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:triangle</span>)))
+      (<span style="color: #eeee00;">&amp;&amp;</span>
+        (~ b c)
+        (-&gt; (@ a <span style="color: #00ee76;">:here</span>) (@ b <span style="color: #00ee76;">:there</span>) <span style="color: #00ee76;">:dir</span> <span style="color: #00ee76;">:both</span> <span style="color: #00ee76;">:arrowtail</span> <span style="color: #00ee76;">:diamond</span>)
+        (-&gt; c b)
+        (-&gt; d c <span style="color: #00ee76;">:label</span> (html (table (tr (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:red</span> <span style="color: #00ee76;">:width</span> 10)
+                                        (td <span style="color: #90ee90;">"Edge labels"</span> (br) <span style="color: #90ee90;">"also"</span>)
+                                        (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:blue</span> <span style="color: #00ee76;">:width</span> 10))))))))))
+</pre>
+
+
+
+
+
+<p>
+<img src="./images/example12-3.png"  alt="./images/example12-3.png" />
+</p>
+
 
 
 </div>
@@ -3745,7 +3854,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-13 11:20:28 JST</p>
+<p class="date">Date: 2012-05-13 22:46:29 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
