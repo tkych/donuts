@@ -1,0 +1,3847 @@
+### Last Updated : 2012/05/14 21:59:38 tkych
+
+##====================================================================
+#+TITLE:  Donuts: Graph DSL for Common Lisp
+#+AUTHOR: Takaya OCHIAI
+#+EMAIL:  tkych.repl@gmail.com
+#+LANGUAGE: ja
+#+STYLE:    <link rel="stylesheet" type="text/css" href="style.css" />
+#+OPTIONS:  todo:t f:t *:t creator:t email:t timestamp:t toc:2
+##====================================================================
+
+#+SRCNAME: donuts.lisp
+#+BEGIN_SRC lisp :exports none  
+  ($$ (let ((o (<> "o" :style :filled :fillcolor :chocolate4)))
+        (&& (--> "d" o "n")
+            (->  "n" "u" :style :dotted)
+            (--> "u" "t" "s")
+            (~ "d" o "t") (~ "n" "s" "u"))))
+#+END_SRC
+
+#+BEGIN_SRC dot
+digraph graph_T377 {
+  node_T378 [label="o",style=filled,fillcolor=chocolate4];
+  {rank=same; "d"; node_T378; "t"};
+  {rank=same; "n"; "u"};
+  "d" -> node_T378 -> "n";
+  "n" -> "u" [style=dotted];
+  "u" -> "t" -> "s";
+}
+#+END_SRC
+
+
+#+BEGIN_HTML
+<div align = "right">
+<p><a href="./index.html">English(under translation)</a>/日本語
+</p>
+</div>
+#+END_HTML
+
+#+ATTR_HTML: alt="lisp-alien image" title="Alieeen!!!" align="left"
+[[http://www.lisperati.com/logo.html][file:./images/donuts-alien.png]]
+
+[TABLE-OF-CONTENTS]
+
+#+SRCNAME: reading-algorithm.lisp
+#+BEGIN_SRC lisp :exports none
+  ($ ()
+     (& (:size "7,7" :label "このドキュメントを読むためのフローチャート（クリックで拡大します）"
+                :labelloc t :fontsize 22)
+       (with-node (:style :bold)
+         (with-edge (:style :bold)
+           (let* ((start (<> "start" :shape :Mdiamond))
+                  (c1 ([] "2+2=5?" :shape :Mrecord))
+                  (sleep ([] "sleep: 一晩"))
+                  (intro ([] "read: 1.はじめに"))
+                  (c2 ([] "Donutsをインストールしたい?" :shape :Mrecord))
+                  (install ([] "read: 2.インストール\\n&\\ninstall: Donuts"))
+                  (c3 ([] "手っ取り早くグラフを書きたい？" :shape :Mrecord))
+                  (arch ([] "read: 3.Donutsの考え方"))
+                  (c4 ([] "Dot言語マスター?" :shape :Mrecord))
+                  (examples ([] "see: 5.Examples"))
+                  (tut ([] "read: 4.チュートリアル"))
+                  (draw-graph (<> "draw:\\nグラフ" :shape :Mcircle :size "1,1"))
+                  (c5 ([] "バグを見つけた?" :shape :Mrecord))
+                  (c6 ([] "ハッカー?" :shape :Mrecord))
+                  (c6-yes ([] "バグは自分で直す\\n&\\nmailto: 作者"))
+                  (c6-no ([] "mailto: 作者\\n&\\n更新を待つ"))
+                  (manual ([] "read:\\nリファレンス\\nマニュアル" :shape :Msquare))
+                  (yes-attrs '(:label "Yes" :color :blue :fontcolor :blue))
+                  (no-attrs  '(:label "No" :color :red :fontcolor :red)))
+             (&&
+               (~ c1 sleep c4 manual) (~ intro c2  examples tut draw-graph) (~ c3 arch) (~ c5 c6)
+               (-> start c1)
+               (apply #'-> c1 (@ sleep :n) (append yes-attrs '(:weight 2)))
+               (apply #'-> c1 intro no-attrs)
+               (-> intro c2)
+               (-> sleep c1 :weight 30)
+               (apply #'-> c2 install yes-attrs)
+               (apply #'-> c2 sleep no-attrs)
+               (-> install c3)
+               (apply #'-> c3 c4 yes-attrs)
+               (apply #'-> c3 arch no-attrs)
+               (--> arch tut examples draw-graph manual)
+               (-> manual draw-graph)
+               (? draw-graph)
+               (-> draw-graph c5)
+               (apply #'-> c4 examples yes-attrs)
+               (apply #'-> c4 tut no-attrs)
+               (apply #'-> c5 c6 yes-attrs)
+               (apply #'-> c5 draw-graph no-attrs)
+               (apply #'-> c6 c6-yes yes-attrs)
+               (apply #'-> c6 c6-no no-attrs)
+               (<== draw-graph c6-yes c6-no)))))))
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/reading-algorithm-big.png
+digraph graph_T1555 {
+  size="10,10";
+  label="このドキュメントを読むためのフローチャート";
+  labelloc=true;
+  fontsize=22;
+  { node [style=bold];
+  { edge [style=bold];
+  node_T1556 [label="start",shape=Mdiamond];
+  record_T1557 [shape=record,label="2+2=5?",shape=Mrecord];
+  record_T1558 [shape=record,label="sleep: 一晩"];
+  record_T1559 [shape=record,label="read: 1.はじめに"];
+  record_T1560 [shape=record,label="Donutsをインストールしたい?",shape=Mrecord];
+  record_T1561 [shape=record,label="read: 2.インストール\n&\ninstall: Donuts"];
+  record_T1562 [shape=record,label="手っ取り早くグラフを書きたい？",shape=Mrecord];
+  record_T1563 [shape=record,label="read: 3.Donutsの考え方"];
+  record_T1564 [shape=record,label="Dot言語マスター?",shape=Mrecord];
+  record_T1565 [shape=record,label="see: 5.Examples"];
+  record_T1566 [shape=record,label="read: 4.チュートリアル"];
+  node_T1567 [label="draw:\nグラフ",shape=Mcircle,size="1,1"];
+  record_T1568 [shape=record,label="バグを見つけた?",shape=Mrecord];
+  record_T1569 [shape=record,label="ハッカー?",shape=Mrecord];
+  record_T1570 [shape=record,label="バグは自分で直す\n&\nmailto: 作者"];
+  record_T1571 [shape=record,label="mailto: 作者\n&\n更新を待つ"];
+  record_T1572 [shape=record,label="read:\nリファレンス\nマニュアル",shape=Msquare];
+  {rank=same; record_T1557; record_T1558; record_T1564; record_T1572};
+  {rank=same; record_T1559; record_T1560; record_T1565; record_T1566; node_T1567};
+  {rank=same; record_T1562; record_T1563};
+  {rank=same; record_T1568; record_T1569};
+  node_T1556 -> record_T1557;
+  record_T1557 -> record_T1558:n [label="Yes",color=blue,fontcolor=blue,weight=2];
+  record_T1557 -> record_T1559 [label="No",color=red,fontcolor=red];
+  record_T1559 -> record_T1560;
+  record_T1558 -> record_T1557 [weight=30];
+  record_T1560 -> record_T1561 [label="Yes",color=blue,fontcolor=blue];
+  record_T1560 -> record_T1558 [label="No",color=red,fontcolor=red];
+  record_T1561 -> record_T1562;
+  record_T1562 -> record_T1564 [label="Yes",color=blue,fontcolor=blue];
+  record_T1562 -> record_T1563 [label="No",color=red,fontcolor=red];
+  record_T1563 -> record_T1566 -> record_T1565 -> node_T1567 -> record_T1572;
+  record_T1572 -> node_T1567;
+  node_T1567 -> node_T1567;
+  node_T1567 -> record_T1568;
+  record_T1564 -> record_T1565 [label="Yes",color=blue,fontcolor=blue];
+  record_T1564 -> record_T1566 [label="No",color=red,fontcolor=red];
+  record_T1568 -> record_T1569 [label="Yes",color=blue,fontcolor=blue];
+  record_T1568 -> node_T1567 [label="No",color=red,fontcolor=red];
+  record_T1569 -> record_T1570 [label="Yes",color=blue,fontcolor=blue];
+  record_T1569 -> record_T1571 [label="No",color=red,fontcolor=red];
+  record_T1570 -> node_T1567;
+  record_T1571 -> node_T1567;
+  };
+  };
+}
+#+END_SRC
+
+[[./images/reading-algorithm-big.png][./images/reading-algorithm.png]]
+
+
+
+##--------------------------------------------------------------------
+* はじめに
+##--------------------------------------------------------------------
+
+　 *DonutsはCommon Lispのためのグラフ作成ドメイン固有言語（DSL）です。*
+lispでちょっとしたグラフを描くことを目指し、Donutsは造られました。
+DonutsはS式で記述されたグラフ構造を[[http://www.graphviz.org/dot-language.html][Dot言語]]に変換し、[[http://graphviz.org/][Graphviz]]によって画像に変換します。
+ざっくり言うとDonutsはLispがDot言語を吸収した言語です。
+Lisp組み込みの機能を用いることによって、Dot言語単体では困難だったことを容易に達成することができます(ex.[[小さなプログラム --- 2分木、コンスセル、有限オートマトン][小さなプログラム]])。
+
+
+　 *Donutsの使い方は簡単です。*
+ =<>= でノードを作り、 =->= で2つのノード間にエッジを張り、 =&= でノードやエッジ（やグラフ）を束ねグラフを作り、 =$$= で画像を出力します。
+例えば、左下のコードをLispのREPLに入力すると、ビューアが起動し右下の画像が出力されます。
+
+#+ATTR_HTML: alt="donuts image" title="donuts!" align="right"
+[[./images/small-donuts.png]]
+
+#+BEGIN_SRC lisp :exports code
+  ($$ (let ((o (<> "o" :style :filled :fillcolor :chocolate4)))   ;チョコドーナツを作る
+        (& (:label "Hello, Donuts!" :labelloc t :size "3,3")      ;グラフを生成する
+          (--> "d" o "n")                                         ;ノード間にエッジを張る
+          (->  "n" "u" :style :dotted)                            ;点線のエッジを張る
+          (--> "u" "t" "s")                                       ;ノード間にエッジを張る
+          (~ "d" o "t") (~ "n" "s" "u"))))                        ;ノードの高さを揃える
+#+END_SRC
+
+　 *すぐにDonutsでグラフを描き始められるように。*
+Donutsの文法はDot言語のものと似ています。
+そこで、Dot言語になじみのある方ならDot言語との類推から、すぐにグラフを描き始めることができるよう、[[Examples from Graphviz manual]]の章を用意しています。
+Dot言語になじみのない方でも、もちろん大丈夫です。
+Donutsですぐにグラフを描くことができるように、[[%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB][チュートリアル]]の章があります。
+
+
+　 *DonutsはMITライセンスの元で配布されています。*
+したがって、あなたの望みが健全な常識の範囲内であれば、自由にDonutsを活用することができるはずです。
+また、Donutsの使用の結果として生じた、いかなる不利益に関しても作者は責任を持ちません。
+ライセンスの正確な文言についてはソースコードのヘッダー部分をご確認ください。
+
+　 *Donutsの最新バージョンは0.2.8です。*
+現在のところDonutsはベータ版です。
+今後の更新予定は[[ToDo]]をご確認ください。
+
+# 　 *Donutsのユーザインターフェイスは完成しています。*
+# ユーザインターフェイスとは、[[図形的な関数名やマクロ名 --- ユーザインターフェイスの設計2][この表中]]にあるコンストラクタ、オペレータ、ユーティリティのことです 。
+# 内部の実装を大幅に更新したり、ユーティリティを追加したりするかもしれません。
+# しかし、ユーザインターフェイス部分の動作について、これ以上削減しません。
+# つまり現在、動作するグラフのコードはDonutsがバージョンアップしても同じように動作する、ということです。
+
+　 *DonutsにはGraphvizに比べ実行時のオーバーヘッドが存在します。*
+S式で記述されたグラフをDot言語のグラフに変換するためです。
+したがって、 Donutsによって得られる抽象や手軽さは、実効速度とトレードオフの関係にあります。
+Donutsは *まだ最適化していません* が、たとえ最適化しても刻一刻と変化する大量のデータからグラフを逐次作成するといった、リアルタイムのグラフ生成などには向かないだろう、と考えています[fn:gc]。
+
+[fn:gc]
+ガーベジコレクタの発動回数を少なくする機構も今のところ備えていません。
+
+　 *Donutsは拡張性を重視して設計されています。*
+Donutsのコアはグラフ作成に関する基本的操作から構成されています。
+グラフ作成に関する基本的操作とは、 _ノードを構築する操作_ =<>= 、 _エッジを構築する操作_  =->= 、 _グラフを構築する操作_  =&= の3つの操作のことです。
+およそいかなるグラフ構造もこれら3つの基本操作のみから作り上げることができます(グラフ画像の見た目やコーディングの手間を気にしなければ)。
+また、Donutsはなるべくlispとぶつからないことを重視して造られています。
+したがって、複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、ユーザが自分で好きなように追加できるはずです(ex.[[小さなプログラム --- 2分木、コンスセル、有限オートマトン][小さなプログラム]])。
+
+　 *Donutsには実用的操作も加えられています。*
+実用的操作とは、主として基本操作を組み合わせた _実用目的の便利機能_ のことです。
+基本的操作だけを使ってグラフを描くこともできます。
+しかし、実用的な操作も使用することで、より多彩なグラフを、より手軽に描くことができます(cf.[[ユーティリティ集]])。
+
+
+##--------------------------------------------------------------------
+* インストール
+##--------------------------------------------------------------------
+** 動作チェック済み環境
+
+- OS :: linux-2.6.32-5-686
+- CL処理系 :: sbcl-1.0.55, ccl-1.7-r14925M(LinuxX8632)
+
+** システム依存
+*** 外部システム
+1. [[http://www.graphviz.org/][Graphviz]] by AT&T Research Labs
+
+2. 画像を見るための適当なビューア
+
+*** Common Lisp ライブラリ
+
+1. [[http://www.quicklisp.org/][quicklisp]] by Zachary Beane
+2. [[http://weitz.de/cl-ppcre/][cl-ppcre]] by Dr. Edmund Weitz
+3. [[http://www.quicklisp.org/][trivial-shell]] by Gary Warren King
+
+
+** 開始設定、動作確認
+
+#+BEGIN_SRC lisp
+CL-USER> (push #P"/path-to-your-donuts-directory/" asdf:*central-registry*)
+CL-USER> (ql:quickload :donuts)
+CL-USER> (in-package :donuts)
+
+DONUTS> (dot-output (&& (-> 1 2)))  ;次のようなdotコードが標準出力に表示されたらOK
+
+; digraph graph_ID_103 {
+;   1 -> 2;
+; }
+
+DONUTS> ($$ (&& (-> 1 2))) ;ビューアが起動し、下の画像が出力されたらOK
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/start.png
+digraph cluster_graph_T3 {
+  1 -> 2;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/start.png]]
+
+　
+
+##--------------------------------------------------------------------
+* Donutsの考え方 --- <>, ->, &
+##--------------------------------------------------------------------
+
+（ *注：* この章は、なぜDonutsのユーザインターフェイスがこうなっているか、についての章です。
+この章はやや抽象的な部分が多いので、退屈だと感じた場合や、とにかく手っ取り早くグラフを作成したい方は、次章の[[チュートリアル]]を読むことをおすすめします。）
+
+
+##--------------------------------------------------------------------
+** Donutsのゴール
+
+　Donutsのゴールは、Common Lispでグラフ作成を *なめらかに* 行えるようにすることです。
+「なめらかに」とは *Lisp的な思考の枠組を切り替えずに* ということを意味します。
+つまりDonutsの達成したい目標は、 _Lispコード内であたかもC言語でコーディングするかのように思考を切り替えずにLispの考え方の枠組みそのままでグラフ作成を可能にすること_ です。
+
+　そもそも、グラフを作成するだけなら、GraphvizなどのDot言語アプリケーションをそのまま使えば済む話です。
+それにもかかわらず、上のことがらをゴールに設定し、Donutsを造った一番の理由は _グラフを描くLispプログラマの生産性の向上のため_ です。
+以下で詳しく説明します。
+
+　おおよそいかなるプログラミング言語を使用したとしても、その言語のシンタックスやセマンティックス、設計思想、伝統文化に根ざした、言語特有の思考習慣の概念的枠組みの中でプログラマはプログラムを書きます。
+LispとJavaによる例を挙げましょう。
+
+*Lisp* ：
+#+BEGIN_SRC lisp :exports code
+  CL-USER> (princ "Hello World")
+  Hello World
+  "Hello World"
+#+END_SRC
+演算がS式の先頭であり、思考の中で述語がまず浮かぶ。
+無意識のうちに開き括弧 ( と演算princをキーボードに打ち込む。
+主語が浮かび、被演算対象"Hello World"と閉じ括弧 ) を打ち込む。
+もちろんプログラマ一人一人では細かい順番は異なる。
+しかし頭の中の思考の流れ、述語--->主語は同じはず。
+
+*Java* ：
+#+BEGIN_SRC java :exports code
+  // in HelloWorld.java
+  public class HelloWorld {
+      public static void main(String[] args) {
+          System.out.println("Hello World");
+      }
+  }
+  
+  // in shell
+  $ javac HelloWorld.java   // HelloWorld.javaをコンパイルする
+  $ java HelloWorld         // HelloWorldを実行する
+  Hello World
+#+END_SRC
+いろいろたくさん考える。
+頭の中の思考の流れは、主語--->述語。
+
+# 　ここで、
+# 「上に挙げた例は細かい観点からのものであり、両者は、大きな観点では同じ概念的枠組みを使っている。
+# LispとJavaは両者ともオブジェクト指向プログラミングスタイルをサポートしているので、
+# オブジェクト指向プログラミングスタイルでプログラミングを行えば両者で使用する枠組みに違いはないのではないか？」
+# と反論されるかもしれません。
+
+# 　この反論に対しては、「プログラムを設計する場合と実際にコーディングする場合では、同じオブジェクト指向スタイルでも頭の中で使用する概念は大きく異なる」と反論できる。
+# 具体的には、「Javaのオブジェクト指向スタイルはメッセージパッシング型のもので、個々のクラスがメソッドを持っている。
+# 一方、LispのCLOSはジェネッリック関数型のもので、クラス群がメソッドを持っているという概念的枠組みになっている」。
+# このように大きな観点からみて同じ概念的枠組みのように思えたとしても実際にコーディングする場合には、両者の隔たりは大きなものです。
+
+　この例で挙げたようなことは、単なる思考の習慣に過ぎず、どれが優れており、どれが劣っているという絶対的なものではありません。
+しかし、プログラマの _生産性に大きく影響します_ 。
+これはある言語のプログラマが他の言語のプログラマと比べて生産性が高い（または低い）という意味で言っているのでは _ありません_ 。
+
+　私が _生産性に大きく影響する_ という言葉で表したい意味は次のことです。
+あるプログラミング言語でコーディング中のプログラマが、別なプログラミング言語に切り替えコードを書きはじめるには、文法の切り替え以前に思考の枠組の切り替えが必要です。
+そして思考の枠組の切り替えは脳をかなり疲れさせるものであり、 *思考の枠組を切り替える度に疲労のため生産性が落ちていく* という意味です。
+
+
+　ではなぜ、コーディング途中で言語を換え、思考の枠組を切り換えねばならないのでしょうか？
+
+　ある言語Aのコードを書きながら途中で別な言語Bのコードを書くことの一番大きな理由は、言語Aの備えていない利点や機能を言語Bが備えているからです。
+例えば、cffiを使うのはLispよりCの方が実効速度が早いという利点があるからです。
+同じように、Lispでコードを書きながらPostScriptを使うとしたら、Lispには画像を作成し出力する機能がないからです。
+
+　したがって問題は、 *Lispにはグラフ作成の機能がなく、代わりに他の言語を使うと思考の枠組の切り替えのために生産性が落ちてしまう* ことです。
+この問題を解決するために、 *Common Lispでグラフ作成を「なめらかに」行えるようにすること* こそが、Donutsのゴールなのです。
+
+　
+
+##--------------------------------------------------------------------
+** Donutsの構築指針
+
+#+BEGIN_VERSE
+# When you work bottom-up, you usually end up with a different program.
+# Instead of a single, monolithic program, you will get a larger language with more abstract operators,
+# and a smaller program written in it.
+# Instead of a lintel, you’ll get an arch.
+ボトムアップで[プログラムを]書いたとき、たいてい最後には独特なプログラムに行き着く。
+単一でモノシリックなプログラムの替わりに、より抽象的なオペレータを持つ大きな言語と、
+それ[大きな言語]で書かれた[[小さなプログラム --- 2分木、コンスセル、有限オートマトン][小さなプログラム]]を手に入れるはずだ。
+# まぐさ[式構造物]の替わりに、アーチ[式構造物]を手に入れるのだ
+...
+# Lisp is an especially good language for writing extensible programs because it is itself an extensible program. 
+# If you write your Lisp programs so as to pass this extensibility on to the user,
+# you effectively get an extension language for free.
+Lispは拡張可能なプログラムを書くために、とりわけみごとな言語である。
+なぜなら、Lispそれ自体が拡張可能なプログラムだからだ。
+もし、この拡張可能性をユーザに譲り渡すようなLispプログラムを書くなら、
+労力なしに拡張[可能]言語を実質的に手に入れる[ことができる]。
+                     --- Paul Graham, On Lisp[fn:onlisp] ,pp.4--5.
+#+END_VERSE
+
+[fn:onlisp]
+On Lispの原著はポールグレアム氏の[[http://www.paulgraham.com/onlisp.html][HP]]にて公開されています。
+また、野田開氏による邦訳がオーム社より出版されています。
+ただし、引用文の訳は筆者によるものです。
+したがって、誤訳や誤読がありましたら、すべて筆者個人の責任です。
+
+--------------------------------------------------------------------
+
+　前節で設定した目標を達成するために、どのような指針の基でアプリケーションを構築すると、うまくいくでしょうか？
+
+　採用した構築指針は *Lispの拡張を目指す* というものです。
+これは、「いっちょCLOSやloopやformatに匹敵するものをこさえるべぇ」というようなビッグドリームを語っているのでは _ありません_ 。
+
+　ポールグレアム氏が著書On Lispで提唱している *ボトムアップデザイン* によるプログラミング技法を指針として、アプリケーションを造っていくということです。
+ボトムアップデザインについては氏がOn Lispの中で詳しく解説しています。
+ここで私なりにボトムアップデザインのエッセンスを濃縮し、まとめてみると次のようになります。
+
+1. アプリケーションに関する必要最低限の機能( *基礎的対象* や *基本操作* )のみをLispに追加し、それ以外の複雑な機能はLispに任せる。
+2. 具体的な関数やマクロを *Lispの上に* 積み重ねていくことによって、抽象的な機能を実現する。
+3. 新しく追加する機能はなるべく *既存のLispとぶつからないもの* にすることを心掛ける。
+4. Lispでボトムアップに構築されたプログラムは自然に *拡張可能性* を備える。
+
+　1--3はボトムアップデザインを行うためのガイドライン、4はボトムアップデザインの利点です。
+いずれの項目もLispでプログラムを書いたことのある方なら、当たり前だと感じるものでしょう。
+しかし、ここで4の拡張可能性について、もう少し掘り下げて考察していきたいと思います。
+なぜなら、4こそがLispを他の言語と違う、まったく異質なものにしていると私は考えるからです。
+そして、この拡張可能性をアプリケーションに付与することで、「なめらかな」アプリケーションを造ることができると私は考えているからです。
+
+　重要なことは「他の言語の機能をLispで実現するということは、単にその機能のみがLispで実現されるということにとどまらない」ことです。
+追加された機能とLispの機能との相乗効果によって、追加した機能を持っていた元の言語では考えることさえできなかったことが可能になるのです。
+
+　その一番のものが拡張可能性です。
+Lispの拡張可能性を支える最大の機能はマクロ機能です(他にも関数、REPL、CLOSなどの機能も拡張可能性を支えるが最重要はマ・ク・ロ)。
+マクロ機能の存在によって、Lispでは他の言語の機能を容易に実現することができます。
+しかし、それだけにとどまらず、 *実現した機能もマクロ機能を利用することができる* のです。
+
+　このことは荒っぽく言うと、機能を実現するためにLispに吸収した言語に、実質的にマクロ機能を加えることに他なりません。
+例えば、Dot言語にはマクロ機能はありません。
+ところが、LispでDot言語を吸収し、Lispでグラフ作成機能を実現すると、マクロ機能を備えた環境でグラフ作成ができるようになるのです。
+つまり、マクロが伝播するのです。
+
+　今、議論のために取り上げたのは、マクロ機能だけです。
+しかし実際は、関数を定義すること、REPL、CLOS、入出力機能など、ありとあらゆるLisp機能のもとで、グラフ作成ができるようになるのです。
+これらの機能はDot言語が備えていないものであり、Dot言語でグラフを作成する際には利用できなかった機能です。
+これをスローガン的にまとめると *Lispに吸収されたものは、またLispとなる* と言えるでしょう(まるで映画「遊星からの物体X」に出てくるエイリアンみたいでワクワクしますね)。
+
+　何かの作業中に「この言語のこの機能、便利なんだけど、もう少し自由に拡張することができたらな」と思うことがあるかもしれません。
+しかし、それは簡単に達成することができます。
+単にLispにその機能を吸収させればよいだけです。
+Lispの上に実現されたその機能は、基盤であるLispの拡張可能性を備えることができるのです。
+
+　この節の最後に、上のボトムアップデザインが含意している(と私が考える)内容をまとめると、次のようになります。
+
+ *Lispは他の言語Lを吸収し、その言語が実現している機能Xを獲得することができる。結果、Lispには機能X'が追加される。しかし、この機能X'は、もはや言語Lの機能Xをはるかに超えたものになっている。
+なぜなら、機能X'は機能Xと異なり、すべてのLisp機能を利用できるからである。*
+
+　
+
+##--------------------------------------------------------------------
+** "グラフ作成"の抽象化 --- ユーザインターフェイスの設計1
+
+#+BEGIN_VERSE
+# The contrast between function and procedure is
+# a reflection of the general distinction between describing properties of things and describing how to do things,
+#  or, as it is sometimes referred to, the distinction between declarative knowledge and imperative knowledge.
+# In mathematics we are usually concerned with declarative (what is) descriptions,
+# whereas in computer science we are usually concerned with imperative (how to) descriptions.
+[数学の]関数と[コンピュータの]手続きの間の差異は、
+ものの性質の説明と、ものの行い方の説明との間の全般的な相違を反映している。
+あるいは、実際のところ、時折言及されるように、宣言的知識と命令的知識との間の相違である。
+通常、数学では宣言的な(何であるかの)叙述に関心を持つのに対し、
+計算機科学では命令的な(どう行うかの)叙述に関心を持つ。
+  --- Harold Abelson and Gerald J. Sussman, with Julie Sussman, SICP[fn:sicp] ,[[http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-10.html#%_sec_1.1.7][section 1.1.7.]]
+#+END_VERSE
+
+[fn:sicp]
+Structure and Interpretarion of Computer Programs -- 2nd ed. (SICP)の原著は[[http://mitpress.mit.edu/sicp/full-text/book/book.html][MITPressのSICP HP]]にて公開されています。
+また、和田英一氏による邦訳がピアソン社より出版されています(邦題は、計算機プログラムの構造と解釈 第二版)。
+ただし、引用文の訳は筆者によるものです。
+したがって、誤訳や誤読がありましたら、すべて筆者個人の責任です。
+
+
+-------------------------------------------------------------------
+
+　ボトムアップにプログラムを書くために、グラフ作成に最低限必要な *基本操作* と 操作される *基本的対象* とは、どのようなものでしょうか？
+"グラフ作成" を抽象化して、それらを探していきました。
+
+　ここで、まず注意してほしいことは、プログラムを書くために "グラフ作成" を抽象化するのであって、数学的な問題を解くために "グラフ" を抽象化するのではないことです。
+数学的な問題を解くには抽象化されたグラフ構造を扱い、 _グラフ構造を持つすべてのものに対し、これこれの命題が成り立つかどうか_ を証明します。
+しかしながら、コンピュータにグラフ作成を命令するプログラムを書くためには、 _そもそもグラフ構造を作るにはどうするか_ を探さねばなりません。
+
+
+　ところで、 _探す_ と言っても、答えが1つに確定している未知のものを探すと言っているわけではありません。
+ここでの _探す_ という言葉の意味は、どのような対象や操作を基本とすれば _ユーザインターフェイスがシンプルで使いやすく美しいものになるか探す_ ということです。
+したがって、以下の議論を論理の面だけから正当化することはできません。
+以下の議論は、それを踏まえたことでよいものができたかどうか、という結果の観点によってのみ判断される発見的なものです。
+
+
+--------------------------------------------------------------------
+
+　まず、基本的対象から探していきました。
+その結果、グラフ作成に最低限必要な基本的対象を *ノードのアイデンティティ* にすると、シンプルで良いのではないかと考えました。
+それは大体つぎのように連想した結果です。
+
+「基礎的対象はグラフという実体が何から構成されているかに基因する。
+グラフは、ノードとエッジという実体によって構成されている。
+では、ノードやエッジは何から構成されているか。
+エッジは2つのノードから、ノードはノードのアイデンティティから構成されている。
+ノードのアイデンティティとは、2つのノードを区別するときに必要になるものである。
+グラフ中の2つのノードを場所によって区別することはできないので、ノードの内部構造というアイデンティティの違いで区別する。」
+
+　次に、基本操作を探していきました。
+基本的対象をノードのアイデンティティ（内部構造）に設定したので、それにどのような操作を加えていくとグラフが得られるか、というように先程と逆の方向で考えていきました。
+結果、次の3つの操作を基本操作にすると、すっきりして使い勝手が良いと考えました
+（--->の左が被操作対象、右が操作後の対象。 * は'と'の代わりです）。
+
++ *ノード構築操作* ：　ノードのアイデンティティ ---> ノード
++ *エッジ構築操作* ：　ノード * ノード ---> エッジ
++ *グラフ構築操作* ：　いくつかのノード * いくつかのエッジ * いくつかのグラフ ---> グラフ
+
+　ここで、グラフ構築操作によって操作される対象にグラフも入れた理由は、「つながっていない2つのグラフから構成されるものも、またグラフである」と考えたからです。
+
+--------------------------------------------------------------------
+
+　さて、グラフ作成のむずかしい部分は、自分ではじめから作るよりも、Graphvizを用いることにしました。
+Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz製作者の方も上と同じようなことを考えていらっしゃったのだろうと思います
+（もちろん、Graphviz製作者の方のほうが、私よりも先にもっと深く考え尽くしていらっしゃったということは言うまでもありませんが）。
+ノードのアイデンティティとして、 *属性* が用いられており、エッジやグラフにも属性が設定されていました。
+
+　エッジにアイデンティティがあれば、2つのノードの間に2本以上のエッジを張ることもできるようになります[fn:g-note]。
+つまり、エッジやグラフに属性があれば、グラフの見えを多様なものにすることができるのです。
+そこで、Graphvizとの兼ね合いも考えて、以下のものをDonutsの基本対象と基本操作にすることにしました。
+
+[fn:g-note]
+グラフの:strict属性をtに指定すると、2つのノードの間に2本以上のエッジを張ることはできません。
+
+
+0. *ノードの属性* :: ノードの名前や[fn:node-id]、ラベル、色、形など。
+0. *エッジの属性* :: エッジの名前や、ラベル、色、形など。
+0. *グラフの属性* :: グラフの名前や、ラベル、色、形など。
+
+1. *ノード構築操作* :: ノードの属性 ---> ノード
+2. *エッジ構築操作* :: ノード * ノード * エッジの属性 ---> エッジ
+3. *グラフ構築操作* :: いくつかのノード * いくつかのエッジ * いくつかのグラフ * グラフの属性 ---> グラフ
+
+[fn:node-id]
+Donutsでは、ユーザにはほとんど見えない実装部分で、アイデンティティとしてname属性値を用いています。
+例えば、 =(<> "a")= によるノードaの生成時、裏では名前が自動生成され、属性:nameの値に指定されます。
+ほとんどの場合、ユーザが自分で名前を指定することはできません。
+唯一の例外がトップレベルのグラフの名前です。
+これは、生成された画像をビューアで見る場合、名前が画像のタイトルとして表示されることがあるためです。
+
+　
+
+##--------------------------------------------------------------------
+** 図形的な関数名やマクロ名 --- ユーザインターフェイスの設計2
+
+　さて、基本対象や基本操作は決まりましたが、それをlisp内でどのような名前で表すかは、まだ決まっていません。
+そこで、次の2点：
+1. グラフ構造が一目瞭然となるような視覚的効果 、
+2. 使用頻度の高い名前を短くすることによる、グラフ作成におけるコーディングとリーディングの両コストの低減 、
+を考慮し、関数名やマクロ名は図形的なものを採用することにしました。
+
+　その結果、出来上がったDonutsの関数やマクロには、 下の表のように図形的な名前を多く使用しました。
+ノード構築操作に =<>= 、エッジ構築操作に =->= 、グラフ構築操作に =&= をそれぞれ割り当てています。
+
+# |        | コンストラクタ | オペレータ | ユーティティ                                           |
+# |--------+----------------+------------+--------------------------------------------------------|
+# | グラフ | &, [&]         |            | with-graph, &&                                         |
+# | エッジ | ->, ---        |            | with-edge, --->, ->>, ==>, <-, <==, ?, -<, >-, ----, O |
+# | ノード | <>, []         | @, rank    | with-node, ~                                           |
+# | その他 | dot-output     |            | dot-pprint,                                            |
+
+#+BEGIN_HTML
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+
+<thead>
+<tr><th scope="col" class="left"></th><th scope="col" class="left">コンストラクタ</th><th scope="col" class="left">オペレータ</th><th scope="col" class="left">ユーティティ</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">グラフ</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">with-graph, &amp;&amp;</td></tr>
+<tr><td class="left">エッジ</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, &lt;-, &lt;==, ?, -&lt;, &gt;-, &ndash;&ndash;&ndash;, O</td></tr>
+
+<tr><td class="left">ノード</td><td class="left">&lt;&gt;, []</td><td class="left">@, rank</td><td class="left">with-node, ~</td></tr>
+<tr><td class="left">その他</td><td class="left">dot-output, $</td><td class="left"></td><td class="left">dot-pprint, $$</td></tr>
+</tbody>
+</table>
+#+END_HTML
+
+　抽象的にグラフを描くのであれば、3つの基本操作 =<>=, =->=, =&= だけで十分です。
+しかし実際には、グラフを修飾したりコーディングの手間を省くために、基本操作以外の *実用的な操作* があると便利です。
+ =<>=, =->=, =&= 以外の操作はそのような実用目的の便利操作です。
+それらの操作の詳細な意味は[[チュートリアル]]または[[リファレンスマニュアル]]を参照してください。
+
+--------------------------------------------------------------------
+
+　
+
+　以上でDonutsの考え方の章は終わりです。
+抽象的で読みづらい章を最後まで読んでくださって、ありがとうございます。
+なるべく分かりやすい文章を心がけて書いたつもりですが、不明瞭な点や論理的展開の弱い点などは、すべて私の責任です。
+もしよろしかったら、Donutsを使用した感想をお聞かせいただければ幸甚です。
+特に、実効速度、使い勝手はどうか、実用操作のバランスはどうか、等の貴重な情報をいただけたら改良に役立てることができますので、大変ありがたいです。
+
+　
+
+##--------------------------------------------------------------------
+* チュートリアル
+##--------------------------------------------------------------------
+
+*Donuts使用法：*
+- ノードコンストラクタ =<>= でノードを生成する。 =(<> label) ＝＞ node=
+- エッジコンストラクタ =->= で2つのノードを結ぶ。 =(-> node1 node2) ＝＞ edge=
+- グラフコンストラクタ =&&= でエッジやノードやグラフを束ねグラフを生成する。 =(&& . nodes-edges-graphs) ＝＞ graph=
+- シェルインターフェイス =$$= でグラフをビューアに出力する。 =($$ graph) ＝＞ NIL ;ビューアに画像が出力=
+- =dot-output= でグラフのdotコードを標準出力に表示する。  =(dot-output graph) ＝＞ NIL ;標準出力にdotコードが表示=
+--------------------------------------------------------------------
+
+（ *注：*
+この章内のコードの大部分は、説明のため、グラフ型のオブジェクトを生成する部分のみ載せてあります。
+グラフオブジェクトのdotコードを標準出力で見るには、 =(dot-output グラフオブジェクト)= のように =dot-output= を使う必要があります。
+また、 =dot-output= の代わりに =dot-pprint= を用いると整形されたdotコードを見ることができます。
+グラフオブジェクトの画像を直接ビューアで見るには、 =($$ グラフオブジェクト)= のようにシェルインターフェイス =$$= を使うと便利です。
+詳しくは[[出力]]の節を参照してください。 ）
+
+　
+
+##--------------------------------------
+** シンプルなグラフ
+##--------------------------------------
+
+#+SRCNAME: simple-graph.lisp
+#+BEGIN_SRC lisp
+  (&& (-> (<> "Hello") (<> "World")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/simple-graph.png
+digraph T11 {
+  "A12" [label="Hello"];
+  "B13" [label="World"];
+  "A12" -> "B13";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/simple-graph.png]]
+
+　上のコード全体が表す意味は、 /Helloとラベルされたノードから、Worldとラベルされたノードへのエッジを持つ有向グラフを生成せよ/ というものです。
+コードの内容を詳しく解説します。
+
+　まず、S式 =(<> "Hello")= の意味は、 /Helloとラベルされたノードを生成せよ/ です。
+=<>= を *ノードコンストラクタ* と呼んでいます。
+ノードコンストラクタ =<>= は、引数として文字列や数値を取り、それらでラベルされたノードを生成します。
+オプショナルな引数である属性キーワードによって属性値を指定することで、多様なノードを生成することもできます
+（属性については[[属性][次節]]で説明します）。
+説明のため =(<> "Hello")= によって生成されたノードを、ノードHelloのように記します（ノードWorldも同様です）。
+
+　次に、S式 =(-> (<> "Hello") (<> "World"))= の意味は、 /ノードHelloとノードWorldを矢印で結んだエッジを生成せよ/ というものです。
+説明のため =(-> (<> "Hello") (<> "World"))= によって生成されたエッジを、エッジHello->Worldのように記します。
+=->= を *エッジコンストラクタ* と呼びます。
+エッジコンストラクタ =->= は、ノード2つを引数に取りエッジを生成します。
+ =<>= と同様に、オプショナルな属性キーワードによって、生成されるエッジの属性を指定することもできます。
+
+　また、 =->= は、略記として、ノードの代わりに文字列や数値も引数に取ることができます。
+その場合、文字列や数値をラベルとするノードが自動生成されます[fn:auto-gen]。
+つまり上のコードは、
+#+BEGIN_SRC lisp
+(&& (-> "Hello" "World"))
+#+END_SRC
+のように、簡略化することもできます。
+
+[fn:auto-gen]
+自動生成についての詳しい解説です。
+文字列や数値から既にノードが自動生成されている場合、それらの文字列や数値による新たなノードの自動生成は起きません。
+文字列や数値が同じもの（lispの =equal= ）であれば、それらは同一のノードです。
+つまり、 =(-> "a" "a")= によって自動生成されるのは1つのノードaのみです。
+したがって、 =(-> "a" "a")= は自己ループを生成します。
+一方、 =(-> (<> "a") (<> "a"))= は、aとラベルされた2つの異なるノードを生成し、それらの間にエッジを張ります。
+したがって、 =(-> (<> "a") (<> "a"))= は、ノードaと別なノードaの間に張られたエッジを生成します。
+コード =(<> "a" :color :red)= により生成されるノードに自己ループを張るには、 =(let ((n (<> "a" :color :red))) (-> n n))= とするか、またはユーティリティ[[自己ループを生成する関数：?][?]]を使って =(? (<> "a" :color :red))= とする必要があります。
+
+　最後に、S式 =(&& ****)= の意味は、 /グラフ構成要素****を束ねたグラフを生成せよ/ というものです(****は、任意の数のエッジやノードやグラフ)。
+  =&&= は、任意数のグラフ構成要素を引数に取りグラフオブジェクトを生成するマクロで、 *グラフコンストラクタ* と呼んでいます。
+
+　この例では、グラフ構成要素としてエッジHello->Worldが =&&= に与えられています。
+その結果、ノードHelloからノードWorldへのエッジを構成要素とする(有向)グラフが生成されています。
+
+　ところで、 =&&= の引数であるグラフ構成要素の中にグラフが含まれていることに、少し奇異な印象を受けるかもしれません。
+これは _連結していない2つのグラフもまた1つのグラフである_ という考えの基に、Donutsが設計されているためです。
+そのため、グラフコンストラクタ =&&= は、グラフも引数に取ることができるようになっているのです。
+そこで、グラフに構成要素を追加する場合、次のような方法を用いることができます。
+#+BEGIN_SRC lisp
+  (setf h (&& (-> "Hello" "World")))
+
+  (&& h (-> "こんにちは" "World"))
+#+END_SRC
+
+　上の行で、変数hにエッジ'Hello->World'で構成されるグラフを束縛しています。
+下の行で、hに束縛されたグラフと、'こんにちは->World'で構成される新たなグラフを生成しています。
+結果、新しいグラフは下のように、'こんにちは->World'がグラフhに追加されたものとなります。
+#+BEGIN_SRC dot :file ./images/simple-graph2.png
+digraph graph_T251 {
+  subgraph graph_T247 {
+  "Hello" -> "World";
+  }
+  "こんにちは" -> "World";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/simple-graph2.png]]
+
+　
+
+##--------------------------------------
+** ラベル
+##--------------------------------------
+　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます[fn:label-diff]。
+
+- =\\無=  空白が印字される[fn:real-space]('無'はスペースを表す)。
+- =\\n=  行末に置くと、その行をセンタリングし、改行する。
+- =\\l=  行末に置くと、その行を左寄せし、改行する。
+- =\\r=  行末に置くと、その行を右寄せし、改行する。
+- =\\N=  そのノードの内部名(ノードのアイデンティティ)が印字される。
+- =\\\\=  '\'が印字される('\'を印字するにはこの方法しかありません)。
+
+#+SRCNAME: label.lisp
+#+BEGIN_SRC lisp
+  (&& (<> "12\\ 34\\n56\\l78\\r\\N\\\\" :shape :note))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/label.png
+digraph graph_T64 {
+  node_T63 [label="12\ 34\n56\l78\r\N\\",shape=note];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/label.png]]
+
+[fn:label-diff]
+Dot言語に詳しい方のための補足です。
+Donutsでは、縦棒 =|= 、角カッコ =[=, =]= 、三角カッコ =<=, =>= をエスケープする必要はありません。
+
+[fn:real-space]
+本当は何も印字されないのが空白さ。
+
+　
+
+##--------------------------------------
+** 属性
+##--------------------------------------
+
+　 *属性* とは、色や形など様々な性質のことで、それぞれのグラフ、ノード、エッジに付随するものです。
+前節までで扱ってきたラベルも実は属性の一つです。
+属性の値を指定することで、グラフの見えをさまざまに変化させることができます。
+
+----------------------------------------------------------------------
+
+　次のコードによって生成されるグラフは、下の様に出力されます(グラフ属性値を指定するには =&&= ではなく =&= を用います)。
+コードの内容を詳しく見ていきましょう。
+#+SRCNAME: proparty.lisp
+#+BEGIN_SRC lisp -n
+  (& (:label "Proparty Example")
+    (-> "a" "b" :color :red)
+    (-> "a" (<> "c" :shape :box) :color :blue)
+    (<> "d" :shape :circle))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/proparty.png
+digraph GRAPH_T328 {
+  label="Proparty Example";
+  "a" -> "b" [color=red];
+  NODE_T330 [label="c",shape=box];
+  "a" -> NODE_T330 [color=blue];
+  NODE_T332 [label="d",shape=circle];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/proparty.png]]
+
+
+　まず1行目、グラフコンストラクタ =&&= が =&= に置き換えられ、 =&&= の次(グラフ構成要素の前)にグラフ属性リスト =(:label "Proparty Example")= が置かれています。
+このグラフ属性リストによってグラフの見えを調整することができるのです。
+ここでは、グラフの属性 =:label= が値 "=Proparty Example=" に指定されていますので、出力されるグラフにラベル"=Proparty Example="が付くことになります。
+
+　他のグラフ属性値も指定したい場合、例えば、グラフのサイズを小さくしたい場合には、 =(:label "Proparty Example" :size "1,1")= の様に書きます。
+サイズ属性値は縦横インチ単位、文字列で指定します。
+属性を指定する順番は、出力結果に影響しません[fn:diff-graph]。
+ =(:label "Proparty Example" :size "1,1")= でも、 =(:size "1,1" :label "Proparty Example")= でも、結果として出力されるグラフは次のものです。
+
+[fn:diff-graph]
+より正確には、属性を指定する順を変えた場合、出力されるdotコードは別のものです。
+しかし、そのdotコードから生成されるグラフ画像の見た目は同じものです。
+
+#+BEGIN_SRC dot :file ./images/proparty2.png
+digraph GRAPH_T328 {
+  label="Proparty Example";
+  size="1,1"
+  "a" -> "b" [color=red];
+  NODE_T330 [label="c",shape=box];
+  "a" -> NODE_T330 [color=blue];
+  NODE_T332 [label="d",shape=circle];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/proparty2.png]]
+
+
+　次に、2行目を見ていきましょう。
+エッジコンストラクタ =->= は、文字列や数値もノードオブジェクトとして引数に取れたことを思い出してください。
+その場合、文字列や数値をラベルとしたノードが自動的に生成されるのでした。
+この行では =->= にエッジの色属性を指定するキーワード =:color= とその値 =:red= が与えられています。
+したがって2行目の意味は、 /aとラベルづけされたノードとbとラベルされたノードの間を、赤い矢印で結んだエッジを生成せよ/ というものです。
+
+　一般的に、属性の値は数値、キーワード、文字列のいずれかになります。
+属性の値を指定する文字列で、内部に空白や'-'がないものは、キーワードでも同じ値が指定できます。
+つまり、2行目の色属性値 =:red= は、"red"でも同じ値が指定できるのです。
+しかしながら、1行目のlabel属性値"Example 2"には空白が含まれていますので、キーワード =:Example 2= を用いて同様の値を指定することはできません。
+
+　3行目で着目してもらいたい部分は、ノードコンストラクタ =<>= に与えられている属性キーワード =:shape= とその値 =:box= です。
+これにより、生成されるノードの形を箱型に変えることができるのです。
+したがって、 =(<> "c" :shape :box)= は、 /cとラベルされ、形が箱型のノードを生成せよ/ という命令になります。
+
+　最後の4行目を見ていきましょう。
+今までの知識から考えてみると、この行の内容は /dとラベルされ、形が円型のノードを生成せよ/ となりますね。
+少しだけ新奇な部分は、この行で生成されたノードがエッジによって、いかなるノードとも結ばれていないところです。
+すなわち、このノードは、孤立ノードとなります。
+このノードはグラフ中の右上に出力されているものです。
+
+　この例から分かるように、最小のグラフは単一のノードです。
+もっとも単純なグラフ生成コードは次のものです[fn:simple]。
+#+SRCNAME: minimum-graph.lisp
+#+BEGIN_SRC lisp
+(&& "")
+#+END_SRC
+このコードは楕円が1つのみのグラフ（まんじゅう1つ）を生成するだけで、あまり興味深いものではありません。
+しかし、Donuts動作の理解のため、あえて内容を解説すると次のようになります。
+ /空の文字列をラベルとするノードを自動生成し、そのノード1つのみで構成されるグラフを生成せよ/ です。
+
+[fn:simple]
+より正確には、 =(&& "")= は最も単純なグラフの生成コードであり、グラフ生成の最も単純なコードは =(&& 一桁の数)= です。
+
+----------------------------------------------------------------------
+
+　属性についての詳細は、以下のGraphvizマニュアルをご確認ください。
+少し注意が必要な点は、Graphvizで属性値を指定するには =属性=値= ですが、Donutsでは =:属性 値= である点です( =値= はキーワード、文字列、数値のいずれかです)。
+- 属性について： http://www.graphviz.org/content/attrs
+- ノードのshape属性について： http://www.graphviz.org/node-shapes.html
+- エッジのshape属性について： http://www.graphviz.org/arrow-shapes.html
+- 色属性について： http://www.graphviz.org/color-names.html
+
+　
+
+##--------------------------------------------------------------------
+** 出力
+##--------------------------------------------------------------------
+
+　dot-output, dot-pprintによって、生成したグラフオブジェクトのdotコードを標準出力に表示することができます。
+また、生成したグラフオブジェクトをビューアで見るには、シェルインターフェイス $ が便利です[fn:tema]。
+
+[fn:tema]
+もちろん、やや手間はかかりますが、画像ファイルをビューアで見るために、
+with-open-file内で*standart-output*を束縛し、
+dot-outputによってdotファイルを出力し、そのdotファイルをGraphvizで画像ファイルに変換し、
+それをビューアで見るという方法もあります。
+
+*** dot-output, dot-pprint
+
+　dot-output, dot-pprintは引数にグラフオブジェクトを取り、標準出力にそのグラフオブジェクトのdotコードを表示します。
+#+BEGIN_SRC lisp
+  (dot-output
+   (& (:rankdir :LR)
+     (-> (<> "Japan" :shape :house) (<> "Head" :shape :diamond) :label "Go to Diamond Head!")))
+#+END_SRC
+
+　上のコードを評価すると、次のようなdotコードが標準出力に出力され、NILが返ります。
+コード2行目のグラフ属性 =:rankdir= は、出力するグラフのレイアウト方向を定める属性です(デフォルト値は上下方向 =:TB= )。
+ここでは左右方向 =:LR= に指定されています。
+
+#+BEGIN_SRC dot :exports code
+  digraph graph_ID_68 {
+    rankdir=LR;
+    node_ID_65 [label="Japan",shape=house];
+    node_ID_66 [label="Head",shape=diamond];
+    node_ID_65 -> node_ID_66 [label="Go to Diamond Head!"];
+  }
+#+END_SRC
+
+　dot-outputの代わりにdot-pprintを用いるとdotコードが整形され、標準出力に表示されます。
+dot-pprintは、Graphvizライブラリの整形用ユーティリティnopによって処理を行うため、dot-outputに比べ実行コストがかかります。
+dot-outputによる表示が見づらい場合に使うと便利です。
+
+*** シェルインターフェイス $
+
+　次のコードを評価すると、画像ファイルdiamond.pngが生成され、
+ビューアが立ち上がり、diamond.pngが表示されます(下の画像)。
+#+BEGIN_SRC lisp
+  ($ (:outfile "diamond.png")
+   (& (:rankdir :LR)
+     (-> (<> "Japan" :shape :house) (<> "Head" :shape :diamond) :label "Go to Diamond Head!")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/output1.png
+digraph graph_T68 {
+  rankdir=LR;
+  node_T65 [label="Japan",shape=house];
+  node_T66 [label="Head",shape=diamond];
+  node_T65 -> node_T66 [label="Go to Diamond Head!"];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/output1.png]]
+
+　シェルインターフェイス$は、出力をコントロールするプロパティリストと、グラフオブジェクトを引数に取ります。
+プロパティリストのプロパティは次の表の通りです。
+
+| キーワード | 指定できるもの                     | デフォルト値     |
+|------------+------------------------------------+------------------|
+| :outfile   | 生成する画像ファイル名             | "DONUTS-TMP.png" |
+| :show      | ビューアを起動するかどうか         | t                |
+| :layout    | グラフ画像のレイアウトアルゴリズム | :dot             |
+
+
++ *:outfile* ::
+　:outfile で出力ファイルを指定する場合、 *拡張子が必須* です。
+Donutsは拡張子によって生成する画像ファイルの種類を定めるためです。
+
+　例えば、上の例では、ファイル名diamond.pngの _pngファイル_ が生成されました。
+もし、:outfileを"diamond.ps"に指定すると、ファイル名diamond.psの _psファイル_ が生成されます。
+また、出力ファイルの *拡張子がdotの場合* 、Graphvizライブラリのnopによって整形されたdotファイルが生成されます。
+
+　生成できる画像ファイルの種類については、次のGraphvizマニュアルをご確認ください。
+
+- http://www.graphviz.org/output-formats.html
+
+　生成するファイル名を指定しない場合、 一時的にファイルDONUTS-TMP.pngが生成され、ビューア終了時に自動削除されます。
+
+
++ *:show* ::
+　:show がtの場合、ビューアが起動し画像が出力されます(デフォルトはt)。
+ただし、:outfileで指定した出力ファイルが *拡張子dot* を持つ場合、:show がtなら _標準出力_ にdotファイルの内容が表示されます。
+
++ *:layout* ::
+　レイアウトアルゴリズムを指定するキーワードです。
+詳細は[[無向グラフ、レイアウトアルゴリズム]]の節で解説します。
+
+
+　
+
+##--------------------------------------
+** 部分グラフ、クラスタ
+##--------------------------------------
+
+　 *部分グラフ* とは、グラフ中の限定された領域内にある、ノードやエッジや部分グラフの集まりから構成されるグラフのことです。
+平たく言うと、グラフ中の適当な部分のことです。
+部分グラフを生成するには、グラフコンストラクタを次のようにネストすれば良いだけです。
+ただし、部分グラフのグラフ属性は無効になります。
+#+SRCNAME: subgraph.lisp
+#+BEGIN_SRC lisp
+  (& (:label "BIG" :labelloc t :size "1,1") ;グラフBIGを生成する
+    (& (:label "small" :size "10,10")       ;部分グラフsmallを生成する、部分グラフの属性は無効！！
+      (-> "a" "b"))                         ;small内でエッジa->bを生成する
+    (-> "A" "B"))                           ;BIG内でエッジA->Bを生成する
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/subgraph.png
+digraph graph_T986 {
+  label="BIG";
+  labelloc=true;
+  size="1.5,1.5";
+  "a" -> "b";
+  "A" -> "B";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/subgraph.png]]
+
+　属性:labellocをtに指定すると、グラフのラベル配置が上部になります。
+重要なのでもう一度繰り返しますが、 *グラフの属性はトップレベルのもののみが有効になります* 。
+部分グラフsmallのラベルが無効になり、トップレベルグラフBIGのラベルが有効になっていることをご確認ください。
+
+----------------------------------------------------------------------------
+
+　 *クラスタ* は、特別な部分グラフです。
+長方形の枠で囲われ、外部と独立に内部のレイアウトを指定することができます。
+*クラスタの属性はトップレベルでなくとも常に有効になります。*
+クラスタを生成するにはクラスタコンストラクタ =[&]= を使います。
+
+#+SRCNAME: subgraph-cluster.lisp
+#+BEGIN_SRC lisp -n
+  (& (:rankdir :LR)
+    ([&] (:label "Here is in the cluster!")  ;クラスタは部分グラフだが属性はつねに有効！！
+      (-> "a" "b")
+      (-> "b" "c"))
+    (-> "Out of the cluster" "c"))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/subgraph-cluster.png
+digraph SUBGRUPH_T49 {
+  rankdir=LR;
+  subgraph cluster_T50 {
+  label="Here is in the cluster!";
+  "a" -> "b";
+  "b" -> "c";
+  }
+  "Out of the cluster" -> "c";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/subgraph-cluster.png]]
+
+　2行目から4行目までが、クラスタを生成するコードです。
+ =[&]= の引数は、 =&= と同様のものです。
+すなわち、必須引数がクラスタの属性リスト、rest引数がクラスタを構成するエッジ、ノード、部分グラフです。
+この例では、属性リスト =(:label "Here is in the cluster!")= 、クラスタ構成要素a->b,b->cが引数です。
+
+　5行目、クラスタ外部のノード'Out of cluster'から、クラスタ内部のノードcへのエッジを生成します。
+
+　
+
+##--------------------------------------
+** ランク
+##--------------------------------------
+
+　 *ランク* とは、ノードの（グラフ中の）配置のことです。
+ノードのランクを指定するには *ランクオペレータ* =rank= を用います。
+ =rank= は、副作用のために用いる関数で、グラフ内の配置方法を指定するランクキーワードと複数のノードを引数に取ります。
+ランクキーワードは、 =:same=, =:min=, =:max=, =:source=, =:sink= のいずれかです。
+ランクは同値関係です(例えば、ノードaとb、bとcが同じランクならば、aとcも同じランクです)。
+
+| rank-keyword | :same    | :min | :max | :source | :sink |
+| 配置方法     | 同じ高さ | 左上 | 右下 | 左上    | 右下  |
+
+----------------------------------------------------------------------
+# rank=same,min,max,source,sink
+# Rank constraints on the nodes in a subgraph.
+#  If rank="same", all nodes are placed on the same rank.
+#  If rank="min", all nodes are placed on the minimum rank.
+#  If rank="source", all nodes are placed on the minimum rank,
+#  and the only nodes on the minimum rank belong to some subgraph whose rank attribute is "source" or "min".
+#  Analogous criteria hold for rank="max" and rank="sink".
+#  (Note: the minimum rank is topmost or leftmost, and the maximum rank is bottommost or rightmost.)
+
+　下のコードの5行目でランクオペレータ =rank= が使用されています。
+ =(rank :same a c e)= によってレキシカル変数 =a=, =c=, =e= にそれぞれ束縛された偶数ノードの高さが揃えられ、
+ =(rank :same b d f)= によってレキシカル変数 =b=, =d=, =f= にそれぞれ束縛された奇数ノードの高さが揃えられています。
+#+SRCNAME: rank.lisp
+#+BEGIN_SRC lisp -n
+  (& (:size "2,2")
+    (let ((a (<> 0 :color :red)) (b (<> 1 :color :blue))
+          (c (<> 2 :color :red)) (d (<> 3 :color :blue))
+          (e (<> 4 :color :red)) (f (<> 5 :color :blue)))
+      (rank :same a c e) (rank :same b d f)
+      (-> a c) (-> c e) (-> b d) (-> d f) (-> a b) (-> c d) (-> e f)))
+#+END_SRC
+　出力されるグラフの画像は次のようになります。
+#+BEGIN_SRC dot :file ./images/rank.png
+digraph graph_T183 {
+  size="2,2";
+  node_T184 [label=0,color=red];
+  node_T185 [label=1,color=blue];
+  node_T186 [label=2,color=red];
+  node_T187 [label=3,color=blue];
+  node_T188 [label=4,color=red];
+  node_T189 [label=5,color=blue];
+  {rank=same; node_T184; node_T186; node_T188};
+  {rank=same; node_T185; node_T187; node_T189};
+  node_T184 -> node_T186;
+  node_T186 -> node_T188;
+  node_T185 -> node_T187;
+  node_T187 -> node_T189;
+  node_T184 -> node_T185;
+  node_T186 -> node_T187;
+  node_T188 -> node_T189;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/rank.png]]
+
+(ノードの高さを揃える操作は使用頻度が高いので、ユーティリティとして再定義しています。cf.[[複数のノードを同じ高さに設定する関数：~][ユーティリティ：~]])
+
+
+　
+
+##--------------------------------------------------------------------
+** ポート
+##--------------------------------------------------------------------
+
+　 *ポート* とは、エッジの始点や終点となるノードの出入り口のことです。
+エッジコンストラクタ =->= でエッジを生成する際に、 *ポートオペレータ* =@= によって、ポートを指定することができます。
+ =(@ node compass-keyword)= によって、 /compass-keyword/ と対応する方位のポートが指定されたnodeが返されます。
+ /compass-keyword/ と方位の対応は次の表のようになっています。
+
+| compass-keyword | :n | :ne  | :e | :se  | :s | :sw  | :w | :nw  | :c   | :_       |
+| 方位            | 北 | 北東 | 東 | 南東 | 南 | 南西 | 西 | 北西 | 中心 | 自動調整 |
+
+----------------------------------------------------------------------
+　ポートの使い方を次の例で見ていきましょう。
+#+SRCNAME: port.lisp
+#+BEGIN_SRC lisp -n
+(& (:size "2,2")
+  (-> (@ "a" :s) (@ "b" :n))
+  (-> (@ "b" :w) "c")
+  (-> (@ "b" :s) "d")
+  (-> (@ "b" :e) "e"))
+#+END_SRC
+
+- 2行目、ノードaの南の方位ポートからノードbの北の方位ポートへのエッジが生成されます。
+- 3行目、ノードbの西の方位ポートからノードcへのエッジが生成されます。
+- 4行目、ノードbの南の方位ポートからノードdへのエッジが生成されます。
+- 5行目、ノードbの東の方位ポートからノードeへのエッジが生成されます。
+
+　上のコードで生成されるグラフの画像は次のようになります。
+ノードbに出入りするエッジの始点、終点が東西南北になっています。
+#+BEGIN_SRC dot :file ./images/port.png
+digraph graph_T203 {
+  size="2,2";
+  "a":s -> "b":n;
+  "b":w -> "c";
+  "b":s -> "d";
+  "b":e -> "e";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/port.png]]
+
+
+　次の節では、特別なノードであるレコードを導入します。
+レコードでは、ポート（フィールドポート）の場所を自分で設定することができます。
+
+
+
+　
+
+##--------------------------------------------------------------------
+** レコード
+##--------------------------------------------------------------------
+
+　 *レコード* とは、内部構造を持つ特別なノードです。
+レコードを用いることで、[[例6 Binary search tree using records]]や、[[例8 Hash table]]のような複雑なグラフを描くことができます。
+レコードを生成するには、 =<>= の代わりに *レコードコンストラクタ* =[]= を使用します。
+ =[]= の使用方法は =<>= とほとんど変わりませんが、ラベル中で特別な意味を持つ文字 =|=, ={=, =}= , =:= を使用することができます。
+
+##--------------------------------------
+*** フィールド
+##--------------------------------------
+
+　レコードはいくつかの内部区画に分割することができます。
+そのような内部区画を *フィールド* と呼びます。
+ノードをフィールドに分割するには、ラベル中で区切り =|= を使います。
+
+　区切り =|= を含む2つ以上のフィールドを中括弧 ={= , =}= でくくることで、出力されるノードの区切り方向の縦横を変えることができます。
+ネストされた ={= , =}= に囲まれた部分は、深さにつれて縦、横、縦、横のように順次、変更されていきます。
+
+--------------------------------------------------------------------
+
+　フィールドの設定の仕方を次の例で見ていきましょう。
+#+SRCNAME: record-field.lisp
+#+BEGIN_SRC lisp
+  (&& (-> "A" ([] "a|b|c"))
+      (-> "A" ([] "d|{1|{e|{2|f|3}|g}|4}|h")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/record-field.png
+digraph graph_T228 {
+  record_T229 [shape=record,label="a|b|c"];
+  "A" -> record_T229;
+  record_T231 [shape=record,label="d|{1|{e|{2|f|3}|g}|4}|h"];
+  "A" -> record_T231;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/record-field.png]]
+
+　コードの2行目は、 =([] "a|b|c")= の部分で、3つのフィールドを持つレコードを生成します。
+そのレコードの出力されたものが、上のグラフの左下の部分です。
+フィールドは、それぞれa、b、cとラベルづけされています。
+
+　コードの3行目のラベル =d|{1|{e|{2|f|3}|g}|4}|h= を見ていきましょう（上のグラフの右下の部分に対応しています）。
+一見、複雑ですが丁寧に外側から一枚一枚 ={= , =}= を剥いでいけば簡単に理解できます。
+まず、ラベルの真ん中を***と置いて、 =d|***|h= のように外側から見ると、「左から右向きにフィールドd、***、フィールドh」となります。
+
+　次に***部分 ={1|{e|{2|f|3}|g}|4}= を見ていきましょう。
+この部分も同じように外側から見てみると、 ={1|****|4}= となります。
+={= , =}= に囲まれているので、縦横が入れ替わり「上から下向きにフィールド1、****、フィールド4」となります。
+
+　次の****部分 ={e|{2|f|3}|g}= も外側から見てみると、 ={e|*****|g}= となります。
+={= , =}= に囲まれているので、縦横が入れ替わり「左から右向きにフィールドe、*****、フィールドg」となります。
+
+　最後の*****部分={2|f|3}= は、 「上から下向きにフィールド2、フィールドf、フィールド3」となります。
+
+　以上をまとめると
+「左から右向きに、フィールドd
+（上から下向きに、フィールド1
+｛左から右向きに、フィールドe
+［上から下向きに、フィールド2、フィールドf、フィールド3］
+フィールドg｝フィールド4）フィールドh」
+になります。
+
+##--------------------------------------
+*** フィールドポート
+##--------------------------------------
+
+　前節[[ポート]]で導入したポートの場所は、いくつかの方位に限られていました。
+レコードでは *フィールドポート* と呼ばれる新たなポートを設定することができます。
+フィールドポートは各フィールドごとに設定することができます。
+
+　フィールドポートを設定するには、ラベルの中でフィールドを設定する際のラベル中の区切り =|= を、 =|:port-name= に置き換えます。
+ /port-name/ は（空白を含まない）文字列であり[fn:port-name]、ラベル内で一意にフィールドポートを指定することができるものです。
+つまり、1つのレコード内の異なる2つのフィールドで、同じポート名を使うことはできません。
+
+[fn:port-name]
+ただし、方位ポートで既に使用されているn,ne,se,s,sw,w,nw,c,_ をフィールドポート名に付けることは、
+コードの読みやすさの観点から、あまりおすすめできません。
+
+　ここで、注意が必要なことは、 1つのフィールド内でフィールドポートとフィールドラベルを同時に用いる場合、
+フィールドポートとフィールドラベルの間に空白を入れることが必須なことです。
+さもないと、次の項目2のようにラベルもポート名の一部と認識されてしまいます。
+
+1. "a|:port1 b|c"
+   ==>
+   a, b, cとラベルされた3つのフィールドが生成され、中央のフィールドにポート =:port1= が設定されます。
+
+2. "a|:port1b|c"
+   ==>
+   a, "", c,とラベルされた3つのフィールドが生成され、中央のフィールドにポート =:port1b= が設定されます。
+
+結局のところ、 =|:port-name= *の後にはいつも空白が必要だ* と覚えておけば無難です。
+
+
+--------------------------------------------------------------------
+
+　前節[[フィールド]]の例にフィールドポートを追加したものが以下のコードです。
+
+　まず着目してほしい部分は2行目で、a, b, cとラベルされた3つのフィールドの部分です。
+それぞれフィールドポート =:a=, =:b=, =:c= が設定されています。
+もちろん、フィールドポートの名前はラベルと必ず同じ名前 =:a=, =:b=, =:c= にする必要は無く、 =:left=, =:center=, =:right= のような任意のものでも構いません。
+同じ行で、もう1つ着目してほしい部分は、 =:shape= 属性に =:Mrecord= が指定されているところです。
+ =:Mrecord= を指定すると、下のグラフの左下のように、角が落とされたレコードが出力されます。
+
+　フィールドポートに関することで知っておくと便利なことは、7行目や8行目のように、
+同じレコード内であってもフィールドの間にエッジを結ぶことができるということです。
+#+SRCNAME: record-port.lisp
+#+BEGIN_SRC lisp -n
+  (let ((abc   ([] ":a a|:b b|:c c" :shape :Mrecord))
+        (defgh ([] "d|{1|{e|{:2 2|:f f|:3 3}|g}|4}|h")))
+    (&& (rank :same abc defgh)
+        (-> "A" (@ abc :b))
+        (-> "A" (@ defgh :f))
+        (-> (@ abc :a) (@ abc :c))
+        (-> (@ defgh :2) (@ defgh :3))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/record-port.png
+digraph graph_T184 {
+  record_T185 [shape=record,label="<a> a|<b> b|<c> c",shape=Mrecord];
+  record_T186 [shape=record,label="d|{1|{e|{<2> 2|<f> f|<3> 3}|g}|4}|h"];
+  {rank=same; record_T185; record_T186};
+  "A" -> record_T185:b;
+  "A" -> record_T186:f;
+  record_T185:a -> record_T185:c;
+  record_T186:2 -> record_T186:3;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/record-port.png]]
+
+　
+
+　(もし、レコードでは表現できないような複雑なノードや、複雑なラベルを持つエッジを生成したいのなら、
+[[Html-likeラベル][html-likeラベル]]によって達成することができるかもしれません。)
+
+
+　
+
+##--------------------------------------------------------------------
+** ユーティリティ集
+##--------------------------------------------------------------------
+
+　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティ集です。
+この章で導入される、with-node, with-edge以外のユーティリティはすべて、コンストラクタなどを組み合わせたものです。
+
+
+##--------------------------------------
+*** 2文字省略するためのマクロ
+##--------------------------------------
+
+　&&は今まで何度も出てきたグラフコンストラクタですが、真の姿は、属性を指定する必要のないとき、2文字省略するためのスーパーマクロです(同様のマクロとして$$もあります)。
+2文字省略することにより、指の疲労が軽減され、キーボードの摩耗も減り、電力の消費も抑えられ、カッコの数も減り、コードの可読性も向上し、世の中が少しだけ良くなる究極のワンダフルマクロです。
+
+#+BEGIN_SRC lisp
+(&& nodes-edges-graphs)
+->                   ;上のコードは下のコードに展開される
+(& () nodes-edges-graphs)
+
+($$ graph)
+->                   ;上のコードは下のコードに展開される
+($ () graph)
+#+END_SRC
+
+##--------------------------------------
+*** コンテキストを作り出すもの
+##--------------------------------------
+　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
+コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
+ with-node,  with-edgeをネストした場合、属性値は上書きされます。
+
+ *注：* 
+ *with-node, with-edgeは、&,[&],&&の内部でのみ、期待通りの動作が保証されます。* 
+with-node, with-edgeは、暗黙の部分グラフを生成します。
+そのため、トップレベルでwith-node, with-edgeを使用した場合、コンテキスト内のグラフ属性が無効になってしまいます。
+次の上のコードは期待通りに動作しますが、下のコードは期待通りに動作しません。
+#+BEGIN_SRC lisp
+  ;; 出力されるグラフにラベルが付く
+  (& (:label "このグラフ属性は有効")  ;トップレベルのグラフなので、属性が有効になる
+    (with-node (:color :red)
+      (-> "a" "b")))
+  
+  ;; 出力されるグラフにはラベルが付かない
+  (with-node (:color :red)
+    (& (:label "このグラフ属性は無効") ;with-nodeによって生成される暗黙の部分グラフの部分グラフなので、属性が無効になる
+      (-> "a" "b")))
+#+END_SRC
+結局のところ、 *with-node, with-edgeは、&,[&],&&の内部でのみ、使用できると考えた方が無難です。*
+
+--------------------------------------
+
+##--------------------------------------
+**** with-node
+##--------------------------------------
+#+SRCNAME: with-node.lisp
+#+BEGIN_SRC lisp -n
+  (& (:rankdir :LR)
+    "a"
+    (with-node (:color :red)
+      (-> "a" "b")
+      (with-node (:shape :box)
+        (-> "b" "c")
+        (with-node (:color :blue)
+          (-> "c" "d")
+          (-> "d" (<> "e" :color :goldenrod :shape :box3d))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/with-node.png
+digraph graph_T79 {
+  rankdir=LR;
+"a";
+  { node [color=red];
+  "a" -> "b";
+  { node [shape=box];
+  "b" -> "c";
+  { node [color=blue];
+  "c" -> "d";
+  node_T83 [label="e",color=goldenrod,shape=box3d];
+  "d" -> node_T83;
+  };
+  };
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/with-node.png]]
+
+詳しくコード内容を説明します。
+
+2行目、ノードaはデフォルトの属性値を持ったノードとして生成されます。
+
+3行目、ノードの色属性のデフォルト値が赤のコンテキストがwith-nodeによって作り出されます。
+これより深いコンテキストで生成されるノードのデフォルト色は赤になります。
+
+4行目、ノードbが生成され、エッジa->bが生成されます。
+ノードbの色は赤です。
+
+5行目、ノードの形属性のデフォルトがboxのコンテキストがwith-nodeによって作り出されます。
+これより深いコンテキストで生成されるノードは、デフォルトで形がbox、色が赤のものになります。
+
+6行目、色が赤、形がboxのノードcが生成され、エッジb->cが生成されます。
+
+7行目、青がノードの色属性のデフォルトである、コンテキストがwith-nodeによって作り出されます。
+これより深いコンテキストで生成されるノードは、デフォルトで形がbox、色が青のものとなります。
+ここで、注目してもらいたいことは、 _デフォルトの色属性値が、(3行目で指定された)赤から青に上書きされた_ ということです。
+
+8行目、色が青、形がboxのノードdが生成され、エッジc->dが生成されます。
+
+9行目、色がgoldenrod、形がbox3dのノードeが生成され、エッジd->eが生成されます。
+ここで、注目して欲しいことは、 _デフォルトの属性値が変更されているコンテキスト内でも、生成するノードの属性値を自由に指定するができる_ ということです。
+
+以上をまとめると、with-nodeコンテキスト用いる際に注意することは、次の3点です（これらは次に見るwith-edgeでも同様です）。
+1. 属性のデフォルト値がすべて変更される。
+2. ネストした場合、デフォルト値が上書きされていく。
+3. コンテキスト内でも、通常のようにコンストラクタで属性値を指定することができる。
+
+
+----------------------------------------------------------------------
+##--------------------------------------
+**** with-edge
+##--------------------------------------
+
+　with-edgeの使い方もwith-nodeと同様です。
+解説すると冗長になってしまいますので、ここでは例の提示のみにとどめます。
+#+SRCNAME: with-edge.lisp
+#+BEGIN_SRC lisp -n
+  (& (:rankdir :LR)
+    (with-edge (:arrowhead :onormal)
+      (-> "a" "b")
+      (with-edge (:color :red)
+        (-> "b" "c")
+        (-> "c" "d" :color :green :arrowhead :dot)))
+    (-> "d" "e"))          ;エッジd->eはコンテキスト外
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/with-edge.png
+digraph graph_T167 {
+  rankdir=LR;
+  { edge [arrowhead=onormal];
+  "a" -> "b";
+  { edge [color=red];
+  "b" -> "c";
+  "c" -> "d" [color=green,arrowhead=dot];
+  };
+  };
+  "d" -> "e";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/with-edge.png]]
+
+
+
+##--------------------------------------
+*** ノードを引数にとるもの1：有向グラフ
+##--------------------------------------
+
+##--------------------------------------
+**** ->の逆：<-
+
+#+BEGIN_SRC lisp
+ (<- "a" "b")
+#+END_SRC
+
+# (dot-output
+#   (& (:rankdir :LR)
+#     (<- "a" "b")))
+
+#+BEGIN_SRC dot :file ./images/inv-edge.png
+digraph graph_T64 {
+  rankdir=LR;
+  "b" -> "a";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/inv-edge.png]]
+
+
+----------------------------------------------------------------------
+****  自己ループを生成する関数：?
+
+　関数 =?= は単一のノードとエッジ属性を引数に取り、自己ループを生成します。
+#+BEGIN_SRC lisp
+(? (<> 42 :shape :Mcircle) :label " Life, the Universe and Everything")
+#+END_SRC
+
+# (dot-output
+#   (& ()
+#     (? (<> 42 :shape :Mcircle)
+#        :label " Life, the Universe and Everything")))
+
+#+BEGIN_SRC dot :file ./images/self-loop.png
+digraph graph_T10 {
+  node_T11 [label=42,shape=Mcircle];
+  node_T11 -> node_T11 [label=" Life, the Universe and Everything"];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/self-loop.png]]
+
+
+----------------------------------------------------------------------
+****  複数のノードを同じ高さに設定する関数：~
+
+　 =~= は、引数に複数のノードを取り、グラフ内でそれらのノードを同じ高さに配置する副作用を行い、NILを返します。
+=~= の定義は次のものです。
+#+BEGIN_SRC lisp
+(defun ~ (&rest nodes)
+  (apply #'rank :same nodes))
+#+END_SRC
+
+　定義からわかるように、 =(~ ****)= はランクオペレータ =(rank :same ****)= と同等の働きをします。
+つまり、 =~= はコードの省略のためだけのユーティリティです。
+実際にDonutsを使ってみて、ノードの高さを揃える頻度がわりと多いこと、記号 =~= は視覚的にわかりやすいことを鑑み、ユーティリティとして新たに定義することにしました。
+
+----------------------------------------------------------------------
+****  複数のノードを数珠つなぎに結ぶ関数：-->
+#+BEGIN_SRC lisp
+  (--> "a" "b" (<> "d" :color :red) "e")
+#+END_SRC
+
+# (& (:rankdir :LR)
+#     (--> "a" "b" (<> "d" :color :red) "e"))
+
+#+BEGIN_SRC dot :file ./images/edges.png
+digraph graph_T41 {
+  rankdir=LR;
+  node_T42 [label="d",color=red];
+  "a" -> "b" -> node_T42 -> "e";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/edges.png]]
+
+ *注：* 個別にエッジの属性を指定することはできません。
+
+----------------------------------------------------------------------
+****  1つのノードから他のノードへ、エッジを放射状に張るマクロ：->>
+
+　 =->>= は、複数のノード（とエッジの属性）を引数に取り、先頭のノードから2番目以降のすべてのノードへのエッジを張った部分グラフを生成するマクロです。
+下のコードの3、4行目のように、エッジの属性を個々に指定することができます。
+便利ですがlispの通常の考え方にやや反するため注意が必要です。
+
+#+BEGIN_SRC lisp
+(->> "a" "b"
+         ("c" :color :red)
+         (<> "d" :color :goldenrod)
+         ((<> "e" :style :filled) :color :green))
+
+; 上のコードは下の様にマクロ展開されます
+
+(LET ((#:G1324 "a"))
+  (&&
+    (-> #:G1324 "b")
+    (-> #:G1324 "c" :COLOR :RED)
+    (-> #:G1324 (<> "d" :COLOR :GOLDENROD))
+    (-> #:G1324 (<> "e" :STYLE :FILLED) :COLOR :GREEN)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/radial-edges.png
+digraph graph_T50 {
+  size="3,3";
+  "a" -> "b";
+  "a" -> "c" [color=red];
+  node_T53 [label="d",color=goldenrod];
+  "a" -> node_T53;
+  node_T55 [label="e",style=filled];
+  "a" -> node_T55 [color=green];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/radial-edges.png]]
+
+----------------------------------------------------------------------
+****  1つのノードへ他のノードから、エッジを収束状に張るマクロ1：<==
+
+　 =<=== は、複数のノード（とエッジの属性）を引数に取り、先頭のノードへ他のノードから収束状（放射の逆）のエッジを張った部分グラフを生成するマクロです。
+下のコードの3、4行目のように、個別にエッジの属性を指定することができます。
+便利ですがlispの通常の考え方にやや反するため注意が必要です。
+#+BEGIN_SRC lisp
+(<== "a" "b"
+         ("c" :color :red)
+         (<> "d" :color :goldenrod)
+         ((<> "e" :style :filled) :color :green))
+
+; 上のコードは下の様にマクロ展開されます
+
+(LET ((#:G1326 "a"))
+  (&&
+    (<- #:G1326 "b")
+    (<- #:G1326 "c" :COLOR :RED)
+    (<- #:G1326 (<> "d" :COLOR :GOLDENROD))
+    (<- #:G1326 (<> "e" :STYLE :FILLED) :COLOR :GREEN)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/conv-edges1.png
+digraph graph_T57 {
+  size="3,3";
+  "b" -> "a";
+  "c" -> "a" [color=red];
+  node_T60 [label="d",color=goldenrod];
+  node_T60 -> "a";
+  node_T62 [label="e",style=filled];
+  node_T62 -> "a" [color=green];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/conv-edges1.png]]
+
+----------------------------------------------------------------------
+****  他のノードから1つのノードへ、エッジを収束状に張るマクロ2：==>
+
+　 ==> は、複数のノード（とエッジの属性）を引数に取り、
+最後尾のノードへ他のノードから収束状（放射状の逆）のエッジを張った部分グラフを生成するマクロです。
+実質的には <== と同様のものですが、グラフコードの見た目にこだわる人のために導入しました
+（エッジは左から右でなければならない人のため）。
+
+　個別にエッジの属性を指定することができます。
+便利ですがlispの通常の考え方にやや反するため注意が必要です。
+#+BEGIN_SRC lisp
+(==> "a" "b" ("c" :color :red) ((<> "d" :color :goldenrod) :color :green)
+     (<> "e" :style :filled))
+
+; 上のコードは下の様にマクロ展開されます
+
+(LET ((#:G1328 (<> "e" :STYLE :FILLED)))
+  (&&
+    (-> "a" #:G1328)
+    (-> "b" #:G1328)
+    (-> "c" #:G1328 :COLOR :RED)
+    (-> (<> "d" :COLOR :GOLDENROD) #:G1328 :COLOR :GREEN)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/conv-edges2.png
+digraph graph_T89 {
+  size="3,3";
+  node_T90 [label="e",style=filled];
+  "a" -> node_T90;
+  "b" -> node_T90;
+  "c" -> node_T90 [color=red];
+  node_T94 [label="d",color=goldenrod];
+  node_T94 -> node_T90 [color=green];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/conv-edges2.png]]
+
+##--------------------------------------
+*** ノードを引数にとるもの2：無向グラフ
+##--------------------------------------
+
+　無向グラフについては、後の[[無向グラフ、レイアウトアルゴリズム]]の節で詳しく解説します。
+
+
+----------------------------------------------------------------------
+**** 複数のノードを直線状につなぐ関数：---
+#+BEGIN_SRC lisp
+  (--- "a" "b" (<> "d" :color :red) "e")
+#+END_SRC
+
+# (& (:rankdir :LR)
+#     (--- "a" "b" (<> "d" :color :red) "e"))
+
+#+BEGIN_SRC dot :file ./images/liner.png
+graph graph_T41 {
+  rankdir=LR;
+  node_T42 [label="d",color=red];
+  "a" -- "b" -- node_T42 -- "e";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/liner.png]]
+
+ *注：* 個別にエッジの属性を指定することはできません。
+
+
+----------------------------------------------------------------------
+**** 複数のノードを環状につなぐ関数：O
+
+#+BEGIN_SRC lisp
+(defun O (&rest nodes)
+  (apply #'--- (conc1 nodes (1st nodes))))
+#+END_SRC
+
+----------------------------------------------------------------------
+**** 1つのノードを多数のノードとつなぐマクロ1：-<
+
+　 =-<= は、複数のノード（とエッジの属性）を引数に取り、先頭のノードとそれ以外のすべてのノードとを結んだ部分グラフを生成するマクロです。
+ =->>= の無向グラフ版です。
+#+BEGIN_SRC lisp
+(-< "a" "b"
+        ("c" :color :red)
+        (<> "d" :color :goldenrod)
+        ((<> "e" :style :filled) :color :green))
+
+; 上のコードは下の様にマクロ展開されます
+
+(LET ((#:G1198 "a"))
+  (&&
+    (-- #:G1198 "b")
+    (-- #:G1198 "c" :COLOR :RED)
+    (-- #:G1198 (<> "d" :COLOR :GOLDENROD))
+    (-- #:G1198 (<> "e" :STYLE :FILLED) :COLOR :GREEN)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/net1.png
+graph graph_T138 {
+  size="3,3";
+  "a" -- "b";
+  "a" -- "c" [color=red];
+  node_T134 [label="d",color=goldenrod];
+  "a" -- node_T134;
+  node_T136 [label="e",style=filled];
+  "a" -- node_T136 [color=green];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/net1.png]]
+
+
+----------------------------------------------------------------------
+**** 1つのノードを多数のノードとつなぐマクロ2：>-
+
+　 =>-= は、複数のノード（とエッジの属性）を引数に取り、最後尾のノードとそれ以外すべてのノードへのエッジを張った部分グラフを生成するマクロです。
+==>の無向グラフ版です。
+
+#+BEGIN_SRC lisp
+(>- "a" "b" ("c" :color :red) ((<> "d" :color :goldenrod) :color :green)
+    (<> "e" :style :filled))
+
+; 上のコードは下の様にマクロ展開されます
+
+(LET ((#:G1354 (<> "e" :STYLE :FILLED)))
+  (&&
+    (-- "a" #:G1354)
+    (-- "b" #:G1354)
+    (-- "c" #:G1354 :COLOR :RED)
+    (-- (<> "d" :COLOR :GOLDENROD) #:G1354 :COLOR :GREEN)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/net2.png
+graph graph_T145 {
+  size="3,3";
+  node_T139 [label="e",style=filled];
+  "a" -- node_T139;
+  "b" -- node_T139;
+  "c" -- node_T139 [color=red];
+  node_T143 [label="d",color=goldenrod];
+  node_T143 -- node_T139 [color=green];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/net2.png]]
+
+　
+
+##--------------------------------------------------------------------
+** 無向グラフ、レイアウトアルゴリズム
+##--------------------------------------------------------------------
+
+　今までは *有向* グラフの描き方のみを見てきました。
+しかし、Donutsでは *無向* グラフを描くこともできます。
+無向グラフを描くには、いくつかの方法があります。
+手っ取り早い方法は、 *エッジの属性:shapeを:noneに指定すること* です。
+もう一つの方法は、
+#+HTML: <b>-&gt;をすべて&ndash;&ndash;に置き換えること</b>です
+（ *注：* 1つのグラフ中で =->= と =--= を併用することはできません[fn:g-d]）。
+
+
+[fn:g-d]
+Dot言語に詳しい方のための補足です。
+グラフ中で1つでも =--= または =---= を使用した場合、Donutsで出力されるdotコードの宣言が自動的に =digraph= ではなく =graph= になります。
+
+
+　両者の方法の違いは、 _後者の場合、無向グラフのレイアウトアルゴリズムを選択できる_ ことです。
+
+　 *レイアウトアルゴリズム* とは、Graphvizでdotファイルから画像ファイルを生成するときに使用する、グラフ生成アルゴリズムのことです。
+レイアウトアルゴリズムを変えることで、出力されるグラフのレイアウトが変化します。
+Donutsでは、シェルインターフェイス$のプロパティリスト中で、キーワード =:layout= によって指定することができます。
+:layoutの取れる値は、 =:dot=, =:neato=, =:circo=, =:twopi=, =:fdp=, =:sfdp= の6つです(デフォルトは:dot)。
+それぞれのレイアウトによるグラフ画像の違いを見ていきましょう。
+
+# dot   	"hierarchical" or layered drawings of directed graphs.
+#         This is the default tool to use if edges have directionality.
+
++ *:dot* :: 主に有向グラフをレイアウトするアルゴリズム。デフォルトのレイアウトアルゴリズム。階層的なレイアウト。
+#+BEGIN_SRC lisp
+  ($ (:layout :dot)     ;デフォルトは:dotなのであえて指定しなくとも良いが解説のため
+     (& (:rankdir :LR)
+       (O "n0" "n1" "n2" "n3"))) 
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/layout-dot.png
+graph graph_T101 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-dot.png]]
+
+# neato 	"spring model'' layouts.
+#         This is the default tool to use if the graph is not too large (about 100 nodes)
+#         and you don't know anything else about it. Neato attempts to minimize a global energy function,
+#         which is equivalent to statistical multi-dimensional scaling.
+
++ *:neato* :: 無向グラフをバネ状にレイアウトするアルゴリズム。
+#+BEGIN_SRC lisp
+  ($ (:layout :neato)
+     (& (:rankdir :LR)
+       (O "n0" "n1" "n2" "n3"))) 
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/layout-neato.png :cmdline -Kneato -Tpng
+graph graph_T101 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-neato.png]]
+
+# twopi 	radial layouts, after Graham Wills 97.
+#         Nodes are placed on concentric circles depending their distance from a given root node.
+
++ *:twopi* :: 放射状のレイアウトアルゴリズム。
+#+BEGIN_SRC lisp
+  ($ (:layout :twopi)
+     (& (:rankdir :LR)
+       (-< "n0" "n1" "n2" "n3")))
+#+END_SRC
+　towpiは環状よりも放射状のグラフに適しているため、
+この例だけ他と異なるグラフを出力しています。
+
+#+BEGIN_SRC dot :file ./images/layout-twopi.png :cmdline -Ktwopi -Tpng
+graph graph_T111 {
+  rankdir=LR;
+  "n0" -- "n1";
+  "n0" -- "n2";
+  "n0" -- "n3";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-twopi.png]]
+
+# circo 	circular layout, after Six and Tollis 99, Kauffman and Wiese 02.
+#         This is suitable for certain diagrams of multiple cyclic structures,
+#         such as certain telecommunications networks.
+
++ *:circo* :: 環状のレイアウトアルゴリズム。ネットワークなどのレイアウトに適している。
+#+BEGIN_SRC lisp
+  ($ (:layout :circo)
+     (& (:rankdir :LR)
+       (O "n0" "n1" "n2" "n3"))) 
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/layout-circo.png :cmdline -Kcirco -Tpng
+graph graph_T101 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-circo.png]]
+
+
+# fdp   	"spring model'' layouts similar to those of neato, 
+#         but does this by reducing forces rather than working with energy.
+
++ *:fdp*  :: バネ状のレイアウトアルゴリズム。neatoと似ている。
+#+BEGIN_SRC lisp
+  ($ (:layout :fdp)
+     (& (:rankdir :LR)
+       (O "n0" "n1" "n2" "n3")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/layout-fdp.png :cmdline -Kfdp -Tpng
+graph graph_T101 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-fdp.png]]
+
+# sfdp   	multiscale version of fdp for the layout of large graphs.
+
++ *:sfdp*  :: fdpのマルチスケール版、大規模なグラフのためのレイアウトアルゴリズム。
+#+BEGIN_SRC lisp
+  ($ (:layout :sfdp)
+     (& (:rankdir :LR)
+       (O "n0" "n1" "n2" "n3"))) 
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/layout-sfdp.png :cmdline -Ksfdp -Tpng
+graph graph_T101 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-sfdp.png]]
+
+　
+
+##--------------------------------------------------------------------
+** Html-Likeラベル
+
+(*注:* html-likeラベルは、古いバージョンのGraphvizではサポートされていません)
+
+　 *html-likeラベル* は、通常のラベルに比べ、表現力の優れた特別なラベルです。
+html-likeラベルは、コード =(html tag)= によって生成され、エッジやノードのラベルとして用いることができます(*注:* レコードのラベルとしてhtml-likeラベルを用いることはできません)。
+Graphvizではhtmlタグのような形式なので、html-likeラベルと呼ばれています。
+Donutsではhtmlタグの冗長性を排した *タグ関数* によってタグオブジェクトを生成し、 *マクロhtml* によってタグオブジェクトをhtml-likeラベルに変換します。
+
+　すべてのタグ関数は、引数として任意数の、属性と属性値、タグ本体(数値や文字列、タグオブジェクト)を取り、タグを生成します。
+タグ関数は、 *br*, *hr*, *vr*, *img*, *font*, *i*, *b*, *u*, *sub*, *sup*, *table*, *tr*, *td* です。
+
+　
+
+----------------------------------------------------------------------
+　具体例によってhtml-likeラベルの使い方を見ていきましょう。
+
+#+BEGIN_SRC lisp :exports code -n
+  (&& (<> (html
+           (table :bgcolor :khaki
+                  (tr (td "!!WANTED!!" (br)
+                          (font :point-size "10" "Dead or Alive")
+                          :border 0))
+                  (tr (td :bgcolor :ghostwhite :border 0
+                          (img :src "/home/tkych/lisplogo_alien_128.png")))
+                  (tr (td :border 0 "$1,000,000" (br) "REWARD"))))
+          :shape :plaintext))
+#+END_SRC
+
+
+
+#+BEGIN_SRC dot :file ./images/html-like-label1.png
+digraph graph_ID_71 {
+  node_ID_70 [label=<<TABLE BGCOLOR="khaki"><TR><TD BORDER="0">!!WANTED!!<BR/><FONT POINT-SIZE="10">Dead or Alive</FONT></TD></TR><TR><TD BGCOLOR="ghostwhite" BORDER="0"><IMG SRC="/home/tkych/lisplogo_alien_128.png"/></TD></TR><TR><TD BORDER="0">$1,000,000<BR/>REWARD</TD></TR></TABLE>>
+    ,shape=plaintext];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/html-like-label1.png]]
+
+　1行目、html以降の部分がhtml-likeラベルの内容です。
+2行目、タグ関数tableによってテーブルが作られます。
+属性:bgcolorでテーブル全体の背景色を指定することができます。
+ここでは:khaki(カーキ色)に指定されています。
+
+　3行目、タグ関数tr(table-rowの略)によってテーブル内に行が配置され、タグ関数tdによって行内にテーブルセルが作られます。
+タグ関数tdの引数は、文字列"!!WANDED!!"、brタグ、fontタグ、そして生成されるtdタグ(テーブルセル)のボーダー属性を指定する:border 0です。
+
+　タグ関数brによって生成されるタグは改行を表すタグです。
+brタグは:align属性を:center, :left, :rightのいずれかに指定することによって、前の行の配置を中央寄せ、左寄せ、右寄せに出力することができます(デフォルトは:center)。
+
+　タグ関数fontは、文字列のフォントの種類や大きさを指定する際に使います。
+fontタグは:color属性によって文字色を、:faceによってフォントの種類を、:point-sizeによって文字の大きさを、それぞれ指定することができます。
+例では文字列"Dead or Alive"のフォントの大きさが10に指定されています。
+
+　ボーダー属性はテーブルセルの枠の太さを指定します。
+ここでは0なので枠は出力されません。
+一般的に、タグの属性を指定するには、属性を表すキーワードと属性値を =:attribute value= のように並べます。
+ =:attribute value= は、タグの引数内であればどこに置いてもかまいません。
+つまり、6,8行目のようにタグ関数の引数の先頭に置いてもかまいません。
+ただし、 *属性キーワードの次には必ず属性値を置かねばなりません* 。
+
+　7行目、imgタグによって画像ファイルを出力しています。
+タグ関数imgは、:src属性値に画像ファイルのパスを指定することにより、画像をラベル中に出力することができます。
+
+# タグ関数imgは、:src属性によって出力される画像ファイルを指定し、:scaleによってセル内の配置(余白)を指定します。
+# :scaleで指定できる属性値は次のものです。
+
+# - :false　画像の大きさそのまま(デフォルト)
+# - :true　画像の尺度そのままにセルの大きさに一様に合わせる(動作未確認)。
+# - :width　セルの横幅に画像を合わせる。
+# - :height　セルの縦幅に画像を合わせる。
+# - :both　セルの縦幅と横幅に画像を合わせる。
+
+# ( (&& (<> (html
+#            (table :bgcolor :khaki
+#                   (tr (td "!!WANDED!!" (br)
+#                           (font :point-size "10" "Dead or Alive")
+#                           :border 0))
+#                   (tr (td :bgcolor :ghostwhite :border 0
+#                           (img :scale :both :src "/home/tkych/project/donuts/doc/images/reading-algorithm-big.png")))
+#                   (tr (td :border 0 "$1,000,000" (br) "REWARD"))))
+#           :shape :plaintext)))
+
+# #+BEGIN_SRC dot :file ./tmp.png
+# digraph graph_ID_101 {
+#   node_ID_100 [label=<<TABLE BGCOLOR="khaki">
+# <TR><TD BORDER="0">!!WANDED!!<BR/><FONT POINT-SIZE="10">Dead or Alive</FONT></TD></TR>
+# <TR><TD BGCOLOR="ghostwhite" BORDER="0"><IMG SCALE=BOTH SRC="/home/tkych/project/donuts/doc/images/reading-algorithm-big.png"/></TD></TR><TR><TD BORDER="0">$1,000,000<BR/>REWARD</TD></TR></TABLE>>
+#     ,shape=plaintext];
+# }
+# #+END_SRC
+
+
+# FALSE : keep image its natural size. (Default)
+# TRUE : scale image uniformly to fit.
+# WIDTH : expand image width to fill
+# HEIGHT : expand image height to fill
+# BOTH : expand both image width height to fill
+
+# If this attribute is undefined, the image inherits the imagescale attribute of the graph object being drawn.
+# As with the imagescale attribute, if the cell has a fixed size and the image is too large,
+# any offending dimension will be shrunk to fit the space, the scaling being uniform in width and height if SCALE="true".
+# Note that the containing cell's ALIGN and VALIGN attributes override an image's SCALE attribute. 
+
+
+　9行目、ノードの:shape属性を:plaintextに指定しています。
+一般的に、html-likeラベルをノードのラベルとして用いる場合、ノードの形（デフォルトの楕円）が出力されないように、ノードの:shape属性を:plaintextや:noneに指定することが多いようです。
+
+
+　
+
++ 参考：[[例12 HTML-like label]]
+
+
++ リファレンスマニュアル：[[HTML-LIKEラベル]]
+
+
++ html-likeラベルについてのGraphvizマニュアル： http://www.graphviz.org/node-shapes.html
+
+
++ lispエイリアン目撃情報！！： http://www.lisperati.com/logo.html
+
+
+　
+
+##--------------------------------------------------------------------
+** 小さなプログラム --- 2分木、コンスセル、有限オートマトン
+##--------------------------------------------------------------------
+
+　描きたいグラフに規則性が存在するなら、lisp組み込みの機能を使うことで簡単に描ける場合があります。
+この節では、Donutsによる小さなプログラムを3つ紹介します。
+2分木を描くための関数binary-tree-graph、ツリーのコンスセル構造を描くためのマクロcons-cell-of、有限オートマトンの遷移図を描くためのマクロtrans-diagramです。
+ざっくり言うと、これらは[[Donuts%E3%81%AE%E6%A7%8B%E7%AF%89%E6%8C%87%E9%87%9D][大きな言語Donutsで書かれた小さなプログラム]]です。
+
+
+*** 2分木
+
+#+BEGIN_SRC lisp
+  ($$ (& (:size "6,8")
+        (binary-tree-graph '("a" ("b" ("d" "h" "i")
+                                      ("e" "j" "k"))
+                                 ("c" ("f" "l" "m")
+                                      ("g" "n" "o"))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/bin-tree-graph.png
+digraph GRAPH_T283 {
+  size="6,8";
+  "d" -> "h";  "d" -> "i";  "b" -> "d";  "e" -> "j";
+  "e" -> "k";  "b" -> "e";  "a" -> "b";  "f" -> "l";
+  "f" -> "m";  "c" -> "f";  "g" -> "n";  "g" -> "o";
+  "c" -> "g";  "a" -> "c";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/bin-tree-graph.png]]
+
+#+BEGIN_SRC lisp -n
+  (defun binary-tree-graph (tree)
+    (labels ((rec (x)
+               (let ((p (first x)) (lc (second x)) (rc (third x)))
+                 (&& (when lc
+                       (if (atom lc)
+                           (-> p lc)
+                           (&& (-> p (car lc)) (rec lc))))
+                     (when rc
+                       (if (atom rc)
+                           (-> p rc)
+                           (&& (-> p (car rc)) (rec rc))))))))
+      (if (null (cdr tree))
+          (car tree)
+          (rec tree))))
+#+END_SRC
+
+　関数 =binary-tree-graph= は、(parent left-child right-child)構造のツリーを再帰的に下り2分木グラフを生成します。
+3行目、マッチに失敗した場合にエラーが発生するので、letをdestructuring-bindに置き換えることはできません。
+12行目、ツリーがルートのみで構成されているかどうかをチェック。
+
+
+
+　
+
+##--------------------------------------
+*** コンスセル
+
+#+SRCNAME: cons-cell.lisp
+#+BEGIN_SRC lisp
+  ($$ (& (:size "5,5") (cons-cell-of (a (b c) (d (e f)) g))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/cons-cell.png
+digraph graph_T189 {
+  size="5,5";
+  record_T190 [shape=record,label="<car> |<cdr>"];
+  record_T190:car -> "A";
+  record_T192 [shape=record,label="<car> |<cdr>"];
+  record_T193 [shape=record,label="<car> |<cdr>"];
+  record_T193:car -> "B";
+  record_T195 [shape=record,label="<car> |<cdr>"];
+  record_T195:car -> "C";
+  {rank=same; record_T193; record_T195};
+  record_T193:e -> record_T195:w;
+  record_T192:car -> record_T193:car:n;
+  record_T199 [shape=record,label="<car> |<cdr>"];
+  record_T200 [shape=record,label="<car> |<cdr>"];
+  record_T200:car -> "D";
+  record_T202 [shape=record,label="<car> |<cdr>"];
+  record_T203 [shape=record,label="<car> |<cdr>"];
+  record_T203:car -> "E";
+  record_T205 [shape=record,label="<car> |<cdr>"];
+  record_T205:car -> "F";
+  {rank=same; record_T203; record_T205};
+  record_T203:e -> record_T205:w;
+  record_T202:car -> record_T203:car:n;
+  {rank=same; record_T200; record_T202};
+  record_T200:e -> record_T202:w;
+  record_T199:car -> record_T200:car:n;
+  record_T211 [shape=record,label="<car> |<cdr>"];
+  record_T211:car -> "G";
+  {rank=same; record_T199; record_T211};
+  record_T199:e -> record_T211:w;
+  {rank=same; record_T192; record_T199};
+  record_T192:e -> record_T199:w;
+  {rank=same; record_T190; record_T192};
+  record_T190:e -> record_T192:w;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/cons-cell.png]]
+
+
+#+SRCNAME: cons-cell-of.lisp
+#+BEGIN_SRC lisp
+  (defmacro cons-cell-of (tree)
+    (labels ((rec (x root-cons nest)
+               (cond ((null x) nil)
+                     ((atom x) `(set-car ,root-cons ,(format nil "~S" x)))
+                     (t        (let* ((name (gensym "CONS-"))
+                                      (car-struct (rec (car x) name t)))
+                                 (list 'cons-cell name car-struct
+                                       (rec (cdr x) name nil)
+                                       (when root-cons
+                                         (list (if nest 'set-car 'set-cdr)
+                                               root-cons name))))))))
+      (rec tree nil nil)))
+  
+  (defmacro cons-cell (name &body body)
+    `(let ((,name ([] ":car |:cdr")))
+       (&& ,@(delete nil body))))
+  
+  (defmacro set-car (cell obj)
+    `(-> (@ ,cell :car)
+         ,(if (stringp obj) obj `(@ ,obj :car :n))))
+  
+  (defmacro set-cdr (cell obj)
+    `(&& (~ ,cell ,obj)
+         (-> (@ ,cell :e)
+             ,(if (stringp obj) obj `(@ ,obj :w)))))
+#+END_SRC
+
+　マクロcons-cell-of[fn:gentle]は、ツリーを引数に取り、ツリーのコンスセル構造を描くグラフを生成します。
+展開の過程で、いったんツリーをツリー構造を表すコードに変換し、その後、グラフを生成するコードに変換します。
+
+[fn:gentle]
+マクロcons-cell-ofを書く際に、
+David S. Touretzkyによる素晴らしいLisp入門書、
+[[http://www.cs.cmu.edu/~dst/LispBook/][Common Lisp: A Gentle Introduction to Symbolic Computation]]のAppendix AのSDRAWのコードが大変参考になりました。
+SDRAWは、ループ構造も含む任意のリストを引数に取り、そのコンスセル構造を標準出力にディスプレイするライブラリです。
+ただし、ここで紹介したマクロcons-cell-ofは、コードが煩雑になってしまうため、ループ構造のリストには対応していません。
+
+#+BEGIN_SRC lisp
+(cons-cell-of (a b))
+->
+(CONS-CELL #:CONS-1347                       ;ツリー構造を表すコード
+  (SET-CAR #:CONS-1347 "A")
+  (CONS-CELL #:CONS-1348
+    (SET-CAR #:CONS-1348 "B") NIL            ;NILはマクロcons-cellの展開時に除かれる
+    (SET-CDR #:CONS-1347 #:CONS-1348)) NIL)
+->
+(LET ((#:CONS-1347 ([] ":car |:cdr")))       ;グラフを生成するコード
+  (&&
+    (-> (@ #:CONS-1347 :CAR) "A")
+    (LET ((#:CONS-1348 ([] ":car |:cdr")))
+      (&&
+        (-> (@ #:CONS-1348 :CAR) "B")
+        (&&
+          (~ #:CONS-1347 #:CONS-1348)
+          (-> (@ #:CONS-1347 :E) (@ #:CONS-1348 :W)))))))
+#+END_SRC
+
+　展開途中のツリーの構造は、cons-cell, set-car, set-cdr等のマクロによって表現されます。
+cons-cellは、nameを引数に取り、（レコードで表現された）コンスセルがnameに束縛されているコンテキストを作ります。
+set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛されたコンスセルのcar（またはcdr）にobjを連結します。
+
+
+　
+
+##--------------------------------------
+*** 有限オートマトン
+
+#+SRCNAME: finite-automaton.lisp
+#+BEGIN_SRC lisp  
+  ($$ (& (:rankdir :LR :size "3,2")
+        (trans-diagram S1 (S2) ((S1 (0 S1) (1 S2))
+                                (S2 (0 S3) (1 S2))
+                                (S3 (0 S2) (1 S1))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/finite-automaton.png
+digraph graph_T862 {
+  rankdir=LR;
+  size="3,2";
+  { edge [fontsize=9];
+  node_T847 [label="",shape=point];
+  node_T848 [label="S1",shape=circle];
+  node_T847 -> node_T848;
+  node_T848 -> node_T848 [label=0];
+  node_T849 [label="S2",shape=doublecircle];
+  node_T848 -> node_T849 [label=1];
+  node_T850 [label="S3",shape=circle];
+  node_T849 -> node_T850 [label=0];
+  node_T849 -> node_T849 [label=1];
+  node_T850 -> node_T849 [label=0];
+  node_T850 -> node_T848 [label=1];
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/finite-automaton.png]]
+
+
+#+BEGIN_SRC lisp
+  (defmacro trans-diagram (start-state final-states trans-fn-list)
+    (let* ((states (mapcar #'first trans-fn-list))
+           (gs     (loop :repeat (length states) :collect (gensym)))
+           (s-gs   (mapcar #'list states gs)))
+      (with-gensyms (s0)
+        `(let ,(cons `(,s0 (<> "" :shape :point))
+                     (mapcar (lambda (s g) (if (member s final-states :test #'equal)
+                                               `(,g (<> ,(format nil "~S" s) :shape :doublecircle))
+                                               `(,g (<> ,(format nil "~S" s) :shape :circle))))
+                             states gs))
+           (&& (with-edge (:fontsize 9)
+                 (-> ,s0 ,(s->g start-state s-gs))
+                 ,@(loop :for g :in gs
+                         :for lst :in trans-fn-list
+                         :collect `(->> ,g
+                                     ,@(loop :for e :in (rest lst)
+                                             :collect `(,(s->g (second e) s-gs) :label ,(first e)))))))))))
+  
+  (defun s->g (state state-gensyms)
+    (second (assoc state state-gensyms :test #'equal)))
+#+END_SRC
+
+　マクロtrans-diagramは、有限オートマトンの遷移図グラフを生成します。
+引数として、初期状態、最終状態のリスト、遷移関数リストの3つを取ります。
+遷移関数リストとは、遷移関数をリストで表現したものです。
+例えば、下表の遷移関数：
+| ＼ | 0  | 1  |
+| S1 | S1 | S2 |
+| S2 | S3 | S2 |
+| S3 | S2 | S1 |
+は、リスト =((S1 (0 S1) (1 S2)) (S2 (0 S3) (1 S2)) (S3 (0 S2) (1 S1)))= によって表すことができます。
+
+　
+
+##--------------------------------------------------------------------
+** Tips
+##--------------------------------------------------------------------
+
+　Donutsによるグラフ作成のこつ。
+
+*** letの後には&&を。
+
+#+BEGIN_SRC lisp
+  (let ((a (<> "a"))
+        (b (<> "c")))
+    (-> a b)
+    (-> 1 2))
+  => #<edge_ID_14 :: 1 -> 2> ;(-> 1 2)の返り値であるedgeだけが返されてしまう。普通は望まない結果。
+#+END_SRC
+
+
+#+BEGIN_SRC lisp
+  (let ((a (<> "a"))
+        (b (<> "c")))
+    (&&
+      (-> a b)
+      (-> 1 2)))
+  => #<GRAPH graph_ID_19::>  ;大概の場合、こちらが望む結果。
+#+END_SRC
+
+*** グラフの規則性に着目すべし。
+
+グラフに規則性(パターン)が存在するなら、lisp組み込みの機能を用いることによって、大きなグラフも少ないコード量で書くことができます。
+
+
+# *** ->と--を1つのグラフ内で同時に使うことはできない。
+
+# #+BEGIN_HTML
+# <div id="outline-container-4-13-3" class="outline-4">
+# <h4 id="sec-4-13-3"><span class="section-number-4">4.13.3</span> -&gt;と&ndash;は同時に使うな。</h4>
+# <div class="outline-text-4" id="text-4-13-3">
+# #+END_HTML
+
+　
+
+##--------------------------------------------------------------------
+* Examples from Graphviz manual
+##--------------------------------------------------------------------
+この章の例は、いずれも以下のGraphvizマニュアルより抜粋したものです。
+
+- http://www.graphviz.org/pdf/dotguide.pdf
+  - [[http://www.cbrc.jp/%7Etominaga/translations/index.html#dot][Tominaga氏による和訳]](原文の版が少し古いのでhtml-likeラベル等は解説されていないことに注意)
+
+
+- http://www.graphviz.org/pdf/neatoguide.pdf
+
+##--------------------------------------------------------------------
+** Examples from dot guide
+##--------------------------------------------------------------------
+*** 例1 Small graph
+
+#+SRCNAME: example1.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (&& (->> "main" "parse" "init" "cleanup" "printf")
+          (->  "parse" "execute")
+          (->  "init" "make_string")
+          (->> "execute" "make_string" "printf" "compare")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example1.png
+digraph T30 {
+  "main" -> "parse";
+  "main" -> "init";
+  "main" -> "cleanup";
+  "main" -> "printf";
+  "parse" -> "execute";
+  "init" -> "make_string";
+  "execute" -> "make_string";
+  "execute" -> "printf";
+  "execute" -> "compare";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example1.png]]
+
+
+##--------------------------------------
+*** 例2 Fancy graph
+#+SRCNAME: example2.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (let ((main (<> "main" :shape :box))
+            (make-string (<> "make a\\nstring")))
+        (& (:size "4,4")
+          (->> main ("parse" :weight 8) ("init" :style :dotted) "cleanup")
+          (->  "parse" "execute")
+          (->> "execute" make-string "printf")
+          (->  "init" make-string)
+          (with-edge (:color :red)
+            (-> main "printf" :style :bold :label "100 times")
+            (-> "execute" (<> "compare" :shape :box :style :filled :color ".7 .3 1.0"))))))
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/example2.png
+digraph graph_T224 {
+  size="4,4";
+  node_T225 [label="main",shape=box];
+  node_T226 [label="make a\nstring"];
+  node_T225 -> "parse" [weight=8];
+  node_T225 -> "init" [style=dotted];
+  node_T225 -> "cleanup";
+  node_T225 -> "printf" [color=red,style=bold,label="100 times"];
+  "parse" -> "execute";
+  "init" -> node_T226;
+  "execute" -> node_T226;
+  "execute" -> "printf";
+  node_T235 [label="compare",shape=box,style=filled,color=".7 .3 1.0"];
+  "execute" -> node_T235 [color=red];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example2.png]]
+
+
+##--------------------------------------
+*** 例3 Graph with polygonal shapes
+
+#+SRCNAME: example3.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (&& (--> (<> "a" :shape :polygon :side 5 :peripheries 3 :color :lightblue :style :filled)
+               "b"
+               (<> "hello world" :shape :polygon :sides 4 :skew .4))
+          (-> "b" (<> "d" :shape :invtriangle))
+          (<> "e" :shape :polygon :sides 4 :distortion .7)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example3.png
+digraph graph_T246 {
+  node_T247 [label="a",shape=polygon,side=5,peripheries=3,color=lightblue,style=filled];
+  node_T248 [label="hello world",shape=polygon,sides=4,skew=0.4];
+  node_T247 -> "b" -> node_T248;
+  node_T250 [label="d",shape=invtriangle];
+  "b" -> node_T250;
+  node_T252 [label="e",shape=polygon,sides=4,distortion=0.7];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example3.png]]
+
+
+##--------------------------------------
+*** 例4 Records with nested fields
+
+#+SRCNAME: example4.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (&& (->> ([] ":f0 left|:f1 mid\\ dle|:f2 right")
+               ([] ":f0 one|:f1 two")
+               ([] "hello\\nworld|{b|{c|:here d|e}|f}|g|h"))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example4.png
+digraph graph_T19 {
+  record_T20 [shape=record,label="<f0> left|<f1> mid\ dle|<f2> right"];
+  record_T21 [shape=record,label="<f0> one|<f1> two"];
+  record_T20 -> record_T21;
+  record_T23 [shape=record,label="hello\nworld|{b|{c|<here> d|e}|f}|g|h"];
+  record_T20 -> record_T23;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example4.png]]
+
+
+##--------------------------------------
+*** 例5 Constrained ranks
+
+#+SRCNAME: example5.lisp :exports code
+#+BEGIN_SRC lisp
+  ($$ (& (:name "asde91" :ranksep .75 :size "7.5,7.5")
+        (with-node (:shape :plaintext :fontsize 16)
+          ;; the time-line graph
+          (--> "past" 1978 1980 1982 1983 1985 1986 1987 1988 1989 1990 "future")
+          ;; ancestor programs
+          "Bourne sh" "make" "SCCS" "yacc" "cron" "Reiser cpp"
+          "Cshell" "emacs" "build" "vi" "<curses>" "RCS" "C*")
+        (~ "Software IS" "Configuration Mgt" "Architecture & Libraries" "Process")
+        (with-node (:shape :box)
+          (~ "past" "SCCS" "make" "Bourne sh" "yacc" "cron")
+          (~ 1978 "Reiser cpp" "Cshell")
+          (~ 1980 "build" "emacs" "vi")
+          (~ 1982 "RCS" "<curses>" "IMX" "SYNED")
+          (~ 1983 "ksh" "IFS" "TTU")
+          (~ 1985 "nmake" "Peggy")
+          (~ 1986 "C*" "ncpp" "ksh-i" "<curses-i>" "PG2")
+          (~ 1987 "Ansi cpp" "nmake 2.0" "3D File System" "fdelta" "DAG" "CSAS")
+          (~ 1988 "CIA" "SBCS" "ksh-88" "PEGASUS/PML" "PAX" "backtalk")
+          (~ 1989 "CIA++" "APP" "SHIP" "DataShare" "ryacc" "Mosaic")
+          (~ 1990 "libft" "CoShell" "DIA" "IFS-i" "kyacc" "sfio" "yeast" "ML-X" "DOT")
+          (~ "future" "Adv. Software Technology")
+          (->  "PEGASUS/PML" "ML-X")
+          (->> "SCCS" "nmake" "3D File System" "RCS")
+          (->> "make" "nmake" "build")
+          (->> "Bourne sh" "Cshell" "ksh")
+          (->  "Reiser cpp" "ncpp")
+          (->  "Cshell" "ksh")
+          (->  "build" "nmake 2.0")
+          (->  "emacs" "ksh")
+          (->> "vi" "ksh" "<curses>")
+          (->> "IFS" "<curses-i>" "IFS-i" "sfio")
+          (--> "<curses>" "<curses-i>" "fdelta")
+          (->> "RCS" "SBCS" "fdelta")
+          (->> "ksh" "nmake" "ksh-i" "ksh-88")
+          (->  "ksh-i" "ksh-88")
+          (->> "nmake" "ksh" "ncpp" "3D File System" "nmake 2.0")
+          (->  "ncpp" "Ansi cpp")
+          (->  "C*" "CSAS")
+          (->  "fdelta" "SBCS")
+          (->  "CSAS" "CIA")
+          (->> "ksh-88" "sfio" "Configuration Mgt" "Architecture & Libraries")
+          (->  "IFS-i" "Architecture & Libraries")
+          (->  "SYNED" "Peggy")
+          (->> "Peggy" "PEGASUS/PML" "ryacc")
+          (->  "PEGASUS/PML" "Architecture & Libraries")
+          (--> "yacc" "ryacc" "kyacc" "Architecture & Libraries")
+          (->  "ML-X" "Architecture & Libraries")
+          (->  "APP" "Software IS")
+          (->  "SBCS" "Configuration Mgt")
+          (->> "DAG" "Software IS" "DOT")
+          (->  "CIA++" "Software IS")
+          (==> "Ansi cpp" "nmake 2.0" "3D File System" "Configuration Mgt")
+          (->  "CIA" "CIA++")
+          (--> "IMX" "TTU" "PG2" "backtalk" "DataShare" "Architecture & Libraries")
+          (->  "nmake 2.0" "CoShell")
+          (==> "CIA" "APP" "DAG" "DIA")
+          (--> "fdelta" "PAX" "SHIP" "Configuration Mgt")
+          (==> "DIA" "DOT" "libft" "Software IS")
+          (->  "sfio" "Architecture & Libraries")
+          (->> "CoShell" "Configuration Mgt" "Architecture & Libraries")
+          (->  "Mosaic" "Process")
+          (-->  "cron" "yeast" "Process")
+          (==> "Software IS" "Configuration Mgt" "Architecture & Libraries" "Process" "Adv. Software Technology"))))
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/example5.png
+digraph asde91 {
+  ranksep=0.75;
+  size="7.5,7.5";
+  { node [shape=plaintext,fontsize=16];
+  "past" -> 1978 -> 1980 -> 1982 -> 1983 -> 1985 -> 1986 -> 1987 -> 1988 -> 1989 -> 1990 -> "future";
+"Bourne sh";
+"make";
+"SCCS";
+"yacc";
+"cron";
+"Reiser cpp";
+"Cshell";
+"emacs";
+"build";
+"vi";
+"<curses>";
+"RCS";
+"C*";
+  };
+  {rank=same; "Software IS"; "Configuration Mgt"; "Architecture & Libraries"; "Process"};
+  { node [shape=box];
+  {rank=same; "past"; "SCCS"; "make"; "Bourne sh"; "yacc"; "cron"};
+  {rank=same; 1978; "Reiser cpp"; "Cshell"};
+  {rank=same; 1980; "build"; "emacs"; "vi"};
+  {rank=same; 1982; "RCS"; "<curses>"; "IMX"; "SYNED"};
+  {rank=same; 1983; "ksh"; "IFS"; "TTU"};
+  {rank=same; 1985; "nmake"; "Peggy"};
+  {rank=same; 1986; "C*"; "ncpp"; "ksh-i"; "<curses-i>"; "PG2"};
+  {rank=same; 1987; "Ansi cpp"; "nmake 2.0"; "3D File System"; "fdelta"; "DAG"; "CSAS"};
+  {rank=same; 1988; "CIA"; "SBCS"; "ksh-88"; "PEGASUS/PML"; "PAX"; "backtalk"};
+  {rank=same; 1989; "CIA++"; "APP"; "SHIP"; "DataShare"; "ryacc"; "Mosaic"};
+  {rank=same; 1990; "libft"; "CoShell"; "DIA"; "IFS-i"; "kyacc"; "sfio"; "yeast"; "ML-X"; "DOT"};
+  {rank=same; "future"; "Adv. Software Technology"};
+  "PEGASUS/PML" -> "ML-X";
+  "SCCS" -> "nmake";
+  "SCCS" -> "3D File System";
+  "SCCS" -> "RCS";
+  "make" -> "nmake";
+  "make" -> "build";
+  "Bourne sh" -> "Cshell";
+  "Bourne sh" -> "ksh";
+  "Reiser cpp" -> "ncpp";
+  "Cshell" -> "ksh";
+  "build" -> "nmake 2.0";
+  "emacs" -> "ksh";
+  "vi" -> "ksh";
+  "vi" -> "<curses>";
+  "IFS" -> "<curses-i>";
+  "IFS" -> "IFS-i";
+  "IFS" -> "sfio";
+  "<curses>" -> "<curses-i>" -> "fdelta";
+  "RCS" -> "SBCS";
+  "RCS" -> "fdelta";
+  "ksh" -> "nmake";
+  "ksh" -> "ksh-i";
+  "ksh" -> "ksh-88";
+  "ksh-i" -> "ksh-88";
+  "nmake" -> "ksh";
+  "nmake" -> "ncpp";
+  "nmake" -> "3D File System";
+  "nmake" -> "nmake 2.0";
+  "ncpp" -> "Ansi cpp";
+  "C*" -> "CSAS";
+  "fdelta" -> "SBCS";
+  "CSAS" -> "CIA";
+  "ksh-88" -> "sfio";
+  "ksh-88" -> "Configuration Mgt";
+  "ksh-88" -> "Architecture & Libraries";
+  "IFS-i" -> "Architecture & Libraries";
+  "SYNED" -> "Peggy";
+  "Peggy" -> "PEGASUS/PML";
+  "Peggy" -> "ryacc";
+  "PEGASUS/PML" -> "Architecture & Libraries";
+  "yacc" -> "ryacc" -> "kyacc" -> "Architecture & Libraries";
+  "ML-X" -> "Architecture & Libraries";
+  "APP" -> "Software IS";
+  "SBCS" -> "Configuration Mgt";
+  "DAG" -> "Software IS";
+  "DAG" -> "DOT";
+  "CIA++" -> "Software IS";
+  "Ansi cpp" -> "Configuration Mgt";
+  "nmake 2.0" -> "Configuration Mgt";
+  "3D File System" -> "Configuration Mgt";
+  "CIA" -> "CIA++";
+  "IMX" -> "TTU" -> "PG2" -> "backtalk" -> "DataShare" -> "Architecture & Libraries";
+  "nmake 2.0" -> "CoShell";
+  "CIA" -> "DIA";
+  "APP" -> "DIA";
+  "DAG" -> "DIA";
+  "fdelta" -> "PAX" -> "SHIP" -> "Configuration Mgt";
+  "DIA" -> "Software IS";
+  "DOT" -> "Software IS";
+  "libft" -> "Software IS";
+  "sfio" -> "Architecture & Libraries";
+  "CoShell" -> "Configuration Mgt";
+  "CoShell" -> "Architecture & Libraries";
+  "Mosaic" -> "Process";
+  "cron" -> "yeast" -> "Process";
+  "Software IS" -> "Adv. Software Technology";
+  "Configuration Mgt" -> "Adv. Software Technology";
+  "Architecture & Libraries" -> "Adv. Software Technology";
+  "Process" -> "Adv. Software Technology";
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example5.png]]
+
+##--------------------------------------
+*** 例6 Binary search tree using records
+
+#+SRCNAME: example6.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (&& (with-node (:height .1)
+            (let ((n0 ([] ":f0 |:f1 G|:f2")) (n1 ([] ":f0 |:f1 E|:f2"))
+                  (n2 ([] ":f0 |:f1 B|:f2")) (n3 ([] ":f0 |:f1 F|:f2"))
+                  (n4 ([] ":f0 |:f1 R|:f2")) (n5 ([] ":f0 |:f1 H|:f2"))
+                  (n6 ([] ":f0 |:f1 Y|:f2")) (n7 ([] ":f0 |:f1 A|:f2"))
+                  (n8 ([] ":f0 |:f1 C|:f2")))
+              (&& (-> (@ n0 :f2) (@ n4 :f1)) (-> (@ n0 :f0) (@ n1 :f1))
+                  (-> (@ n1 :f0) (@ n2 :f1)) (-> (@ n1 :f2) (@ n3 :f1))
+                  (-> (@ n2 :f2) (@ n8 :f1)) (-> (@ n2 :f0) (@ n7 :f1))
+                  (-> (@ n4 :f2) (@ n6 :f1)) (-> (@ n4 :f0) (@ n5 :f1)))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example6.png
+digraph graph_T385 {
+  node [height=0.1];
+  record_T386 [shape=record,label="<f0> |<f1> G|<f2>"];
+  record_T387 [shape=record,label="<f0> |<f1> E|<f2>"];
+  record_T388 [shape=record,label="<f0> |<f1> B|<f2>"];
+  record_T389 [shape=record,label="<f0> |<f1> F|<f2>"];
+  record_T390 [shape=record,label="<f0> |<f1> R|<f2>"];
+  record_T391 [shape=record,label="<f0> |<f1> H|<f2>"];
+  record_T392 [shape=record,label="<f0> |<f1> Y|<f2>"];
+  record_T393 [shape=record,label="<f0> |<f1> A|<f2>"];
+  record_T394 [shape=record,label="<f0> |<f1> C|<f2>"];
+  record_T386:f2 -> record_T390:f1;
+  record_T386:f0 -> record_T387:f1;
+  record_T387:f0 -> record_T388:f1;
+  record_T387:f2 -> record_T389:f1;
+  record_T388:f2 -> record_T394:f1;
+  record_T388:f0 -> record_T393:f1;
+  record_T390:f2 -> record_T392:f1;
+  record_T390:f0 -> record_T391:f1;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example6.png]]
+
+##--------------------------------------
+*** 例7 Records with nested fields (revisited)
+#+BEGIN_SRC dot
+digraph structs {
+node [shape=record];
+    struct1 [shape=record,label="<f0> left|<f1> middle|<f2> right"];
+    struct2 [shape=record,label="<f0> one|<f1> two"];
+    struct3 [shape=record,label="hello\nworld|{b|{c|<here> d|e}|f}|g|h"];
+    struct1:f1 -> struct2:f0;
+    struct1:f2 -> struct3:here;
+}
+#+END_SRC
+
+#+SRCNAME: example7.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (let ((s1 ([] ":f0 left|:f1 mid\\ dle|:f2 right"))
+            (s2 ([] ":f0 one|:f1 two"))
+            (s3 ([] "hello\\nworld|{b|{c|:here d|e}|f}|g|h")))
+        (&& (-> (@ s1 :f1) (@ s2 :f0))
+            (-> (@ s1 :f2) (@ s3 :here)))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example7.png
+digraph graph_T290 {
+  record_T291 [shape=record,label="<f0> left|<f1> mid\ dle|<f2> right"];
+  record_T292 [shape=record,label="<f0> one|<f1> two"];
+  record_T293 [shape=record,label="hello\nworld|{b|{c|<here> d|e}|f}|g|h"];
+  record_T291:f1 -> record_T292:f0;
+  record_T291:f2 -> record_T293:here;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example7.png]]
+
+
+##--------------------------------------
+*** 例8 Hash table
+
+#+BEGIN_SRC dot
+digraph G {
+    nodesep=.05;
+    rankdir=LR;
+    node [shape=record,width=.1,height=.1];
+    node0 [label = "<f0> |<f1> |<f2> |<f3> |<f4> |<f5> |<f6> | ",height=2.5];
+    node [width = 1.5];
+    node1 [label = "{<n> n14 | 719 |<p> }"];
+    node2 [label = "{<n> a1  | 805 |<p> }"];
+    node3 [label = "{<n> i9  | 718 |<p> }"];
+    node4 [label = "{<n> e5  | 989 |<p> }"];
+    node5 [label = "{<n> t20 | 959 |<p> }"];
+    node6 [label = "{<n> o15 | 794 |<p> }"];
+    node7 [label = "{<n> s19 | 659 |<p> }"];
+    node0:f0 -> node1:n;
+    node0:f1 -> node2:n;
+    node0:f2 -> node3:n;
+    node0:f5 -> node4:n;
+    node0:f6 -> node5:n;
+    node2:p -> node6:n;
+    node4:p -> node7:n;
+}
+#+END_SRC
+
+#+SRCNAME: example8.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (& (:nodesep .05 :rankdir :LR)
+        (with-node (:width 1.5 :height .1)
+          (let ((n0 ([] ":f0 |:f1 |:f2 |:f3 |:f4 |:f5 |:f6 | " :height 2.5 :width .1))
+                (n1 ([] "{:n n14 | 719 |:p }")) (n2 ([] "{:n a1  | 805 |:p }"))
+                (n3 ([] "{:n i9  | 718 |:p }")) (n4 ([] "{:n e5  | 989 |:p }"))
+                (n5 ([] "{:n t20 | 959 |:p }")) (n6 ([] "{:n o15 | 794 |:p }"))
+                (n7 ([] "{:n s19 | 659 |:p }")))
+            (&& (-> (@ n0 :f0) (@ n1 :n)) (-> (@ n0 :f1) (@ n2 :n))
+                (-> (@ n0 :f2) (@ n3 :n)) (-> (@ n0 :f5) (@ n4 :n))
+                (-> (@ n0 :f6) (@ n5 :n)) (-> (@ n2 :p)  (@ n6 :n))
+                (-> (@ n4 :p)  (@ n7 :n)))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example8.png
+digraph graph_T368 {
+  nodesep=0.05;
+  rankdir=LR;
+  node [width=1.5,height=0.1];
+  record_T369 [shape=record,label="<f0> |<f1> |<f2> |<f3> |<f4> |<f5> |<f6> | ",height=2.5,width=0.1];
+  record_T370 [shape=record,label="{<n> n14 | 719 |<p> }"];
+  record_T371 [shape=record,label="{<n> a1  | 805 |<p> }"];
+  record_T372 [shape=record,label="{<n> i9  | 718 |<p> }"];
+  record_T373 [shape=record,label="{<n> e5  | 989 |<p> }"];
+  record_T374 [shape=record,label="{<n> t20 | 959 |<p> }"];
+  record_T375 [shape=record,label="{<n> o15 | 794 |<p> }"];
+  record_T376 [shape=record,label="{<n> s19 | 659 |<p> }"];
+  record_T369:f0 -> record_T370:n;
+  record_T369:f1 -> record_T371:n;
+  record_T369:f2 -> record_T372:n;
+  record_T369:f5 -> record_T373:n;
+  record_T369:f6 -> record_T374:n;
+  record_T371:p -> record_T375:n;
+  record_T373:p -> record_T376:n;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example8.png]]
+
+
+##--------------------------------------
+*** 例9 Clusters
+#+BEGIN_SRC dot
+digraph G {
+  subgraph cluster0 {
+    node [style=filled,color=white];
+    style=filled;
+    color=lightgrey;
+    a0 -> a1 -> a2 -> a3;
+    label = "process #1";
+  }
+  subgraph cluster1 {
+    node [style=filled];
+    b0 -> b1 -> b2 -> b3;
+    label = "process #2";
+    color=blue
+  }
+  start -> a0;
+  start -> b0;
+  a1 -> b3;
+  b2 -> a3;
+  a3 -> a0;
+  a3 -> end;
+  b3 -> end;
+  start [shape=Mdiamond];
+  end [shape=Msquare];
+}
+#+END_SRC
+
+#+SRCNAME: example9.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (&& ([&] (:label "process #1" :style :filled :color :lightgrey)
+            (with-node (:style :filled :color :white)
+              (--> "a0" "a1" "a2" "a3")))
+          ([&] (:label "process #2" :color :blue)
+            (with-node (:style :filled)
+              (--> "b0" "b1" "b2" "b3")))
+          (->> (<> "start" :shape :Mdiamond) "a0" "b0")
+          (==> "a3" "b3" (<> "end" :shape :Msquare))
+          (->  "a1" "b3")
+          (->  "a3" "a0")
+          (->  "b2" "a3")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example9.png
+digraph graph_T153 {
+  subgraph cluster_T154 {
+  label="process #1";
+  style=filled;
+  color=lightgrey;
+  { node [style=filled,color=white];
+  "a0" -> "a1" -> "a2" -> "a3";
+  };
+  }
+  subgraph cluster_T155 {
+  label="process #2";
+  color=blue;
+  { node [style=filled];
+  "b0" -> "b1" -> "b2" -> "b3";
+  };
+  }
+  node_T158 [label="start",shape=Mdiamond];
+  node_T158 -> "a0";
+  node_T158 -> "b0";
+  node_T161 [label="end",shape=Msquare];
+  "a3" -> node_T161;
+  "b3" -> node_T161;
+  "a1" -> "b3";
+  "a3" -> "a0";
+  "b2" -> "a3";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example9.png]]
+
+##--------------------------------------
+*** 例10 Call graph with labeled
+
+　出力される画像がマニュアルのものと違いますが、グラフとしては同等です。
+グラフを構成する要素(ノード、エッジ、グラフ)の順によって、グラフ構造としては同等でも、グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります(これはGraphvizの仕様です)。
+
+
+#+BEGIN_SRC dot :file ./tmp.png
+  digraph G {
+    size="8,6"; ratio=fill; node[fontsize=24];
+  
+  ciafan->computefan; fan->increment; computefan->fan; stringdup->fatal;
+  main->exit; main->interp_err; main->ciafan; main->fatal; main->malloc;
+  main->strcpy; main->getopt; main->init_index; main->strlen; fan->fatal;
+  fan->ref; fan->interp_err; ciafan->def; fan->free; computefan->stdprintf;
+  computefan->get_sym_fields; fan->exit; fan->malloc; increment->strcmp;
+  computefan->malloc; fan->stdsprintf; fan->strlen; computefan->strcmp;
+  computefan->realloc; computefan->strlen; debug->sfprintf; debug->strcat;
+  stringdup->malloc; fatal->sfprintf; stringdup->strcpy; stringdup->strlen;
+  fatal->exit;
+  
+  subgraph "cluster_error.h" { label="error.h"; interp_err; }
+  subgraph "cluster_sfio.h" { label="sfio.h"; sfprintf; }
+  subgraph "cluster_ciafan.c" { label="ciafan.c"; ciafan; computefan; increment; }
+  subgraph "cluster_util.c" { label="util.c"; stringdup; fatal; debug; }
+  subgraph "cluster_query.h" { label="query.h"; ref; def; }
+  subgraph "cluster_field.h" { get_sym_fields; }
+  subgraph "cluster_stdio.h" { label="stdio.h"; stdprintf; stdsprintf; }
+  subgraph "cluster_<libc.a>" { getopt; }
+  subgraph "cluster_stdlib.h" { label="stdlib.h"; exit; malloc; free; realloc; }
+  subgraph "cluster_main.c" { main; }
+  subgraph "cluster_index.h" { init_index; }
+  subgraph "cluster_string.h" { label="string.h"; strcpy; strlen; strcmp; strcat; }
+  }
+#+END_SRC
+
+
+#+SRCNAME: example10.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (& (:size "8,6" :ratio :fill)
+        (with-node (:fontsize 24)
+          ([&] (:label "error.h") "interp_err")
+          ([&] (:label "sfio.h") "sfprintf")
+          ([&] (:label "ciafan.c") "ciafan" "computefan" "increment")
+          ([&] (:label "util.c") "stringdup" "fatal" "debug")
+          ([&] (:label "query.h") "ref" "def")
+          ([&] () "get_sym_fields")
+          ([&] (:label "stdio.h") "stdprintf" "stdsprintf")
+          ([&] () "getopt")
+          ([&] (:label "stdlib.h") "exit" "malloc" "free" "realloc")
+          ([&] () "main")
+          ([&] () "init_index")
+          ([&] (:label "string.h") "strcpy" "strlen" "strcmp" "strcat")
+          (->> "main" "strcpy" "strlen" "getopt" "init_index" "fatal" "ciafan" "interp_err" "malloc" "exit")
+          (->> "debug" "strcat" "sfprintf")
+          (->> "stringdup" "strcpy" "strlen" "malloc" "fatal")
+          (->> "fatal" "sfprintf" "exit")
+          (->  "increment" "strcmp")
+          (->> "ciafan" "computefan" "def")
+          (->> "computefan" "strlen" "strcmp" "get_sym_fields" "stdprintf" "realloc" "malloc" "fan")
+          (->> "fan" "increment" "fatal" "ref" "strlen" "stdsprintf" "malloc" "exit" "free" "interp_err"))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example10.png
+digraph graph_T656 {
+  size="8,6";
+  ratio=fill;
+  { node [fontsize=24];
+  subgraph cluster_T657 {
+  label="error.h";
+"interp_err";
+  }
+  subgraph cluster_T658 {
+  label="sfio.h";
+"sfprintf";
+  }
+  subgraph cluster_T659 {
+  label="ciafan.c";
+"ciafan";
+"computefan";
+"increment";
+  }
+  subgraph cluster_T660 {
+  label="util.c";
+"stringdup";
+"fatal";
+"debug";
+  }
+  subgraph cluster_T661 {
+  label="query.h";
+"ref";
+"def";
+  }
+  subgraph cluster_T662 {
+"get_sym_fields";
+  }
+  subgraph cluster_T663 {
+  label="stdio.h";
+"stdprintf";
+"stdsprintf";
+  }
+  subgraph cluster_T664 {
+"getopt";
+  }
+  subgraph cluster_T665 {
+  label="stdlib.h";
+"exit";
+"malloc";
+"free";
+"realloc";
+  }
+  subgraph cluster_T666 {
+"main";
+  }
+  subgraph cluster_T667 {
+"init_index";
+  }
+  subgraph cluster_T668 {
+  label="string.h";
+"strcpy";
+"strlen";
+"strcmp";
+"strcat";
+  }
+  "main" -> "strcpy";
+  "main" -> "strlen";
+  "main" -> "getopt";
+  "main" -> "init_index";
+  "main" -> "fatal";
+  "main" -> "ciafan";
+  "main" -> "interp_err";
+  "main" -> "malloc";
+  "main" -> "exit";
+  "debug" -> "strcat";
+  "debug" -> "sfprintf";
+  "stringdup" -> "strcpy";
+  "stringdup" -> "strlen";
+  "stringdup" -> "malloc";
+  "stringdup" -> "fatal";
+  "fatal" -> "sfprintf";
+  "fatal" -> "exit";
+  "increment" -> "strcmp";
+  "ciafan" -> "computefan";
+  "ciafan" -> "def";
+  "computefan" -> "strlen";
+  "computefan" -> "strcmp";
+  "computefan" -> "get_sym_fields";
+  "computefan" -> "stdprintf";
+  "computefan" -> "realloc";
+  "computefan" -> "malloc";
+  "computefan" -> "fan";
+  "fan" -> "increment";
+  "fan" -> "fatal";
+  "fan" -> "ref";
+  "fan" -> "strlen";
+  "fan" -> "stdsprintf";
+  "fan" -> "malloc";
+  "fan" -> "exit";
+  "fan" -> "free";
+  "fan" -> "interp_err";
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example10.png]]
+
+##--------------------------------------
+*** 例11 Graph with edges on clusters
+#+SRCNAME: example11.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (& (:compound t)
+        (let ((c0 ([&] () (->> "a" "b" "c")
+                          (==> "b" "c" "d")))
+              (c1 ([&] () (->> "e" "g" "f"))))
+          (&& c0 c1
+              (-> "b" "f" :lhead c1)
+              (->> "c" ("g" :ltail c0 :lhead c1) ("e" :ltail c0))
+              (->> "d" "e" "h")))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example11.png
+digraph graph_T325 {
+  compound=true;
+  subgraph cluster_T326 {
+  "a" -> "b";
+  "a" -> "c";
+  "b" -> "d";
+  "c" -> "d";
+  }
+  subgraph cluster_T327 {
+  "e" -> "g";
+  "e" -> "f";
+  }
+  "b" -> "f" [lhead=cluster_T327];
+  "c" -> "g" [ltail=cluster_T326,lhead=cluster_T327];
+  "c" -> "e" [ltail=cluster_T326];
+  "d" -> "e";
+  "d" -> "h";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example11.png]]
+
+
+##--------------------------------------
+*** 例12 HTML-like label
+
+#+BEGIN_SRC dot
+  digraph html {
+    abc [shape=none, margin=0, label=<
+         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+         <TR><TD ROWSPAN="3"><FONT COLOR="red">hello</FONT><BR/>world</TD>
+             <TD COLSPAN="3">b</TD>
+             <TD ROWSPAN="3" BGCOLOR="lightgrey">g</TD>
+             <TD ROWSPAN="3">h</TD></TR>
+         <TR><TD>c</TD>
+             <TD PORT="here">d</TD>
+             <TD>e</TD> </TR>
+         <TR><TD COLSPAN="3">f</TD></TR></TABLE>>];
+       }
+#+END_SRC
+
+# 　html-likeラベルの詳細については、チュートリアルの[[Html-Likeラベル]]の節をご確認ください。
+
+#+SRCNAME: example12.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (& (:name "html")
+        (<> (html
+              (table :border 0 :cellborder 1 :cellspacing 0 :cellpadding 4
+                     (tr (td (font "hello" :color :red)
+                             (br)
+                             "world" :rowspan 3)
+                         (td "b" :colspan 3)
+                         (td "g" :rowspan 3 :bgcolor :lightgrey)
+                         (td "h" :rowspan 3))
+                     (tr (td "c")
+                         (td "d" :port "here")
+                         (td "e"))
+                     (tr (td "f" :colspan 3))))
+            :shape :none :margin 0)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example12.png
+digraph graph_T10 {
+  node_T9 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD ROWSPAN="3"><FONT COLOR="red">hello</FONT><BR/>world</TD><TD COLSPAN="3">b</TD><TD ROWSPAN="3" BGCOLOR="lightgrey">g</TD><TD ROWSPAN="3">h</TD></TR><TR><TD>c</TD><TD PORT="here">d</TD><TD>e</TD></TR><TR><TD COLSPAN="3">f</TD></TR></TABLE>>,shape=none,margin=0];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example12.png]]
+
+
+----------------------------------------------------------------------
+
+from http://www.graphviz.org/doc/info/html3.gv
+
+#+BEGIN_SRC dot
+digraph structs {
+    node [shape=plaintext];
+
+    struct1 [label=<<TABLE>
+	<TR>
+	    <TD>line 1</TD>
+	    <TD BGCOLOR="blue"><FONT COLOR="white">line2</FONT></TD>
+	    <TD BGCOLOR="gray"><FONT POINT-SIZE="24.0">line3</FONT></TD>
+	    <TD BGCOLOR="yellow"><FONT POINT-SIZE="24.0" FACE="ambrosia">line4</FONT></TD>
+	    <TD>
+	      <TABLE CELLPADDING="0" BORDER="0" CELLSPACING="0">
+          <TR>
+            <TD><FONT COLOR="green">Mixed</FONT></TD>
+            <TD><FONT COLOR="red">fonts</FONT></TD>
+          </TR>
+	      </TABLE>
+        </TD>
+	</TR>
+    </TABLE>>];
+}
+#+END_SRC
+
+#+SRCNAME: example12-2.lisp
+#+BEGIN_SRC lisp :exports code
+($$ (&&
+  (with-node (:shape :plaintext)
+    (<> (html
+         (table
+          (tr (td "line 1")
+              (td :bgcolor :blue (font :color :white "line 2"))
+              (td :bgcolor :gray (font :point-size "24.0" "line 3"))
+              (td :bgcolor :yellow (font :point-size "24.0" :face "ambrosia" "line 4"))
+              (td (table :colorpadding 0 :border 0 :cellspacing 0
+                         (tr (td (font :color :green "Mixed"))
+                             (td (font :color :red "fonts"))))))))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example12-2.png
+digraph graph_ID_36 {
+  { node [shape=plaintext];
+  node_ID_34 [label=<<TABLE><TR><TD>line 1</TD>
+<TD BGCOLOR="blue"><FONT COLOR="white">line2</FONT></TD>
+<TD BGCOLOR="gray"><FONT POINT-SIZE="24.0">line3</FONT></TD>
+<TD BGCOLOR="yellow"><FONT POINT-SIZE="24.0" FACE="ambrosia">line4</FONT></TD>
+<TD><TABLE COLORPADDING="0" BORDER="0" CELLSPACING="0"><TR><TD><FONT COLOR="green">Mixed</FONT></TD>
+<TD><FONT COLOR="red">fonts</FONT></TD></TR></TABLE></TD></TR></TABLE>>
+    ];
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example12-2.png]]
+
+
+----------------------------------------------------------------------
+
+
+from http://www.graphviz.org/doc/info/html2.gv
+#+BEGIN_SRC lisp :exports code
+  ($$ (& (:rankdir :LR)
+    (with-node (:shape :plaintext)
+      (let ((a (<> (html (table :border 0 :cellborder 1 :cellspacing 0
+                                (tr (td :rowspan 3 :bgcolor :yellow "class"))
+                                (tr (td :port "here" :bgcolor :lightblue "qualfier"))))))
+            (b (<> (html (table :bgcolor :bisque
+                                (tr (td :colspan 3 "elephant")
+                                    (td :rowspan 2 :bgcolor :chartreuse
+                                        :valign :bottom :align :right "two"))
+                                (tr (td :colspan 2 :rowspan 2
+                                        (table :bgcolor :grey
+                                               (tr (td "corn"))
+                                               (tr (td :bgcolor :yellow "c"))
+                                               (tr (td "f"))))
+                                    (td :bgcolor :white "penguin"))
+                                (tr (td :colspan 2 :border 4 :align :right :port "there" "4"))))
+                    :shape :ellipse :style :filled))
+            (c (<> (html "long line 1" (br) "line 2" (br :align :left) "line 3" (br :align :right))))
+            (d (<> "d" :shape :triangle)))
+        (&&
+          (~ b c)
+          (-> (@ a :here) (@ b :there) :dir :both :arrowtail :diamond)
+          (-> c b)
+          (-> d c :label (html (table (tr (td :bgcolor :red :width 10)
+                                          (td "Edge labels" (br) "also")
+                                          (td :bgcolor :blue :width 10))))))))))
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/example12-3.png
+digraph graph_ID_179 {
+  rankdir=LR;
+  { node [shape=plaintext];
+  {rank=same; node_ID_171; node_ID_172};
+  node_ID_170:here [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0"><TR><TD ROWSPAN="3" BGCOLOR="yellow">class</TD></TR><TR><TD PORT="here" BGCOLOR="lightblue">qualfier</TD></TR></TABLE>>
+    ];
+  node_ID_171:there [label=<<TABLE BGCOLOR="bisque"><TR><TD COLSPAN="3">elephant</TD><TD ROWSPAN="2" BGCOLOR="chartreuse" VALIGN="bottom" ALIGN="right">two</TD></TR><TR><TD COLSPAN="2" ROWSPAN="2"><TABLE BGCOLOR="grey"><TR><TD>corn</TD></TR><TR><TD BGCOLOR="yellow">c</TD></TR><TR><TD>f</TD></TR></TABLE></TD><TD BGCOLOR="white">penguin</TD></TR><TR><TD COLSPAN="2" BORDER="4" ALIGN="right" PORT="there">4</TD></TR></TABLE>>
+    ,shape=ellipse,style=filled];
+  node_ID_170:here -> node_ID_171:there [dir=both,arrowtail=diamond];
+  node_ID_172 [label=<long line 1<BR/>line 2<BR ALIGN="left"/>line 3<BR ALIGN="right"/>>
+    ];
+  node_ID_171 [label=<<TABLE BGCOLOR="bisque"><TR><TD COLSPAN="3">elephant</TD><TD ROWSPAN="2" BGCOLOR="chartreuse" VALIGN="bottom" ALIGN="right">two</TD></TR><TR><TD COLSPAN="2" ROWSPAN="2"><TABLE BGCOLOR="grey"><TR><TD>corn</TD></TR><TR><TD BGCOLOR="yellow">c</TD></TR><TR><TD>f</TD></TR></TABLE></TD><TD BGCOLOR="white">penguin</TD></TR><TR><TD COLSPAN="2" BORDER="4" ALIGN="right" PORT="there">4</TD></TR></TABLE>>
+    ,shape=ellipse,style=filled];
+  node_ID_172 -> node_ID_171;
+  node_ID_173 [label="d",shape=triangle];
+  node_ID_173 -> node_ID_172 [label=<<TABLE><TR><TD BGCOLOR="red" WIDTH="10"></TD><TD>Edge labels<BR/>also</TD><TD BGCOLOR="blue" WIDTH="10"></TD></TR></TABLE>>
+    ];
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example12-3.png]]
+
+　
+
+##--------------------------------------------------------------------
+
+##--------------------------------------------------------------------
+** Examples from neato guide
+##--------------------------------------------------------------------
+
+*** 例13 Process States in an Operating System Kernel 
+
+#+BEGIN_SRC dot
+graph G {
+    run -- intr;
+    intr -- runbl;
+    runbl -- run;
+    run -- kernel;
+    kernel -- zombie;
+    kernel -- sleep;
+    kernel -- runmem;
+    sleep -- swap;
+    swap -- runswap;
+    runswap -- new;
+    runswap -- runmem;
+    new -- runmem;
+    sleep -- runmem;
+}
+#+END_SRC
+
+#+SRCNAME: example13-1.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (& (:size "3,3")
+        (O   "run" "intr" "runbl")
+        (-<  "kernel" "run" "zombie" "sleep" "runmen")
+        (--- "sleep" "swap" "runswap" "new")
+        (-<  "runmen" "runswap" "new" "sleep")))
+#+END_SRC
+
+　上のコードをREPLで評価すると、ビューアが起動し、次のグラフ画像が出力されます。
+デフォルトのレイアウトアルゴリズムは:dotです。
+
+#+BEGIN_SRC dot :file ./images/example13-1.png
+graph graph_T135 {
+  size="3,3";
+  "run" -- "intr" -- "runbl" -- "run";
+  "kernel" -- "run";
+  "kernel" -- "zombie";
+  "kernel" -- "sleep";
+  "kernel" -- "runmen";
+  "sleep" -- "swap" -- "runswap" -- "new";
+  "runmen" -- "runswap";
+  "runmen" -- "new";
+  "runmen" -- "sleep";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example13-1.png]]
+
+
+
+#+SRCNAME: example13-2.lisp
+#+BEGIN_SRC lisp -n :exports code
+  ($ (:layout :neato)
+     (& (:size "4,4")
+       (with-edge (:len 2)
+         (O   "run" "intr" "runbl")
+         (-<  "kernel" "run" "zombie" "sleep" "runmen")
+         (--- "sleep" "swap" "runswap" "new")
+         (-<  "runmen" "runswap" "new" "sleep"))))
+#+END_SRC
+
+　上のコードをREPLで評価すると、ビューアが起動し、下のグラフ画像が出力されます。
+ =$= のプロパティリストでレイアウトアルゴリズムを:neatoに指定しているため、:dotと異なったレイアウトで画像が出力されます。
+3行目のエッジ属性:lenはエッジの長さを指定する属性です。
+属性:lenはレイアウトアルゴリズム:dotでは無効になります。
+
+#+BEGIN_SRC dot :file ./images/example13-2.png :cmdline -Kneato -Tpng
+graph graph_T281 {
+  size="4,4";
+  { edge [len=1.5];
+  "run" -- "intr" -- "runbl" -- "run";
+  "kernel" -- "run";
+  "kernel" -- "zombie";
+  "kernel" -- "sleep";
+  "kernel" -- "runmen";
+  "sleep" -- "swap" -- "runswap" -- "new";
+  "runmen" -- "runswap";
+  "runmen" -- "new";
+  "runmen" -- "sleep";
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example13-2.png]]
+
+
+##--------------------------------------
+*** 例14 Example
+
+#+BEGIN_SRC dot
+graph G {
+    n0 -- n1 -- n2 -- n3 -- n0;
+}
+#+END_SRC
+
+
+#+SRCNAME: example14-2.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ (:layout :neato)
+     (&& (O "n0" "n1" "n2" "n3")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example14-2.png :cmdline -Kneato -Tpng
+graph graph_T327 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example14-2.png]]
+
+#+SRCNAME: example14-3.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ (:layout :circo)
+     (&& (O "n0" "n1" "n2" "n3")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example14-3.png :cmdline -Kcirco -Tpng
+graph graph_T327 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example14-3.png]]
+
+
+##--------------------------------------
+*** 例15 Node and Edge Options
+
+#+SRCNAME: 
+#+BEGIN_SRC dot
+graph G {
+    node [shape=box,style=filled];
+    {node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue]
+ A1 A2 A3}
+    A -- A1 [label="l #6"];
+    A -- A2 [label="l #7"];
+    A -- A3 [label="l #8"];
+    {edge [style=invis]; A1 -- A2 -- A3}
+    edge [len=3];   /* applies to  all following edges */
+    A -- B [label="l #1"]; A -- C  [label="l #2"]; A -- D [label="l #3"];
+    A -- E [label="l #4"]; A -- F  [label="l #5"]; B -- C [label="l #1"];
+    B -- E [label="l #2"]; B -- F  [label="l #3"]; C -- D [label="l #1"];
+    D -- E [label="l #1"];
+}
+#+END_SRC
+
+#+SRCNAME: example15.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ (:layout :neato)
+     (& (:size "5,5")
+       (with-node (:shape :box :style :filled)
+         (with-node (:width .3 :height .3 :shape :octagon :style :filled :color :skyblue)
+           "A1" "A2" "A3")
+         (-< "A" ("A1" :label "l #6") ("A2" :label "l #7") ("A3" :label "l #8"))
+         (with-edge (:style :invis :len 1.3) (--- "A1" "A2" "A3"))
+         (with-edge (:len 3)
+           (-< "A" ("B" :label "l #1") ("C" :label "l #2") ("D" :label "l #3")
+                   ("E" :label "l #4") ("F" :label "l #5"))
+           (-< "B" ("C" :label "l #1") ("E" :label "l #2") ("F" :label "l #3"))
+           (-- "C" "D" :label "l #1")
+           (-- "D" "E" :label "l #1")))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example15.png :cmdline -Kneato -Tpng
+graph graph_T487 {
+  size="5,5";
+  { node [shape=box,style=filled];
+  { node [width=0.3,height=0.3,shape=octagon,style=filled,color=skyblue];
+"A1";
+"A2";
+"A3";
+  };
+  "A" -- "A1" [label="l #6"];
+  "A" -- "A2" [label="l #7"];
+  "A" -- "A3" [label="l #8"];
+  { edge [style=invis,len=1.3];
+  "A1" -- "A2" -- "A3";
+  };
+  { edge [len=3];
+  "A" -- "B" [label="l #1"];
+  "A" -- "C" [label="l #2"];
+  "A" -- "D" [label="l #3"];
+  "A" -- "E" [label="l #4"];
+  "A" -- "F" [label="l #5"];
+  "B" -- "C" [label="l #1"];
+  "B" -- "E" [label="l #2"];
+  "B" -- "F" [label="l #3"];
+  "C" -- "D" [label="l #1"];
+  "D" -- "E" [label="l #1"];
+  };
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example15.png]]
+
+##--------------------------------------
+*** 例16
+#+BEGIN_SRC dot
+graph G {
+        n0 -- n1 [len=2, style=bold];
+        n1 -- n2 -- n3 -- n0;
+}
+#+END_SRC
+
+#+SRCNAME: example16.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ (:layout :neato)
+     (&& (--  "n0" "n1" :len 2 :style :bold)
+         (--- "n1" "n2" "n3" "n0")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example16.png :cmdline -Kneato -Tpng
+graph graph_T514 {
+  "n0" -- "n1" [len=2,style=bold];
+  "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example16.png]]
+
+
+##--------------------------------------
+*** 例17
+
+#+BEGIN_SRC dot
+graph G {
+    n0 [ pos = "0,0!" ];
+    n1 [ pos = "2,0" ];
+    n2 [ pos = "2,2!" ];
+    n0 -- n1 -- n2 -- n3 -- n0;
+}
+#+END_SRC
+
+#+SRCNAME: example17.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ (:layout :neato)
+     (&& (O (<> "n0" :pos "0,0!")
+            (<> "n1" :pos "2,0!")
+            (<> "n2" :pos "2,2!")
+            "n3")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example17.png :cmdline -Kneato -Tpng
+graph graph_T527 {
+  node_T528 [label="n0",pos="0,0!"];
+  node_T529 [label="n1",pos="2,0!"];
+  node_T530 [label="n2",pos="2,2!"];
+  node_T528 -- node_T529 -- node_T530 -- "n3" -- node_T528;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example17.png]]
+
+
+
+##--------------------------------------------------------------------
+
+
+
+##--------------------------------------------------------------------
+* リファレンスマニュアル
+##--------------------------------------------------------------------
+
+　Graphvizで使用できる属性は大方のものをサポートしている(URL属性類は未実装)。
+レイアウトアルゴリズムごとにサポートしている属性が異なるので注意。
+
+
+##--------------------------------------------------------------------
+** ノード
+##--------------------------------------------------------------------
+
+　ノードコンストラクタ<>によって生成されるオブジェクトはnode型のオブジェクトである。
+プレノード(数値、ストリング)、[]によって生成されるレコードもnodeのオブジェクト型とみなされる。
+これら以外のものはnode型のオブジェクトではない。
+
+ノード属性の種類については、下記のリンク先を参照せよ。
+- 属性について： http://www.graphviz.org/content/attrs
+- shape属性について： http://www.graphviz.org/node-shapes.html
+- color属性について： http://www.graphviz.org/color-names.html
+
+　
+
++ *<>* /label/ &rest /node-attributes/ => node ::
+　[Function]　ノードを生成する。
+
+　
+
++ *[]* /label/ &rest /node-attributes/ => record ::
+　[Function]　レコードを生成する。
+
+　
+
++ *@* /node/ /port-keyword1/ &optional /port-keyword2/ => pre-node, or node ::
+　[Function]　
+
+　
+
++ *rank* /rank-keyward/ &rest /nodes/ => NIL ::
+　[Function]
+
+　
+
++ *~* &rest /nodes/ => NIL ::
+　[Function]
+
+　
+
++  *with-node* (&rest /node-attributes/) &body /body/ => graph ::
+　[Macro]　with-nodeは &, &&, [&]の引き数内で使うのが無難。
+
+　
+
+# Dot-Node-Attributes
+# :color :colorscheme :comment :distortion
+# :fillcolor :fixedsize :fontcolor :fontname :fontsize
+# :group :height :id :image :imagescale
+# :label :labelloc :layer :margin :nojustify :orientation
+# :penwidth :peripheries :regular
+# :samplepoints :shape :sides :skew :style :target
+
+# Neato-Node-Attributes
+# :shape :height :width :label :fontsize :fontname :fontcolor
+# :style :color :pos
+
+##--------------------------------------------------------------------
+** エッジ
+##--------------------------------------------------------------------
+
+
+
+　エッジコンストラクタ->とエッジユーティリティ(---,<-,--->,----,?,O)によって生成されるオブジェクトのみがedge型のオブジェクトである。
+
+エッジ属性の種類については、下記のリンク先を参照せよ。
+- 属性について： http://www.graphviz.org/content/attrs
+- shape属性について： http://www.graphviz.org/arrow-shapes.html
+- color属性について： http://www.graphviz.org/color-names.html
+
+　
+
++ *->*  /node1/ /node2/ &rest /edge-attributes/ => edge ::
+　[Function]　
+
+　
+
+# + *---*  /node1/ /node2/ &rest /edge-attributes/ => path ::
+# 　[Function]　---は2つのdashを表す。
+#+BEGIN_HTML
+</p>
+<dl>
+<dt><b>&ndash;&ndash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; path</dt><dd>
+
+</dd>
+</dl>
+
+<p>　[Function]　
+</p>
+<p>
+#+END_HTML
+
+
+　
+
++ *?*  /node/ &rest /edge-attributes/ => edge ::
+　[Function]　
+
+　
+
++ *<-*  /node1/ /node2/ &rest /edge-attributes/ => edge ::
+　[Function]　
+
+　
+
+# + *--->*  &rest /nodes/ => edges ::
+# 　[Function]　---は2つのdashを表す。
+#+BEGIN_HTML
+</p>
+<dl>
+<dt><b>&ndash;&ndash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edges</dt><dd>
+
+</dd>
+</dl>
+
+<p>　[Function]　
+</p>
+<p>
+#+END_HTML
+
+　
+
++ *->>*  &rest /nodes/ => graph ::
+　[Macro]　
+
+　
+
++ *==>*  &rest /nodes/ => graph ::
+　[Macro]　
+
+　
+
++ *<==*  &rest /nodes/ => graph ::
+　[Macro]　
+
+　
+
++ *-<*  &rest /nodes/ => graph ::
+　[Macro]　
+
+　
+
++ *>-*  &rest /nodes/ => graph ::
+　[Macro]　
+
+　
+
+# + *---*  &rest /nodes/ => paths ::
+# 　[Macro]　
+#+BEGIN_HTML
+</p>
+<dl>
+<dt><b>&ndash;&ndash;&ndash;</b>  &amp;rest <i>nodes</i> =&gt; edges</dt><dd>
+
+</dd>
+</dl>
+
+<p>　[Function]　
+</p>
+<p>
+#+END_HTML
+　
+
++ *O*  &rest /nodes/ => paths ::
+　[Macro]　
+
+　
+
++ *with-edge* (&rest /edge-attributes/) &body /body/ => graph ::
+　[Macro]　with-edgeは &, &&, [&]の引き数内で使うのが無難。
+
+　
+
+# Edge-Attrs
+# :arrowhead :arrowsize :arrowtail
+# :color :colorscheme :comment :constraint
+# :decorate :dir :edgeURL :edgehref :edgetarget :edgetooltip
+# :fontcolor :fontname :fontsize :headclip :headhref :headlabel
+# :headport :headtarget :headtooltip :headURL :href :id
+# :label :labelangle :labeldistance :labelfloat :labelfontcolor
+# :labelfontname :labelfontsize :labelhref :labelURL :labeltarget
+# :labeltooltip :layer :lhead :ltail
+# :minlen :penwidth :samehead :sametail :style
+# :tailclip :tailhref :taillabel :tailport :tailtarget :tailtooltip
+# :tailURL :target :tooltip :weight
+
+# Neato-Edge-Attrs
+# :weight :label :fontsize :fontname :fontcolor :style
+# :color :len :dir :decorate :id
+
+
+##--------------------------------------------------------------------
+** グラフ
+##--------------------------------------------------------------------
+
+　グラフコンストラクタ& (or &&)によって生成されるオブジェクトはgraph型のオブジェクトである。
+with-系のユーティリティの返り値、エッジユーティリティ(->>,==>,<==,-<,>-)の返り値、[&]によって生成されるクラスタもgraphのオブジェクト型とみなされる。
+これら以外のものはgraph型のオブジェクトではない。
+
+　クラスター以外のグラフ属性値はトップレベルのもののみ有効。
+クラスター以外のサブグラフのグラフ属性は無視される。
+Graphvizがサポートする属性に加え、:name、:strictもグラフ属性として追加されている。
+:name値はトップレベルグラフの名前で、ビューアのタイトルとして使用されることがある。
+:strict値をtに設定すると、同一のノード組に張ることのできるエッジの数が1本に制限される（デフォルト値はnil）。
+
+グラフ属性の種類については、下記のリンク先を参照せよ。
+- 属性について： http://www.graphviz.org/content/attrs
+- クラスターのcolor属性について： http://www.graphviz.org/color-names.html
+
+
+　
+
++ *&*  (&rest /graph-attributes/) &body /nodes-edges-graphs/ => graph ::
+　[Macro]　グラフ属性リストとグラフ構成要素(ノード、エッジ、グラフ)からグラフを生成する。
+
+　
+
++ *&&*  &body /nodes-edges-graphs/ => graph ::
+　[Macro]　グラフ属性リストがnilに指定されているグラフを生成する。
+
+　
+
++ *[&]*  (&rest /graph-attributes/) &body /nodes-edges-graphs/ => cluster ::
+　[Macro]　グラフ属性リストとグラフ構成要素(ノード、エッジ、グラフ)からクラスターを生成する。
+
+　
+
+
+
+# Graph-Attrs
+# :aspect :bgcolor
+# :center :clusterrank :color :colorscheme :comment :compound
+# :concentrate
+# :dpi :fillcolor :fontcolor :fontname :fontnames :fontpath :fontsize
+# :id :label :labeljust :labelloc :landscape :layers :layersep
+# :margin :mindist :nodesep :nojustify
+# :ordering :orientation :outputorder
+# :page :pagedir :pencolor :penwidth :peripheries
+# :rank :rankdir :ranksep :ratio :minimization :rotate
+# :samplepoints :searchsize :size :splines :style :stylesheet
+# :target :tooltip :truecolor :viewport :URL
+
+# Neato-Graph-Attrs
+# :start :size :page :margin :label :fontsize :fontname :fontcolor
+# :orientation :center :overlap :splines :sep
+
+
+##--------------------------------------------------------------------
+** アウトプット
+##--------------------------------------------------------------------
+
+　
+
++ *dot-output*  /graph/ => NIL ::
+　[Function]　
+
+　
+
++ *dot-pprint*  /graph/ => NIL ::
+　[Function]　
+
+　
+
++ *$*  (&rest /shell-proparties/) /graph/ => NIL  ::
+　[Macro]　
+
+　
+
++ *$$*  /graph/ => NIL  ::
+　[Macro]　プロパティリストをnilに指定する以外、$と同様の動作を行う。
+
+　
+
+##--------------------------------------------------------------------
+** HTML-LIKEラベル
+##--------------------------------------------------------------------
+
+　HTML-LIKEラベルは古いヴァージョンのGraphvizではサポートしていない可能性がある。
+HTML-LIKEラベルは通常のラベルに比べ表現力が大きく、ラベル中に画像を載せることもできる。
+ノードのラベルとして使用すると、レコードよりも詳細にノードの修飾を指定できる。
+HTML-LIKEラベルはエッジのラベルとしても用いることができる。
+
+　HTML-LIKEラベルはコード =(html tags-bodies)= によって生成される。
+ =html= はマクロ、 =tags-bodies= は任意の数のタグ型オブジェクトと文字列、数値を表す。
+tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, sub, sup, table, tr, td)によってのみ生成される。
+
+　参考： http://www.graphviz.org/node-shapes.html
+
+　
+
++ *タグ関数* &rest /attrs-tags-bodies/ => tag ::
+　[Function]　タグ関数: *br*, *hr*, *vr*, *img*, *font*, *i*, *b*, *u*, *sub*, *sup*, *table*, *tr*, *td*.
+タグ関数は任意数の、タグ、タグボディ、タグ属性、タグ属性値を引数に取る。
+引数の順は任意。
+ただし、タグ属性の次には必ずタグ属性値を置かなければならない。
+
+　
+
++ *html* /tags-bodies/ => html-like-labels ::
+　[Macro]　
+
+　
+
+##--------------------------------------------------------------------
+* ToDo
+##--------------------------------------------------------------------
+
+優先度順
+
+
+- 日本語版ドキュメントの完成。
+  - チュートリアル：html-likeラベル。
+  - リファレンスマニュアル。
+
+
+- 開発環境以外での動作確認(windows, macなど)。
+  - windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じる。-> trivial-shellとの相性か？
+
+
+- Graphviz機能の実装。
+  - カスタムシェイプの実装。
+  - URL属性類の実装。
+
+
+- コードにコメントを付属させる。
+      コードが読みづらくなるので、もう少し実装が固まってから。
+
+
+- ドキュメントの英訳。日本語版ドキュメントの完成後。
+
+
+- エラー処理。
+      どこまでlispでエラーチェックするか？
+      Graphvizに任せてもいい部分はGraphvizに。
+
+
+- セキュリティ。
+      現在のところ知識不足。要勉強。
+      少なくとも任意のコマンドはshellに打ち込めないように。
+
+
+- 最適化。
+  - ホットスポットの発見。
+  - cons使用量の調査。
+
+##====================================================================
+
