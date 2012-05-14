@@ -1,6 +1,7 @@
-Last Updated : 2012/05/13 19:10:30 tkych
+Last Updated : 2012/05/14 17:54:22 tkych
 
 # Donuts: Graph DSL for Common Lisp
+
 
 ## Introduction
 
@@ -9,7 +10,9 @@ How to use donuts is easy.
 <> creates a node.
 -> puts an edge between two nodes.
 && makes a graph by bundling some nodes, edges and graphs.
-$$ outputs an image of a graph.
+$$ outputs an image of the graph.
+
+The goal of donuts is to draw graphes in lispic way of thinking. 
 
 For more details, see index.html(Under translation) or index-j.html(Japanease) in doc directory.
 
