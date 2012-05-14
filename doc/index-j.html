@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-14 17:53:32 JST"/>
+<meta name="generated" content="2012-05-14 21:09:05 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -2282,10 +2282,10 @@ Donutsではhtmlタグの冗長性を排した <b>タグ関数</b> によって�
 <img src="./images/html-like-label1.png"  alt="./images/html-like-label1.png" />
 </p>
 <p>
-　まず1行目、htmlによってhtml-likeラベルが開始されます。
+　1行目、html以降の部分がhtml-likeラベルの内容です。
 2行目、タグ関数tableによってテーブルが作られます。
-属性:bgcolorによって背景色を指定することができます。
-ここでは:khakiによってカーキ色に指定されています。
+属性:bgcolorでテーブル全体の背景色を指定することができます。
+ここでは:khaki(カーキ色)に指定されています。
 </p>
 <p>
 　3行目、タグ関数tr(table-rowの略)によってテーブル内に行が配置され、タグ関数tdによって行内にテーブルセルが作られます。
@@ -2303,14 +2303,14 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 <p>
 　ボーダー属性はテーブルセルの枠の太さを指定します。
 ここでは0なので枠は出力されません。
-一般的に、タグの属性を指定するには、属性を表すキーワードと属性値を <code>:keyword value</code> のように並べます。
- <code>:keyword value</code> は、タグの引数内であればどの場所に置いてもかまいません。
+一般的に、タグの属性を指定するには、属性を表すキーワードと属性値を <code>:attribute value</code> のように並べます。
+ <code>:attribute value</code> は、タグの引数内であればどこに置いてもかまいません。
 つまり、6,8行目のようにタグ関数の引数の先頭に置いてもかまいません。
-ただし、 <b>キーワードの次には必ず属性値を置かねばなりません</b> 。
+ただし、 <b>属性キーワードの次には必ず属性値を置かねばなりません</b> 。
 </p>
 <p>
 　7行目、imgタグによって画像ファイルを出力しています。
-タグ関数imgは、:src属性値に画像ファイルのパスを指定することで、画像をラベル中に出力することができます。
+タグ関数imgは、:src属性値に画像ファイルのパスを指定することにより、画像をラベル中に出力することができます。
 </p>
 
 
@@ -2322,7 +2322,7 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 <p>
 　9行目、ノードの:shape属性を:plaintextに指定しています。
-一般的に、html-likeラベルをノードのラベルとして用いる場合、ノードの形（デフォルトで楕円）が出力されないように、ノードの:shape属性を:plaintextや:noneに指定することが多いようです。
+一般的に、html-likeラベルをノードのラベルとして用いる場合、ノードの形（デフォルトの楕円）が出力されないように、ノードの:shape属性を:plaintextや:noneに指定することが多いようです。
 </p>
 
 <p>
@@ -2372,7 +2372,7 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 　描きたいグラフに規則性が存在するなら、lisp組み込みの機能を使うことで簡単に描ける場合があります。
 この節では、Donutsによる小さなプログラムを3つ紹介します。
 2分木を描くための関数binary-tree-graph、ツリーのコンスセル構造を描くためのマクロcons-cell-of、有限オートマトンの遷移図を描くためのマクロtrans-diagramです。
-ざっくり言うと、これらのプログラムは言語Donutsで書かれたプログラムです。
+ざっくり言うと、これらは<a href="#sec-3-2">大きな言語Donutsで書かれた小さなプログラム</a>です。
 </p>
 
 
@@ -2662,16 +2662,21 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <h2 id="sec-5"><span class="section-number-2">5</span> Examples from Graphviz manual</h2>
 <div class="outline-text-2" id="text-5">
 
-<p>この章の例は、いずれも次のGraphvizマニュアルより抜粋したものです。
+<p>この章の例は、いずれも以下のGraphvizマニュアルより抜粋したものです。
 </p>
 <ul>
 <li><a href="http://www.graphviz.org/pdf/dotguide.pdf">http://www.graphviz.org/pdf/dotguide.pdf</a>
 <ul>
-<li>Tominaga氏による和訳: <a href="http://www.cbrc.jp/~tominaga/translations/index.html#dot">http://www.cbrc.jp/%7Etominaga/translations/index.html#dot</a> (ただしバージョンが少しだけ古いのでhtml-likeラベルなどは解説されていないことに注意)
+<li><a href="http://www.cbrc.jp/~tominaga/translations/index.html#dot">Tominaga氏による和訳</a>(原文の版が少し古いのでhtml-likeラベル等は解説されていないことに注意)
 </li>
 </ul>
 
 </li>
+</ul>
+
+
+
+<ul>
 <li><a href="http://www.graphviz.org/pdf/neatoguide.pdf">http://www.graphviz.org/pdf/neatoguide.pdf</a>
 </li>
 </ul>
@@ -4023,7 +4028,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-14 17:53:32 JST</p>
+<p class="date">Date: 2012-05-14 21:09:05 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
