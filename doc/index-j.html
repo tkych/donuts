@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-13 23:23:04 JST"/>
+<meta name="generated" content="2012-05-14 17:53:32 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -83,7 +83,47 @@
  }
 /*]]>*///-->
 </script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
 
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
 </head>
 <body>
 
@@ -119,7 +159,7 @@
 <ul>
 <li><a href="#sec-2-1">2.1 動作確認</a></li>
 <li><a href="#sec-2-2">2.2 システム依存</a></li>
-<li><a href="#sec-2-3">2.3 開始設定</a></li>
+<li><a href="#sec-2-3">2.3 開始設定、動作確認</a></li>
 </ul>
 </li>
 <li><a href="#sec-3">3 Donutsの考え方 &mdash; &lt;&gt;, -&gt;, &amp;</a>
@@ -140,10 +180,11 @@
 <li><a href="#sec-4-6">4.6 ランク</a></li>
 <li><a href="#sec-4-7">4.7 ポート</a></li>
 <li><a href="#sec-4-8">4.8 レコード</a></li>
-<li><a href="#sec-4-9">4.9 ユーティリティ</a></li>
+<li><a href="#sec-4-9">4.9 ユーティリティ集</a></li>
 <li><a href="#sec-4-10">4.10 無向グラフ、レイアウトアルゴリズム</a></li>
 <li><a href="#sec-4-11">4.11 Html-Likeラベル</a></li>
 <li><a href="#sec-4-12">4.12 小さなプログラム &mdash; 2分木、コンスセル、有限オートマトン</a></li>
+<li><a href="#sec-4-13">4.13 Tips</a></li>
 </ul>
 </li>
 <li><a href="#sec-5">5 Examples from Graphviz manual</a>
@@ -186,13 +227,13 @@
 　 <b>DonutsはCommon Lispのためのグラフ作成ドメイン固有言語（DSL）です。</b>
 lispでちょっとしたグラフを描くことを目指し、Donutsは造られました。
 DonutsはS式で記述されたグラフ構造を<a href="http://www.graphviz.org/dot-language.html">Dot言語</a>に変換し、<a href="http://graphviz.org/">Graphviz</a>によって画像に変換します。
-ざっくりいうとDonutsはLispがDot言語を吸収した言語です。
-Lisp組み込みの機能を用いることによって、Dot言語単体では困難だったことが容易に達成できるようになっています(ex.<a href="#sec-4-12">小さなプログラム</a>)。
+ざっくり言うとDonutsはLispがDot言語を吸収した言語です。
+Lisp組み込みの機能を用いることによって、Dot言語単体では困難だったことを容易に達成することができます(ex.<a href="#sec-4-12">小さなプログラム</a>)。
 </p>
 
 <p>
 　 <b>Donutsの使い方は簡単です。</b>
- <code>&lt;&gt;</code> でノードを作り、 <code>-&gt;</code> で2つのノード間にエッジを張り、 <code>&amp;</code> でノードやエッジ（やグラフ）を束ねグラフを作り、 <code>$</code> で画像を出力します。
+ <code>&lt;&gt;</code> でノードを作り、 <code>-&gt;</code> で2つのノード間にエッジを張り、 <code>&amp;</code> でノードやエッジ（やグラフ）を束ねグラフを作り、 <code>$$</code> で画像を出力します。
 例えば、左下のコードをLispのREPLに入力すると、ビューアが起動し右下の画像が出力されます。
 </p>
 <p>
@@ -206,12 +247,12 @@ Lisp組み込みの機能を用いることによって、Dot言語単体では�
         (--&gt; <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"n"</span>)                                         <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#38291;&#12395;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
         (-&gt;  <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:dotted</span>)                            <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#28857;&#32218;&#12398;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
         (--&gt; <span style="color: #90ee90;">"u"</span> <span style="color: #90ee90;">"t"</span> <span style="color: #90ee90;">"s"</span>)                                       <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#38291;&#12395;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
-        (~ <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"t"</span>) (~ <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span>))))                            <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#12398;&#39640;&#12373;&#12434;&#25539;&#12360;&#12427;</span>
+        (~ <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"t"</span>) (~ <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"s"</span> <span style="color: #90ee90;">"u"</span>))))                        <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#12398;&#39640;&#12373;&#12434;&#25539;&#12360;&#12427;</span>
 </pre>
 
 
 <p>
-　 <b>すぐにDonutsでグラフを描きはじめられるように。</b>
+　 <b>すぐにDonutsでグラフを描き始められるように。</b>
 Donutsの文法はDot言語のものと似ています。
 そこで、Dot言語になじみのある方ならDot言語との類推から、すぐにグラフを描き始めることができるよう、<a href="#sec-5">Examples from Graphviz manual</a>の章を用意しています。
 Dot言語になじみのない方でも、もちろん大丈夫です。
@@ -249,7 +290,7 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 　 <b>Donutsには実用的操作も加えられています。</b>
 実用的操作とは、主として基本操作を組み合わせた <span style="text-decoration:underline;">実用目的の便利機能</span> のことです。
 基本的操作だけを使ってグラフを描くこともできます。
-しかし、実用的な操作も使用することで、より多彩なグラフを、より手軽に描くことができます(cf.<a href="#sec-4-9">ユーティリティ</a>)。
+しかし、実用的な操作も使用することで、より多彩なグラフを、より手軽に描くことができます(cf.<a href="#sec-4-9">ユーティリティ集</a>)。
 </p>
 
 </div>
@@ -329,7 +370,7 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 </div>
 
 <div id="outline-container-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> 開始設定</h3>
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> 開始設定、動作確認</h3>
 <div class="outline-text-3" id="text-2-3">
 
 
@@ -339,7 +380,13 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 <pre class="src src-lisp">CL-USER&gt; (push #P<span style="color: #90ee90;">"/path-to-your-donuts-directory/"</span> asdf:*central-registry*)
 CL-USER&gt; (ql:quickload <span style="color: #00ee76;">:donuts</span>)
 CL-USER&gt; (<span style="color: #eeee00;">in-package</span> <span style="color: #00ee76;">:donuts</span>)
-DONUTS&gt; (dot-output (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">dot code &#12364;&#27161;&#28310;&#20986;&#21147;&#12395;&#34920;&#31034;&#12373;&#12428;&#12383;&#12425;OK</span>
+
+DONUTS&gt; (dot-output (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2)))  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#27425;&#12398;&#12424;&#12358;&#12394;dot&#12467;&#12540;&#12489;&#12364;&#27161;&#28310;&#20986;&#21147;&#12395;&#34920;&#31034;&#12373;&#12428;&#12383;&#12425;OK</span>
+
+<span style="color: #eeee00;">; </span><span style="color: #eeee00;">digraph graph_ID_103 {</span>
+<span style="color: #eeee00;">;   </span><span style="color: #eeee00;">1 -&gt; 2;</span>
+<span style="color: #eeee00;">; </span><span style="color: #eeee00;">}</span>
+
 DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12499;&#12517;&#12540;&#12450;&#12364;&#36215;&#21205;&#12375;&#12289;&#19979;&#12398;&#30011;&#20687;&#12364;&#20986;&#21147;&#12373;&#12428;&#12383;&#12425;OK</span>
 </pre>
 
@@ -491,7 +538,7 @@ Lispは拡張可能なプログラムを書くために、とりわけみごと�
 これは、「いっちょCLOSやloopやformatに匹敵するものをこさえるべぇ」というようなビッグドリームを語っているのでは <span style="text-decoration:underline;">ありません</span> 。
 </p>
 <p>
-　ポールグレアム氏が著書On Lispで提唱している <b>ボトムアップデザイン</b> によるプログラミング技法を指針として、プログラムを書くということです。
+　ポールグレアム氏が著書On Lispで提唱している <b>ボトムアップデザイン</b> によるプログラミング技法を指針として、アプリケーションを造っていくということです。
 ボトムアップデザインについては氏がOn Lispの中で詳しく解説しています。
 ここで私なりにボトムアップデザインのエッセンスを濃縮し、まとめてみると次のようになります。
 </p>
@@ -511,8 +558,8 @@ Lispは拡張可能なプログラムを書くために、とりわけみごと�
 　1&ndash;3はボトムアップデザインを行うためのガイドライン、4はボトムアップデザインの利点です。
 いずれの項目もLispでプログラムを書いたことのある方なら、当たり前だと感じるものでしょう。
 しかし、ここで4の拡張可能性について、もう少し掘り下げて考察していきたいと思います。
-なぜなら、4こそがLispを他の言語と、まったく異質なものにしていると私は考えているからです。
-そして、この拡張可能性をアプリケーションに与えることで、「なめらかな」アプリケーションを造ることができると私は考えているからです。
+なぜなら、4こそがLispを他の言語と違う、まったく異質なものにしていると私は考えるからです。
+そして、この拡張可能性をアプリケーションに付与することで、「なめらかな」アプリケーションを造ることができると私は考えているからです。
 </p>
 <p>
 　重要なことは「他の言語の機能をLispで実現するということは、単にその機能のみがLispで実現されるということにとどまらない」ことです。
@@ -520,7 +567,7 @@ Lispは拡張可能なプログラムを書くために、とりわけみごと�
 </p>
 <p>
 　その一番のものが拡張可能性です。
-Lispの拡張可能性を支える一番の機能はマクロ機能です(他にも関数、REPL、CLOSなどの機能も拡張可能性を支えるが一番はマ・ク・ロ)。
+Lispの拡張可能性を支える最大の機能はマクロ機能です(他にも関数、REPL、CLOSなどの機能も拡張可能性を支えるが最重要はマ・ク・ロ)。
 マクロ機能の存在によって、Lispでは他の言語の機能を容易に実現することができます。
 しかし、それだけにとどまらず、 <b>実現した機能もマクロ機能を利用することができる</b> のです。
 </p>
@@ -528,7 +575,7 @@ Lispの拡張可能性を支える一番の機能はマクロ機能です(他に
 　このことは荒っぽく言うと、機能を実現するためにLispに吸収した言語に、実質的にマクロ機能を加えることに他なりません。
 例えば、Dot言語にはマクロ機能はありません。
 ところが、LispでDot言語を吸収し、Lispでグラフ作成機能を実現すると、マクロ機能を備えた環境でグラフ作成ができるようになるのです。
-つまり、マクロが伝染するのです。
+つまり、マクロが伝播するのです。
 </p>
 <p>
 　今、議論のために取り上げたのは、マクロ機能だけです。
@@ -580,8 +627,8 @@ Lispの上に実現されたその機能は、基盤であるLispの拡張可能
 </p>
 <p>
 　ここで、まず注意してほしいことは、プログラムを書くために "グラフ作成" を抽象化するのであって、数学的な問題を解くために "グラフ" を抽象化するのではないことです。
-数学的な問題を解くには抽象化されたグラフ構造を扱い、 <span style="text-decoration:underline;">グラフ構造を持つすべてのものに対し、これこれの命題が成り立つかどうか</span> を調べます。
-しかし、コンピュータに命令しグラフを作成させるプログラムを書くためには、 <span style="text-decoration:underline;">そもそもグラフ構造を作るにはどうするか</span> を探さねばなりません。
+数学的な問題を解くには抽象化されたグラフ構造を扱い、 <span style="text-decoration:underline;">グラフ構造を持つすべてのものに対し、これこれの命題が成り立つかどうか</span> を証明します。
+しかしながら、コンピュータにグラフ作成を命令するプログラムを書くためには、 <span style="text-decoration:underline;">そもそもグラフ構造を作るにはどうするか</span> を探さねばなりません。
 </p>
 
 <p>
@@ -1527,7 +1574,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 </div>
 
 <div id="outline-container-4-9" class="outline-3">
-<h3 id="sec-4-9"><span class="section-number-3">4.9</span> ユーティリティ</h3>
+<h3 id="sec-4-9"><span class="section-number-3">4.9</span> ユーティリティ集</h3>
 <div class="outline-text-3" id="text-4-9">
 
 
@@ -1547,8 +1594,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <p>
 　&amp;&amp;は今まで何度も出てきたグラフコンストラクタですが、真の姿は、属性を指定する必要のないとき、2文字省略するためのスーパーマクロです(同様のマクロとして$$もあります)。
 2文字省略することにより、指の疲労が軽減され、キーボードの摩耗も減り、電力の消費も抑えられ、カッコの数も減り、コードの可読性も向上し、世の中が少しだけ良くなる究極のワンダフルマクロです。
-</p>
-
 
 
 <pre class="src src-lisp">(<span style="color: #eeee00;">&amp;&amp;</span> nodes-edges-graphs)
@@ -1561,7 +1606,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 </pre>
 
 
-</div>
+</p></div>
 
 </div>
 
@@ -2181,7 +2226,9 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 <p>
 <img src="./images/layout-sfdp.png"  alt="./images/layout-sfdp.png" />
 </p>
-
+<p>
+　
+</p>
 </div>
 
 </div>
@@ -2192,38 +2239,41 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 
 
 <p>
-　 <b>html-likeラベル</b> は通常のラベルに比べ、表現力の優れた特別なラベルです( <b>注：</b> 古いバージョンのGraphvizではサポートされてません)。
-html-likeラベルは、コード <code>(html tag-object)</code> によって生成され、エッジやノードのラベルとして用いることができます。
+(<b>注:</b> html-likeラベルは、古いバージョンのGraphvizではサポートされていません)
+</p>
+<p>
+　 <b>html-likeラベル</b> は、通常のラベルに比べ、表現力の優れた特別なラベルです。
+html-likeラベルは、コード <code>(html tag)</code> によって生成され、エッジやノードのラベルとして用いることができます(<b>注:</b> レコードのラベルとしてhtml-likeラベルを用いることはできません)。
 Graphvizではhtmlタグのような形式なので、html-likeラベルと呼ばれています。
 Donutsではhtmlタグの冗長性を排した <b>タグ関数</b> によってタグオブジェクトを生成し、 <b>マクロhtml</b> によってタグオブジェクトをhtml-likeラベルに変換します。
 </p>
 <p>
 　すべてのタグ関数は、引数として任意数の、属性と属性値、タグ本体(数値や文字列、タグオブジェクト)を取り、タグを生成します。
-次のものがタグ関数です。
+タグ関数は、 <b>br</b>, <b>hr</b>, <b>vr</b>, <b>img</b>, <b>font</b>, <b>i</b>, <b>b</b>, <b>u</b>, <b>sub</b>, <b>sup</b>, <b>table</b>, <b>tr</b>, <b>td</b> です。
 </p>
-<dl>
-<dt><b>タグ関数</b>  &amp;rest <i>attrs-bodies</i></dt><dd>タグ関数 : <b>br</b>, <b>hr</b>, <b>vr</b>, <b>img</b>, <b>font</b>, <b>i</b>, <b>b</b>, <b>u</b>, <b>sub</b>, <b>sup</b>, <b>table</b>, <b>tr</b>, <b>td</b>
-</dd>
-</dl>
-
-
-
-
-
+<p>
+　
+</p>
 
 <hr/>
+<p>
+　具体例によってhtml-likeラベルの使い方を見ていきましょう。
+</p>
 
 
 
-
-
-<pre class="src src-lisp">($$ (<span style="color: #eeee00;">&amp;&amp;</span> (&lt;&gt; (html
-             (table (tr (td <span style="color: #90ee90;">"WANDED"</span>))
-                    (tr (td (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"10"</span> <span style="color: #90ee90;">"Dead or Alive"</span>)))
-                    (tr (td (img <span style="color: #00ee76;">:src</span> <span style="color: #90ee90;">"/home/tkych/lisplogo_alien_128.png"</span>)))
-                    (tr (td <span style="color: #90ee90;">"$1,000,000"</span> (br) <span style="color: #90ee90;">"REWARD"</span>))))
-            <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:plaintext</span>)))
+<pre class="src src-lisp"><span class="linenr">1:  </span>(<span style="color: #eeee00;">&amp;&amp;</span> (&lt;&gt; (html
+<span class="linenr">2:  </span>         (table <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:khaki</span>
+<span class="linenr">3:  </span>                (tr (td <span style="color: #90ee90;">"!!WANTED!!"</span> (br)
+<span class="linenr">4:  </span>                        (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"10"</span> <span style="color: #90ee90;">"Dead or Alive"</span>)
+<span class="linenr">5:  </span>                        <span style="color: #00ee76;">:border</span> 0))
+<span class="linenr">6:  </span>                (tr (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:ghostwhite</span> <span style="color: #00ee76;">:border</span> 0
+<span class="linenr">7:  </span>                        (img <span style="color: #00ee76;">:src</span> <span style="color: #90ee90;">"/home/tkych/lisplogo_alien_128.png"</span>)))
+<span class="linenr">8:  </span>                (tr (td <span style="color: #00ee76;">:border</span> 0 <span style="color: #90ee90;">"$1,000,000"</span> (br) <span style="color: #90ee90;">"REWARD"</span>))))
+<span class="linenr">9:  </span>        <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:plaintext</span>))
 </pre>
+
+
 
 
 
@@ -2231,25 +2281,79 @@ Donutsではhtmlタグの冗長性を排した <b>タグ関数</b> によって�
 <p>
 <img src="./images/html-like-label1.png"  alt="./images/html-like-label1.png" />
 </p>
+<p>
+　まず1行目、htmlによってhtml-likeラベルが開始されます。
+2行目、タグ関数tableによってテーブルが作られます。
+属性:bgcolorによって背景色を指定することができます。
+ここでは:khakiによってカーキ色に指定されています。
+</p>
+<p>
+　3行目、タグ関数tr(table-rowの略)によってテーブル内に行が配置され、タグ関数tdによって行内にテーブルセルが作られます。
+タグ関数tdの引数は、文字列"!!WANDED!!"、brタグ、fontタグ、そして生成されるtdタグ(テーブルセル)のボーダー属性を指定する:border 0です。
+</p>
+<p>
+　タグ関数brによって生成されるタグは改行を表すタグです。
+brタグは:align属性を:center, :left, :rightのいずれかに指定することによって、前の行の配置を中央寄せ、左寄せ、右寄せに出力することができます(デフォルトは:center)。
+</p>
+<p>
+　タグ関数fontは、文字列のフォントの種類や大きさを指定する際に使います。
+fontタグは:color属性によって文字色を、:faceによってフォントの種類を、:point-sizeによって文字の大きさを、それぞれ指定することができます。
+例では文字列"Dead or Alive"のフォントの大きさが10に指定されています。
+</p>
+<p>
+　ボーダー属性はテーブルセルの枠の太さを指定します。
+ここでは0なので枠は出力されません。
+一般的に、タグの属性を指定するには、属性を表すキーワードと属性値を <code>:keyword value</code> のように並べます。
+ <code>:keyword value</code> は、タグの引数内であればどの場所に置いてもかまいません。
+つまり、6,8行目のようにタグ関数の引数の先頭に置いてもかまいません。
+ただし、 <b>キーワードの次には必ず属性値を置かねばなりません</b> 。
+</p>
+<p>
+　7行目、imgタグによって画像ファイルを出力しています。
+タグ関数imgは、:src属性値に画像ファイルのパスを指定することで、画像をラベル中に出力することができます。
+</p>
+
+
+
+
+
+
+
+
+<p>
+　9行目、ノードの:shape属性を:plaintextに指定しています。
+一般的に、html-likeラベルをノードのラベルとして用いる場合、ノードの形（デフォルトで楕円）が出力されないように、ノードの:shape属性を:plaintextや:noneに指定することが多いようです。
+</p>
+
+<p>
+　
+</p>
+<ul>
+<li>参考：<a href="#sec-5-1-12">例12 HTML-like label</a>
+</li>
+</ul>
+
+
+
+<ul>
+<li>リファレンスマニュアル：<a href="#sec-6-5">HTML-LIKEラベル</a>
+</li>
+</ul>
+
+
+
+<ul>
+<li>html-likeラベルについてのGraphvizマニュアル： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+</li>
+</ul>
+
+
 
 <ul>
 <li>lispエイリアン目撃情報！！： <a href="http://www.lisperati.com/logo.html">http://www.lisperati.com/logo.html</a>
 </li>
 </ul>
 
-
-
-<ul>
-<li>html-likeラベルについて： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
-</li>
-</ul>
-
-
-
-<ul>
-<li>cf. <a href="#sec-5-1-12">例12 HTML-like label</a>
-</li>
-</ul>
 
 
 <p>
@@ -2483,6 +2587,66 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </table>
 
 は、リスト <code>((S1 (0 S1) (1 S2)) (S2 (0 S3) (1 S2)) (S3 (0 S2) (1 S1)))</code> によって表すことができます。
+
+<p>
+　
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4-13" class="outline-3">
+<h3 id="sec-4-13"><span class="section-number-3">4.13</span> Tips</h3>
+<div class="outline-text-3" id="text-4-13">
+
+
+<p>
+　Donutsによるグラフ作成のこつ。
+</p>
+
+</div>
+
+<div id="outline-container-4-13-1" class="outline-4">
+<h4 id="sec-4-13-1"><span class="section-number-4">4.13.1</span> letの後には&amp;&amp;を。</h4>
+<div class="outline-text-4" id="text-4-13-1">
+
+
+
+
+
+<pre class="src src-lisp">(<span style="color: #eeee00;">let</span> ((a (&lt;&gt; <span style="color: #90ee90;">"a"</span>))
+      (b (&lt;&gt; <span style="color: #90ee90;">"c"</span>)))
+  (-&gt; a b)
+  (-&gt; 1 2))
+=&gt; #&lt;edge_ID_14 <span style="color: #00ee76;">::</span> 1 -&gt; 2&gt; <span style="color: #eeee00;">;</span><span style="color: #eeee00;">(-&gt; 1 2)&#12398;&#36820;&#12426;&#20516;&#12391;&#12354;&#12427;edge&#12384;&#12369;&#12364;&#36820;&#12373;&#12428;&#12390;&#12375;&#12414;&#12358;&#12290;</span>
+</pre>
+
+
+
+
+<pre class="src src-lisp">(<span style="color: #eeee00;">let</span> ((a (&lt;&gt; <span style="color: #90ee90;">"a"</span>))
+      (b (&lt;&gt; <span style="color: #90ee90;">"c"</span>)))
+  (<span style="color: #eeee00;">&amp;&amp;</span>
+    (-&gt; a b)
+    (-&gt; 1 2)))
+=&gt; #&lt;GRAPH graph_ID_19::&gt;  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#22823;&#27010;&#12398;&#22580;&#21512;&#12289;&#12371;&#12385;&#12425;&#12364;&#26395;&#12416;&#32080;&#26524;&#12290;</span>
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4-13-2" class="outline-4">
+<h4 id="sec-4-13-2"><span class="section-number-4">4.13.2</span> グラフの規則性に着目すべし。</h4>
+<div class="outline-text-4" id="text-4-13-2">
+
+
+<p>
+グラフに規則性(パターン)が存在するなら、lisp組み込みの機能を用いることによって、大きなグラフも少ないコード量で書くことができます。
+</p>
+
 
 
 <p>
@@ -2824,9 +2988,6 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
         (-&gt;  <span style="color: #90ee90;">"a1"</span> <span style="color: #90ee90;">"b3"</span>)
         (-&gt;  <span style="color: #90ee90;">"a3"</span> <span style="color: #90ee90;">"a0"</span>)
         (-&gt;  <span style="color: #90ee90;">"b2"</span> <span style="color: #90ee90;">"a3"</span>)))
-
-($ ()
-
 </pre>
 
 
@@ -2846,7 +3007,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 <p>
 　出力される画像がマニュアルのものと違いますが、グラフとしては同等です。
-グラフを構成する要素(ノード、エッジ、グラフ)の順によって、グラフとしては同等でも、グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります(これはGraphvizの仕様です)。
+グラフを構成する要素(ノード、エッジ、グラフ)の順によって、グラフ構造としては同等でも、グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります(これはGraphvizの仕様です)。
 </p>
 
 
@@ -2898,7 +3059,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 <pre class="src src-lisp">($$ (&amp; (<span style="color: #00ee76;">:compound</span> t)
       (<span style="color: #eeee00;">let</span> ((c0 ([&amp;] () (-&gt;&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> <span style="color: #90ee90;">"c"</span>)
-                     (==&gt; <span style="color: #90ee90;">"b"</span> <span style="color: #90ee90;">"c"</span> <span style="color: #90ee90;">"d"</span>)))
+                        (==&gt; <span style="color: #90ee90;">"b"</span> <span style="color: #90ee90;">"c"</span> <span style="color: #90ee90;">"d"</span>)))
             (c1 ([&amp;] () (-&gt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #90ee90;">"g"</span> <span style="color: #90ee90;">"f"</span>))))
         (<span style="color: #eeee00;">&amp;&amp;</span> c0 c1
             (-&gt; <span style="color: #90ee90;">"b"</span> <span style="color: #90ee90;">"f"</span> <span style="color: #00ee76;">:lhead</span> c1)
@@ -2969,9 +3130,7 @@ from <a href="http://www.graphviz.org/doc/info/html3.gv">http://www.graphviz.org
           (tr (td <span style="color: #90ee90;">"line 1"</span>)
               (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:blue</span> (font <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:white</span> <span style="color: #90ee90;">"line 2"</span>))
               (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:gray</span> (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"24.0"</span> <span style="color: #90ee90;">"line 3"</span>))
-              (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span>
-                  (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"24.0"</span> <span style="color: #00ee76;">:face</span> <span style="color: #90ee90;">"ambrosia"</span>
-                        <span style="color: #90ee90;">"line 4"</span>))
+              (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span> (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"24.0"</span> <span style="color: #00ee76;">:face</span> <span style="color: #90ee90;">"ambrosia"</span> <span style="color: #90ee90;">"line 4"</span>))
               (td (table <span style="color: #00ee76;">:colorpadding</span> 0 <span style="color: #00ee76;">:border</span> 0 <span style="color: #00ee76;">:cellspacing</span> 0
                          (tr (td (font <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span> <span style="color: #90ee90;">"Mixed"</span>))
                              (td (font <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span> <span style="color: #90ee90;">"fonts"</span>))))))))))))
@@ -2996,8 +3155,7 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 <pre class="src src-lisp">($$ (&amp; (<span style="color: #00ee76;">:rankdir</span> <span style="color: #00ee76;">:LR</span>)
   (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:plaintext</span>)
     (<span style="color: #eeee00;">let</span> ((a (&lt;&gt; (html (table <span style="color: #00ee76;">:border</span> 0 <span style="color: #00ee76;">:cellborder</span> 1 <span style="color: #00ee76;">:cellspacing</span> 0
-                              (tr (td <span style="color: #00ee76;">:rowspan</span> 3 <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span>
-                                      <span style="color: #90ee90;">"class"</span>))
+                              (tr (td <span style="color: #00ee76;">:rowspan</span> 3 <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span> <span style="color: #90ee90;">"class"</span>))
                               (tr (td <span style="color: #00ee76;">:port</span> <span style="color: #90ee90;">"here"</span> <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:lightblue</span> <span style="color: #90ee90;">"qualfier"</span>))))))
           (b (&lt;&gt; (html (table <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:bisque</span>
                               (tr (td <span style="color: #00ee76;">:colspan</span> 3 <span style="color: #90ee90;">"elephant"</span>)
@@ -3006,14 +3164,12 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
                               (tr (td <span style="color: #00ee76;">:colspan</span> 2 <span style="color: #00ee76;">:rowspan</span> 2
                                       (table <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:grey</span>
                                              (tr (td <span style="color: #90ee90;">"corn"</span>))
-                                             (tr (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span>
-                                                     <span style="color: #90ee90;">"c"</span>))
+                                             (tr (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span> <span style="color: #90ee90;">"c"</span>))
                                              (tr (td <span style="color: #90ee90;">"f"</span>))))
                                   (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:white</span> <span style="color: #90ee90;">"penguin"</span>))
                               (tr (td <span style="color: #00ee76;">:colspan</span> 2 <span style="color: #00ee76;">:border</span> 4 <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:right</span> <span style="color: #00ee76;">:port</span> <span style="color: #90ee90;">"there"</span> <span style="color: #90ee90;">"4"</span>))))
-                        <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:ellipse</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
-          (c (&lt;&gt; (html <span style="color: #90ee90;">"long line 1"</span> (br) <span style="color: #90ee90;">"line 2"</span> (br <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:left</span>)
-                       <span style="color: #90ee90;">"line 3"</span> (br <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:right</span>))))
+                  <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:ellipse</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
+          (c (&lt;&gt; (html <span style="color: #90ee90;">"long line 1"</span> (br) <span style="color: #90ee90;">"line 2"</span> (br <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:left</span>) <span style="color: #90ee90;">"line 3"</span> (br <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:right</span>))))
           (d (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:triangle</span>)))
       (<span style="color: #eeee00;">&amp;&amp;</span>
         (~ b c)
@@ -3031,8 +3187,9 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 <p>
 <img src="./images/example12-3.png"  alt="./images/example12-3.png" />
 </p>
-
-
+<p>
+　
+</p>
 
 </div>
 </div>
@@ -3866,7 +4023,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-13 23:23:04 JST</p>
+<p class="date">Date: 2012-05-14 17:53:32 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
