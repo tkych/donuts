@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/15 09:33:01 tkych
+### Last Updated : 2012/05/15 23:08:00 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -163,7 +163,7 @@ Donutsのゴールは、lisp環境内でちょっとしたグラフを描くこ�
 Donutsは、S式で記述されたグラフ構造を、画像としてビューアに出力します
 (実際の内部動作は、S式を[[http://www.graphviz.org/dot-language.html][Dot言語]]のコードに変換し、[[http://graphviz.org/][Graphviz]]により画像を生成し、ビューアに出力するというものです)。
 ざっくり言うとDonutsはLispがDot言語を吸収した言語です。
-Donutsでグラフを作成する際には、すべてのLisp機能(REPL、マクロ、関数など)を利用できるので、Dot言語では手間がかかることでも容易に成し遂げることができます(cf.[[小さなプログラム --- 2分木、コンスセル、有限オートマトン][小さなプログラム]])。
+Donutsでグラフを作成する際には、すべてのLisp機能(REPL、マクロ、関数など)を利用できるので、Dot言語では手間がかかることでも容易に成し遂げることができます(cf.[[小さなプログラム --- カレンダー、2分木、コンスセル、有限オートマトン][小さなプログラム]])。
 
 
 　 *Donutsの使い方は簡単です。*
@@ -217,7 +217,8 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 グラフ作成に関する基本的操作とは、 _ノードを構築する操作_ =<>= 、 _エッジを構築する操作_  =->= 、 _グラフを構築する操作_  =&= の3つの操作のことです。
 およそいかなるグラフ構造もこれら3つの基本操作のみから作り上げることができます(グラフ画像の見た目やコーディングの手間を気にしなければ)。
 また、Donutsはなるべくlispとぶつからないことを重視して造られています。
-したがって、複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、ユーザが自分で好きなように追加できるはずです(cf.[[小さなプログラム --- 2分木、コンスセル、有限オートマトン][小さなプログラム]])。
+したがって、複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、
+ユーザが自分で好きなように追加できるはずです(cf.[[小さなプログラム --- カレンダー、2分木、コンスセル、有限オートマトン][小さなプログラム]])。
 
 　 *Donutsには実用的操作も加えられています。*
 実用的操作とは、主として基本操作を組み合わせた _実用目的の便利機能_ のことです。
@@ -365,7 +366,7 @@ LispとJavaによる例を挙げましょう。
 # Instead of a lintel, you’ll get an arch.
 ボトムアップで[プログラムを]書いたとき、たいてい最後には独特なプログラムに行き着く。
 単一でモノシリックなプログラムの替わりに、より抽象的なオペレータを持つ大きな言語と、
-それ[大きな言語]で書かれた[[小さなプログラム --- 2分木、コンスセル、有限オートマトン][小さなプログラム]]を手に入れるはずだ。
+それ[大きな言語]で書かれた[[小さなプログラム --- カレンダー、2分木、コンスセル、有限オートマトン][小さなプログラム]]を手に入れるはずだ。
 # まぐさ[式構造物]の替わりに、アーチ[式構造物]を手に入れるのだ
 ...
 # Lisp is an especially good language for writing extensible programs because it is itself an extensible program. 
@@ -1271,25 +1272,15 @@ digraph graph_T184 {
 ##--------------------------------------------------------------------
 
 　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティ集です。
-この章で導入される、with-node, with-edge以外のユーティリティはすべて、コンストラクタなどを組み合わせたものです。
 
+# ##--------------------------------------
+# *** 2文字省略するためのユーティリティ
+# ##--------------------------------------
 
-##--------------------------------------
-*** 2文字省略するためのマクロ
-##--------------------------------------
+# 　&&は今まで何度も出てきたグラフコンストラクタです。
+# しかし、真の姿は、属性を指定する必要のない場合に、2文字省略するためのスーパーユーティリティです(同様のユーティリティとしてもあります)。
+# 2文字省略することにより、指の疲労が軽減され、キーボードの摩耗も減り、電力の消費も抑えられ、カッコの数も減り、コードの可読性も向上し、世の中が少しだけ良くなる究極のワンダフルユーティリティです。
 
-　&&は今まで何度も出てきたグラフコンストラクタですが、真の姿は、属性を指定する必要のないとき、2文字省略するためのスーパーマクロです(同様のマクロとして$$もあります)。
-2文字省略することにより、指の疲労が軽減され、キーボードの摩耗も減り、電力の消費も抑えられ、カッコの数も減り、コードの可読性も向上し、世の中が少しだけ良くなる究極のワンダフルマクロです。
-
-#+BEGIN_SRC lisp
-(&& nodes-edges-graphs)
-->                   ;上のコードは下のコードに展開される
-(& () nodes-edges-graphs)
-
-($$ graph)
-->                   ;上のコードは下のコードに展開される
-($ () graph)
-#+END_SRC
 
 ##--------------------------------------
 *** コンテキストを作り出すもの
@@ -1298,8 +1289,7 @@ digraph graph_T184 {
 コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
  with-node,  with-edgeをネストした場合、属性値は上書きされます。
 
- *注：* 
- *with-node, with-edgeは、&,[&],&&の内部でのみ、期待通りの動作が保証されます。* 
+ *注: with-node, with-edgeは、&,[&],&&の内部でのみ、期待通りの動作が保証されます。* 
 with-node, with-edgeは、暗黙の部分グラフを生成します。
 そのため、トップレベルでwith-node, with-edgeを使用した場合、コンテキスト内のグラフ属性が無効になってしまいます。
 次の上のコードは期待通りに動作しますが、下のコードは期待通りに動作しません。
@@ -1314,7 +1304,7 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
     (& (:label "このグラフ属性は無効") ;with-nodeによって生成される暗黙の部分グラフの部分グラフなので、属性が無効になる
       (-> "a" "b")))
 #+END_SRC
-結局のところ、 *with-node, with-edgeは、&,[&],&&の内部でのみ、使用できると考えた方が無難です。*
+*with-node, with-edgeは、&,[&],&&の内部でのみ、使用できると考えた方が無難です。*
 
 --------------------------------------
 
@@ -2019,14 +2009,112 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 　
 
 ##--------------------------------------------------------------------
-** 小さなプログラム --- 2分木、コンスセル、有限オートマトン
+** 小さなプログラム --- カレンダー、2分木、コンスセル、有限オートマトン
 ##--------------------------------------------------------------------
 
-　描きたいグラフに規則性が存在するなら、lisp組み込みの機能を使うことで簡単に描ける場合があります。
-この節では、Donutsによる小さなプログラムを3つ紹介します。
-2分木を描くための関数binary-tree-graph、ツリーのコンスセル構造を描くためのマクロcons-cell-of、有限オートマトンの遷移図を描くためのマクロtrans-diagramです。
+　グラフに規則性が存在するなら、lisp組み込みの機能を使うことで簡単に描ける場合があります。
+この節では、Donutsによる小さなプログラムを4つ紹介します。
+カレンダーを描く関数generate-monthly-calendar、2分木を描く関数binary-tree-graph、ツリーのコンスセル構造を描くマクロcons-cell-of、有限オートマトンの遷移図を描くマクロtrans-diagramです。
 ざっくり言うと、これらは[[Donuts%E3%81%AE%E6%A7%8B%E7%AF%89%E6%8C%87%E9%87%9D][大きな言語Donutsで書かれた小さなプログラム]]です。
 
+　
+
+
+*** カレンダー
+
+　Grapvizによってカレンダーを描くという例は、Mihalis Tsoukalos氏による[[http://www.linuxjournal.com/article/7275][An Introduction to GraphViz]]より拝借しました。
+ただし、もとの例はカレンダーを描くdotコードを生成するPerlプログラムを書くというものです。
+
+#+BEGIN_SRC lisp
+($$ (& (:size "8,6":rankdir :LR) (generate-monthly-calendar 'may 2012 31 2)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/calendar.png
+digraph graph_ID_1124 {
+  size="8,6";
+  rankdir=LR;
+  node_ID_1074 [label="May\n2012",shape=Msquare];
+  node_ID_1075 [label="Sun",shape=egg,style=filled,color=lightgray];
+  node_ID_1076 [label="Mon",shape=egg,style=filled,color=lightgray];
+  node_ID_1077 [label="Tue",shape=egg,style=filled,color=lightgray];
+  node_ID_1078 [label="Wed",shape=egg,style=filled,color=lightgray];
+  node_ID_1079 [label="Thu",shape=egg,style=filled,color=lightgray];
+  node_ID_1080 [label="Fri",shape=egg,style=filled,color=lightgray];
+  node_ID_1081 [label="Sat",shape=egg,style=filled,color=lightgray];
+  node_ID_1074 -> node_ID_1075 -> node_ID_1076 -> node_ID_1077 -> node_ID_1078 -> node_ID_1079 -> node_ID_1080 -> node_ID_1081;
+  node_ID_1082 [label="",shape=box];
+  node_ID_1083 [label="",shape=box];
+  node_ID_1084 [label=1,shape=box];
+  node_ID_1085 [label=2,shape=box];
+  node_ID_1086 [label=3,shape=box];
+  node_ID_1087 [label=4,shape=box];
+  node_ID_1088 [label=5,shape=box];
+  node_ID_1074 -> node_ID_1082 -> node_ID_1083 -> node_ID_1084 -> node_ID_1085 -> node_ID_1086 -> node_ID_1087 -> node_ID_1088;
+  node_ID_1089 [label=6,shape=box];
+  node_ID_1090 [label=7,shape=box];
+  node_ID_1091 [label=8,shape=box];
+  node_ID_1092 [label=9,shape=box];
+  node_ID_1093 [label=10,shape=box];
+  node_ID_1094 [label=11,shape=box];
+  node_ID_1095 [label=12,shape=box];
+  node_ID_1074 -> node_ID_1089 -> node_ID_1090 -> node_ID_1091 -> node_ID_1092 -> node_ID_1093 -> node_ID_1094 -> node_ID_1095;
+  node_ID_1096 [label=13,shape=box];
+  node_ID_1097 [label=14,shape=box];
+  node_ID_1098 [label=15,shape=box];
+  node_ID_1099 [label=16,shape=box];
+  node_ID_1100 [label=17,shape=box];
+  node_ID_1101 [label=18,shape=box];
+  node_ID_1102 [label=19,shape=box];
+  node_ID_1074 -> node_ID_1096 -> node_ID_1097 -> node_ID_1098 -> node_ID_1099 -> node_ID_1100 -> node_ID_1101 -> node_ID_1102;
+  node_ID_1103 [label=20,shape=box];
+  node_ID_1104 [label=21,shape=box];
+  node_ID_1105 [label=22,shape=box];
+  node_ID_1106 [label=23,shape=box];
+  node_ID_1107 [label=24,shape=box];
+  node_ID_1108 [label=25,shape=box];
+  node_ID_1109 [label=26,shape=box];
+  node_ID_1074 -> node_ID_1103 -> node_ID_1104 -> node_ID_1105 -> node_ID_1106 -> node_ID_1107 -> node_ID_1108 -> node_ID_1109;
+  node_ID_1110 [label=27,shape=box];
+  node_ID_1111 [label=28,shape=box];
+  node_ID_1112 [label=29,shape=box];
+  node_ID_1113 [label=30,shape=box];
+  node_ID_1114 [label=31,shape=box];
+  node_ID_1115 [label="",shape=box];
+  node_ID_1116 [label="",shape=box];
+  node_ID_1074 -> node_ID_1110 -> node_ID_1111 -> node_ID_1112 -> node_ID_1113 -> node_ID_1114 -> node_ID_1115 -> node_ID_1116;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/calendar.png]]
+
+#+BEGIN_SRC lisp
+  (defun generate-monthly-calendar (month year num-days starting-day)
+    (let ((month (<> (format nil "~@(~A~)\\n~D" month year) :shape :Msquare))
+          (weeks (loop :for day :in '("Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat")
+                       :collect (<> day :shape :egg :style :filled :color :lightgray)))
+          (days (loop :for day :in (nconc (loop :repeat starting-day :collect "")
+                                          (loop :for day :from 1 :to num-days :collect day)
+                                          (loop :repeat (- (* 7 (if (and (= 28 num-days) (= 0 starting-day))
+                                                                    4 5)) ;for Feb starting Sun in common year 
+                                                           starting-day num-days)
+                                                :collect ""))
+                      :collect (<> day :shape :box))))
+      (apply #'&& (loop :for week :in (cons weeks (group 7 days))
+                        :collect (apply #'--> month week)))))
+  
+  ;; from on lisp
+  (defun group (n lst)
+    (if (zerop n) (error "zero length"))
+    (labels ((rec (lst acc)
+               (let ((rest (nthcdr n lst)))
+                 (if (consp rest)
+                     (rec rest (cons (subseq lst 0 n) acc))
+                     (nreverse (cons lst acc))))))
+      (if lst (rec lst nil) nil)))
+#+END_SRC
+
+　
 
 *** 2分木
 
@@ -3719,7 +3807,7 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 　
 
 + *&&*  &body /nodes-edges-graphs/ => graph ::
-　[Macro]　グラフ属性リストがnilに指定されているグラフを生成する。
+　[Function]　グラフ属性リストがnilに指定されているグラフを生成する。
 
 　
 
@@ -3808,7 +3896,15 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 * ToDo
 ##--------------------------------------------------------------------
 
-優先度順
+*優先度順*
+
+- *!!バグ!!*: with-node, with-edge;
+  let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、
+  束縛変数の初期出現時の属性コンテキストに影響されてしまう。
+
+
+- *!変更!*: ->>, ==>, <==, -<, >-;
+  マクロではなく関数として定義する。lispに反するため。
 
 
 - 日本語版ドキュメントの完成。
