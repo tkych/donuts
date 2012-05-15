@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-14 21:09:05 JST"/>
+<meta name="generated" content="2012-05-15 09:32:57 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -157,7 +157,7 @@
 <li><a href="#sec-1">1 はじめに</a></li>
 <li><a href="#sec-2">2 インストール</a>
 <ul>
-<li><a href="#sec-2-1">2.1 動作確認</a></li>
+<li><a href="#sec-2-1">2.1 動作チェック済み環境</a></li>
 <li><a href="#sec-2-2">2.2 システム依存</a></li>
 <li><a href="#sec-2-3">2.3 開始設定、動作確認</a></li>
 </ul>
@@ -225,10 +225,11 @@
 
 <p>
 　 <b>DonutsはCommon Lispのためのグラフ作成ドメイン固有言語（DSL）です。</b>
-lispでちょっとしたグラフを描くことを目指し、Donutsは造られました。
-DonutsはS式で記述されたグラフ構造を<a href="http://www.graphviz.org/dot-language.html">Dot言語</a>に変換し、<a href="http://graphviz.org/">Graphviz</a>によって画像に変換します。
+Donutsのゴールは、lisp環境内でちょっとしたグラフを描くことです。
+Donutsは、S式で記述されたグラフ構造を、画像としてビューアに出力します
+(実際の内部動作は、S式を<a href="http://www.graphviz.org/dot-language.html">Dot言語</a>のコードに変換し、<a href="http://graphviz.org/">Graphviz</a>により画像を生成し、ビューアに出力するというものです)。
 ざっくり言うとDonutsはLispがDot言語を吸収した言語です。
-Lisp組み込みの機能を用いることによって、Dot言語単体では困難だったことを容易に達成することができます(ex.<a href="#sec-4-12">小さなプログラム</a>)。
+Donutsでグラフを作成する際には、すべてのLisp機能(REPL、マクロ、関数など)を利用できるので、Dot言語では手間がかかることでも容易に成し遂げることができます(cf.<a href="#sec-4-12">小さなプログラム</a>)。
 </p>
 
 <p>
@@ -254,7 +255,7 @@ Lisp組み込みの機能を用いることによって、Dot言語単体では�
 <p>
 　 <b>すぐにDonutsでグラフを描き始められるように。</b>
 Donutsの文法はDot言語のものと似ています。
-そこで、Dot言語になじみのある方ならDot言語との類推から、すぐにグラフを描き始めることができるよう、<a href="#sec-5">Examples from Graphviz manual</a>の章を用意しています。
+そこで、Dot言語になじみのある方ならDot言語との類推によって、すぐにグラフを描き始めることができるよう、<a href="#sec-5">Examples from Graphviz manual</a>の章を用意しています。
 Dot言語になじみのない方でも、もちろん大丈夫です。
 Donutsですぐにグラフを描くことができるように、<a href="#sec-4">チュートリアル</a>の章があります。
 </p>
@@ -283,8 +284,7 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 グラフ作成に関する基本的操作とは、 <span style="text-decoration:underline;">ノードを構築する操作</span> <code>&lt;&gt;</code> 、 <span style="text-decoration:underline;">エッジを構築する操作</span>  <code>-&gt;</code> 、 <span style="text-decoration:underline;">グラフを構築する操作</span>  <code>&amp;</code> の3つの操作のことです。
 およそいかなるグラフ構造もこれら3つの基本操作のみから作り上げることができます(グラフ画像の見た目やコーディングの手間を気にしなければ)。
 また、Donutsはなるべくlispとぶつからないことを重視して造られています。
-したがって、複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、
-ユーザが自分で好きなように追加できるはずです(ex.<a href="#sec-4-12">小さなプログラム</a>)。
+したがって、複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、ユーザが自分で好きなように追加できるはずです(cf.<a href="#sec-4-12">小さなプログラム</a>)。
 </p>
 <p>
 　 <b>Donutsには実用的操作も加えられています。</b>
@@ -305,13 +305,10 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 </div>
 
 <div id="outline-container-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 動作確認</h3>
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 動作チェック済み環境</h3>
 <div class="outline-text-3" id="text-2-1">
 
 
-<p>
-動作確認済みの環境。
-</p>
 <dl>
 <dt>OS</dt><dd>linux-2.6.32-5-686
 </dd>
@@ -411,8 +408,7 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 
 <p>
 （ <b>注：</b> この章は、なぜDonutsのユーザインターフェイスがこうなっているか、についての章です。
-この章はやや抽象的な部分が多いので、退屈だと感じた場合や、とにかく手っ取り早くグラフを作成したい方は、
-次章の<a href="#sec-4">チュートリアル</a>を読むことをおすすめします。）
+この章はやや抽象的な部分が多いので、退屈だと感じた場合や、とにかく手っ取り早くグラフを作成したい方は、次章の<a href="#sec-4">チュートリアル</a>を読むことをおすすめします。）
 </p>
 
 
@@ -768,7 +764,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 　以上でDonutsの考え方の章は終わりです。
 抽象的で読みづらい章を最後まで読んでくださって、ありがとうございます。
 なるべく分かりやすい文章を心がけて書いたつもりですが、不明瞭な点や論理的展開の弱い点などは、すべて私の責任です。
-もしよろしかったら、Donutsを使用した感想をお聞かせいただければ幸甚です。
+もしお手数でなけば、フィードバックを頂ければ幸甚です。
 特に、実効速度、使い勝手はどうか、実用操作のバランスはどうか、等の貴重な情報をいただけたら改良に役立てることができますので、大変ありがたいです。
 </p>
 <p>
@@ -1579,7 +1575,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 <p>
-　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティです。
+　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティ集です。
 この章で導入される、with-node, with-edge以外のユーティリティはすべて、コンストラクタなどを組み合わせたものです。
 </p>
 
@@ -1639,7 +1635,7 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 </pre>
 
 <p>
-したがって、 <b>with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、使用できると考えた方が無難です。</b>
+結局のところ、 <b>with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、使用できると考えた方が無難です。</b>
 </p>
 
 <hr/>
@@ -1700,18 +1696,18 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 ここで、注目して欲しいことは、 <span style="text-decoration:underline;">デフォルトの属性値が変更されているコンテキスト内でも、生成するノードの属性値を自由に指定するができる</span> ということです。
 </p>
 <p>
-以上をまとめると、with-nodeコンテキスト用いる際に注意することは、次の3点：
+以上をまとめると、with-nodeコンテキスト用いる際に注意することは、次の3点です（これらは次に見るwith-edgeでも同様です）。
 </p><ol>
-<li>属性のデフォルト値がすべて変更されること、
+<li>属性のデフォルト値がすべて変更される。
 </li>
-<li>ネストした場合、デフォルト値が上書きされていくこと、
+<li>ネストした場合、デフォルト値が上書きされていく。
 </li>
-<li>with-nodeコンテキスト内でも、通常のようにコンストラクタで属性値を指定することができること、
+<li>コンテキスト内でも、通常のようにコンストラクタで属性値を指定することができる。
 </li>
 </ol>
 
-<p>です（これは次に見るwith-edgeでも同様です）。
-</p>
+
+
 
 <hr/>
 </li>
@@ -2619,7 +2615,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
       (b (&lt;&gt; <span style="color: #90ee90;">"c"</span>)))
   (-&gt; a b)
   (-&gt; 1 2))
-=&gt; #&lt;edge_ID_14 <span style="color: #00ee76;">::</span> 1 -&gt; 2&gt; <span style="color: #eeee00;">;</span><span style="color: #eeee00;">(-&gt; 1 2)&#12398;&#36820;&#12426;&#20516;&#12391;&#12354;&#12427;edge&#12384;&#12369;&#12364;&#36820;&#12373;&#12428;&#12390;&#12375;&#12414;&#12358;&#12290;</span>
+=&gt; #&lt;edge_ID_14 <span style="color: #00ee76;">::</span> 1 -&gt; 2&gt; <span style="color: #eeee00;">;</span><span style="color: #eeee00;">(-&gt; 1 2)&#12398;&#36820;&#12426;&#20516;&#12391;&#12354;&#12427;edge&#12384;&#12369;&#12364;&#36820;&#12373;&#12428;&#12390;&#12375;&#12414;&#12358;&#12290;&#26222;&#36890;&#12399;&#26395;&#12414;&#12394;&#12356;&#32080;&#26524;&#12290;</span>
 </pre>
 
 
@@ -2667,7 +2663,9 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <ul>
 <li><a href="http://www.graphviz.org/pdf/dotguide.pdf">http://www.graphviz.org/pdf/dotguide.pdf</a>
 <ul>
-<li><a href="http://www.cbrc.jp/~tominaga/translations/index.html#dot">Tominaga氏による和訳</a>(原文の版が少し古いのでhtml-likeラベル等は解説されていないことに注意)
+<li><a href="http://www.cbrc.jp/~tominaga/translations/index.html#dot">Tominaga氏による和訳</a>
+    (翻訳元の原文の版が少し古いので、html-likeラベル等の新しい機能は解説されていません。
+    しかしながら、ほとんどの部分で大変参考になるはずです)
 </li>
 </ul>
 
@@ -3406,7 +3404,7 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 
 <p>
-Graphvizで使用できる属性は大方のものをサポートしている(URL属性類は未実装)。
+　Graphvizで使用できる属性は大方のものをサポートしている(URL属性類は未実装)。
 レイアウトアルゴリズムごとにサポートしている属性が異なるので注意。
 </p>
 
@@ -3813,9 +3811,14 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 
 <p>
 　HTML-LIKEラベルは古いヴァージョンのGraphvizではサポートしていない可能性がある。
-HTML-LIKEラベルはレコードに比べ、より詳細にノードの修飾を指定できる。
-HTML-LIKEラベルはエッジのラベル属性値としても用いることができる(動作未確認)。
-タグ関数(br, hr, vr, img, font, i, b, u, sub, sup, table, tr, td)によってのみtag型のオブジェクトは生成される。
+HTML-LIKEラベルは通常のラベルに比べ表現力が大きく、ラベル中に画像を載せることもできる。
+ノードのラベルとして使用すると、レコードよりも詳細にノードの修飾を指定できる。
+HTML-LIKEラベルはエッジのラベルとしても用いることができる。
+</p>
+<p>
+　HTML-LIKEラベルはコード <code>(html tags-bodies)</code> によって生成される。
+ <code>html</code> はマクロ、 <code>tags-bodies</code> は任意の数のタグ型オブジェクトと文字列、数値を表す。
+tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, sub, sup, table, tr, td)によってのみ生成される。
 </p>
 <p>
 　参考： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
@@ -3824,7 +3827,7 @@ HTML-LIKEラベルはエッジのラベル属性値としても用いること�
 　
 </p>
 <dl>
-<dt><b>タグ関数</b> &amp;rest <i>attrs-tag-body</i> =&gt; tag</dt><dd>
+<dt><b>タグ関数</b> &amp;rest <i>attrs-tags-bodies</i> =&gt; tag</dt><dd>
 </dd>
 </dl>
 
@@ -3837,7 +3840,7 @@ HTML-LIKEラベルはエッジのラベル属性値としても用いること�
 　
 </p>
 <dl>
-<dt><b>html</b> <i>tag</i> =&gt; html-like-labels</dt><dd>
+<dt><b>html</b> <i>tags-bodies</i> =&gt; html-like-labels</dt><dd>
 </dd>
 </dl>
 
@@ -4028,7 +4031,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-14 21:09:05 JST</p>
+<p class="date">Date: 2012-05-15 09:32:57 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
