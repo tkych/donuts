@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/10 20:57:46 tkych
+;;;; Last Updated : 2012/05/15 23:09:52 tkych
 
 ;; Flesh in donuts
 
@@ -28,10 +28,6 @@
 ;; Flesh in Donuts
 ;;====================================================================
 (in-package :in-donuts)
-
-(eval-when (:compile-toplevel :load-toplevel)
-  (defmacro && (&body node-edge-graphs)
-    `(& () ,@node-edge-graphs)))
 
 (defmacro $$ (graph)
   `($ () ,graph))

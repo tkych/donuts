@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/13 22:30:26 tkych
+;;;; Last Updated : 2012/05/15 23:09:19 tkych
 
 ;; Nuts in donuts
 
@@ -260,6 +260,17 @@
 (defmacro & ((&rest graph-attrs) &body nodes-edges-graphs)
   `(let ((*directed?* t))
      (make-graph ',graph-attrs ,@nodes-edges-graphs)))
+
+(let ((*directed?* t))
+  (defun && (&rest nodes-edges-graphs)
+    (when *directed?*
+      (unless (every #':dir (remove-if-not #'graph? nodes-edges-graphs))
+        (setf *directed?* nil)))
+    (prog1
+      (make-inst 'graph :dir *directed?*
+                 :buff nodes-edges-graphs
+                 :name (format nil "graph_~A" (gentemp "ID_")))
+      (setf *directed?* t))))
 
 ;;--------------------------------------
 (defclass cluster (graph) ())
