@@ -1,0 +1,3016 @@
+### Last Updated : 2012/05/18 02:42:42 tkych
+
+##====================================================================
+#+TITLE:  Donuts: Graph DSL for Common Lisp
+#+AUTHOR: Takaya OCHIAI
+#+EMAIL:  tkych.repl@gmail.com
+#+LANGUAGE: en
+#+STYLE:    <link rel="stylesheet" type="text/css" href="style.css" />
+#+OPTIONS:  todo:t f:t *:t creator:t email:t timestamp:t toc:2
+##====================================================================
+
+#+SRCNAME: donuts.lisp
+#+BEGIN_SRC lisp :exports none  
+  ($ ()
+     (let ((o (<> "o" :style :filled :fillcolor :chocolate4)))
+       (& ()
+         (--> "d" o "n")
+         (~ "d" o "t")
+         (~ "n" "u")
+         (->  "n" "u" :style :dotted)
+         (--> "u" "t" "s"))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/donuts.png
+digraph graph_T377 {
+  node_T378 [label="o",style=filled,fillcolor=chocolate4];
+  {rank=same; "d"; node_T378; "t"};
+  {rank=same; "n"; "u"};
+  "d" -> node_T378 -> "n";
+  "n" -> "u" [style=dotted];
+  "u" -> "t" -> "s";
+}
+#+END_SRC
+
+
+#+BEGIN_HTML
+<div align = "right">
+<p>
+<a href="./index-j.html">日本語</a>/English(under translation)
+</p>
+</div>
+#+END_HTML
+
+#+ATTR_HTML: alt="lisp-alien image" title="Alieeen!!!" align="left"
+[[http://www.lisperati.com/logo.html][file:./images/donuts-alien.png]]
+
+[TABLE-OF-CONTENTS]
+
+
+#+BEGIN_SRC dot :file ./images/reading-algorithm-en-big.png
+digraph graph_T1555 {
+  size="10,10";
+  label="Flow chart for reading this document (click to large)";
+  labelloc=true;
+  fontsize=22;
+  { node [style=bold];
+  { edge [style=bold];
+  node_T1556 [label="start",shape=Mdiamond];
+  record_T1557 [shape=record,label="2+2=5?",shape=Mrecord];
+  record_T1558 [shape=record,label="sleep: one night"];
+  record_T1559 [shape=record,label="read: 1.Introduction"];
+  record_T1560 [shape=record,label="Do you want install?",shape=Mrecord];
+  record_T1561 [shape=record,label="read: 2.Instration\n&\ninstall: Donuts"];
+  record_T1562 [shape=record,label="Anyway, draw graphes？",shape=Mrecord];
+  record_T1563 [shape=record,label="read: 3.Idea of Donuts"];
+  record_T1564 [shape=record,label="Are you master of dot?",shape=Mrecord];
+  record_T1565 [shape=record,label="see: 5.Examples"];
+  record_T1566 [shape=record,label="read: 4.Tutorial"];
+  node_T1567 [label="draw:\ngraph",shape=Mcircle,size="1,1"];
+  record_T1568 [shape=record,label="Find bug?",shape=Mrecord];
+  record_T1569 [shape=record,label="Hacker?",shape=Mrecord];
+  record_T1570 [shape=record,label="Fix by yourself\n&\nmailto: Author"];
+  record_T1571 [shape=record,label="mailto: Author\n&\nWait"];
+  record_T1572 [shape=record,label="read:\nReference\nManual",shape=Msquare];
+  {rank=same; record_T1557; record_T1558; record_T1564; record_T1572};
+  {rank=same; record_T1559; record_T1560; record_T1565; record_T1566; node_T1567};
+  {rank=same; record_T1562; record_T1563};
+  {rank=same; record_T1568; record_T1569};
+  node_T1556 -> record_T1557;
+  record_T1557 -> record_T1558:n [label="Yes",color=blue,fontcolor=blue,weight=2];
+  record_T1557 -> record_T1559 [label="No",color=red,fontcolor=red];
+  record_T1559 -> record_T1560;
+  record_T1558 -> record_T1557 [weight=30];
+  record_T1560 -> record_T1561 [label="Yes",color=blue,fontcolor=blue];
+  record_T1560 -> record_T1558 [label="No",color=red,fontcolor=red];
+  record_T1561 -> record_T1562;
+  record_T1562 -> record_T1564 [label="Yes",color=blue,fontcolor=blue];
+  record_T1562 -> record_T1563 [label="No",color=red,fontcolor=red];
+  record_T1563 -> record_T1566 -> record_T1565 -> node_T1567 -> record_T1572;
+  record_T1572 -> node_T1567;
+  node_T1567 -> node_T1567;
+  node_T1567 -> record_T1568;
+  record_T1564 -> record_T1565 [label="Yes",color=blue,fontcolor=blue];
+  record_T1564 -> record_T1566 [label="No",color=red,fontcolor=red];
+  record_T1568 -> record_T1569 [label="Yes",color=blue,fontcolor=blue];
+  record_T1568 -> node_T1567 [label="No",color=red,fontcolor=red];
+  record_T1569 -> record_T1570 [label="Yes",color=blue,fontcolor=blue];
+  record_T1569 -> record_T1571 [label="No",color=red,fontcolor=red];
+  record_T1570 -> node_T1567;
+  record_T1571 -> node_T1567;
+  };
+  };
+}
+#+END_SRC
+
+[[./images/reading-algorithm-en-big.png][./images/reading-algorithm-en.png]]
+
+
+
+##--------------------------------------------------------------------
+* Introduction
+##--------------------------------------------------------------------
+
+
+#+ATTR_HTML: alt="donuts image" title="donuts!" align="right"
+[[./images/small-donuts.png]]
+
+#+BEGIN_SRC lisp :exports code
+  ($ () (let ((o (<> "o" :style :filled :fillcolor :chocolate4)))   ;Make chocolate donut
+          (& (:label "Hello, Donuts!" :labelloc t :size "3,3")      ;Make graph
+            (--> "d" o "n")                                         ;Put edges through nodes
+            (->  "n" "u" :style :dotted)                            ;Put doted edge between "n" "u"
+            (--> "u" "t" "s")                                       ;Put edges through nodes
+            (~ "d" o "t") (~ "n" "u"))))                            ;Arrange nodes
+#+END_SRC
+
+
+##--------------------------------------------------------------------
+* Installation
+##--------------------------------------------------------------------
+** Chacked Operational Environments
+
+
+- OS :: linux-2.6.32-5-686
+- CL Implementations :: sbcl-1.0.55
+
+** Dependency
+*** Outer Systems
+1. [[http://www.graphviz.org/][Graphviz]]
+
+2. Appropriate viewer
+
+*** Common Lisp Library
+
+1. [[http://www.quicklisp.org/][quicklisp]] by Zachary Beane, Pierre R. Mai
+2. [[http://weitz.de/cl-ppcre/][cl-ppcre]] by Dr. Edmund Weitz
+3. [[http://www.quicklisp.org/][trivial-shell]] by Gary Warren King
+
+
+** Setting
+
+#+BEGIN_SRC lisp
+CL-USER> (push #P"/path-to-your-donuts-directory/" asdf:*central-registry*)
+CL-USER> (ql:quickload :donuts)
+CL-USER> (in-package :donuts)
+DONUTS> ($ () (& () (-> 1 2))) ;ビューアが起動し、下の画像が出力される
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/start.png
+digraph cluster_graph_T3 {
+  1 -> 2;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/start.png]]
+
+　
+
+##--------------------------------------------------------------------
+* Idea of Donuts --- <>, ->, &
+##--------------------------------------------------------------------
+
+
+##--------------------------------------------------------------------
+** The Goal of Donuts
+
+*Lisp* ：
+#+BEGIN_SRC lisp :exports code
+  CL-USER> (princ "Hello World")
+  Hello World
+  "Hello World"
+#+END_SRC
+
+*Java* ：
+#+BEGIN_SRC java :exports code
+  // in HelloWorld.java
+  public class HelloWorld {
+      public static void main(String args[]) {
+          System.out.println("Hello World");
+      }
+  }
+  
+  // in shell
+  $ javac HelloWorld.java   // HelloWorld.javaをコンパイルする
+  $ java HelloWorld         // HelloWorldを実行する
+  Hello World
+#+END_SRC
+
+　
+
+##--------------------------------------------------------------------
+** Lodestar
+
+#+BEGIN_VERSE
+When you work bottom-up, you usually end up with a different program.
+Instead of a single, monolithic program, you will get a larger language with more abstract operators,
+and a smaller program written in it.
+...
+Lisp is an especially good language for writing extensible programs because it is itself an extensible program. 
+If you write your Lisp programs so as to pass this extensibility on to the user,
+you effectively get an extension language for free.
+                     --- Paul Graham, On Lisp ,pp.4--5.
+#+END_VERSE
+
+--------------------------------------------------------------------
+
+
+##--------------------------------------------------------------------
+** Abstruction of "Create Graphes" --- User Interface1
+
+#+BEGIN_VERSE
+The contrast between function and procedure is
+a reflection of the general distinction between describing properties of things and describing how to do things,
+or, as it is sometimes referred to, the distinction between declarative knowledge and imperative knowledge.
+In mathematics we are usually concerned with declarative (what is) descriptions,
+whereas in computer science we are usually concerned with imperative (how to) descriptions.
+      --- Harold Abelson and Gerald J. Sussman, with Julie Sussman, SICP ,[[http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-10.html#%_sec_1.1.7][section 1.1.7.]]
+#+END_VERSE
+
+
+-------------------------------------------------------------------
+
+
+
+##--------------------------------------------------------------------
+** Pictorial name of functions and macros --- User Interface2
+
+# |        | コンストラクタ | オペレータ | ユーティティ                                           |
+# |--------+----------------+------------+--------------------------------------------------------|
+# | グラフ | &, [&]         |            | with-graph, &&                                         |
+# | エッジ | ->, ---        |            | with-edge, --->, ->>, ==>, <-, <==, ?, -<, >-, ----, O |
+# | ノード | <>, []         | @, rank    | with-node, ~                                           |
+# | その他 | dot-output     |            | dot-pprint,                                            |
+
+#+BEGIN_HTML
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+
+<thead>
+<tr><th scope="col" class="left"></th><th scope="col" class="left">Constructors</th><th scope="col" class="left">Operators</th><th scope="col" class="left">Utilities</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">Graphes</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">with-graph, &amp;&amp;</td></tr>
+<tr><td class="left">Edges</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, &lt;-, &lt;==, ?, -&lt;, &gt;-, &ndash;&ndash;&ndash;, O</td></tr>
+
+<tr><td class="left">Nodes</td><td class="left">&lt;&gt;, []</td><td class="left">@, rank</td><td class="left">with-node, ~</td></tr>
+<tr><td class="left">Miscellaneous</td><td class="left">dot-output, $</td><td class="left"></td><td class="left">dot-pprint, $$</td></tr>
+</tbody>
+</table>
+#+END_HTML
+
+　
+
+##--------------------------------------------------------------------
+* Tutorial
+##--------------------------------------------------------------------
+
+--------------------------------------------------------------------
+
+　
+
+##--------------------------------------
+** Simple Graphes
+##--------------------------------------
+
+#+SRCNAME: simple-graph.lisp
+#+BEGIN_SRC lisp
+  (& ()
+    (-> (<> "Hello") (<> "World")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/simple-graph.png
+digraph T11 {
+  "A12" [label="Hello"];
+  "B13" [label="World"];
+  "A12" -> "B13";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/simple-graph.png]]
+
+#+BEGIN_SRC lisp
+(& () (-> "Hello" "World"))
+#+END_SRC
+
+
+#+BEGIN_SRC lisp
+  (setf h (& () (-> "Hello" "World")))
+
+  (& () h (-> "こんにちは" "World"))
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/simple-graph2.png
+digraph graph_T251 {
+  subgraph graph_T247 {
+  "Hello" -> "World";
+  }
+  "こんにちは" -> "World";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/simple-graph2.png]]
+
+　
+
+##--------------------------------------
+** Attributes
+##--------------------------------------
+
+#+SRCNAME: proparty.lisp
+#+BEGIN_SRC lisp -n
+  (& (:label "Proparty Example")
+    (-> "a" "b" :color :red)
+    (-> "a" (<> "c" :shape :box) :color :blue)
+    (<> "d" :shape :circle))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/proparty.png
+digraph GRAPH_T328 {
+  label="Proparty Example";
+  "a" -> "b" [color=red];
+  NODE_T330 [label="c",shape=box];
+  "a" -> NODE_T330 [color=blue];
+  NODE_T332 [label="d",shape=circle];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/proparty.png]]
+
+
+#+BEGIN_SRC dot :file ./images/proparty2.png
+digraph GRAPH_T328 {
+  label="Proparty Example";
+  size="1,1"
+  "a" -> "b" [color=red];
+  NODE_T330 [label="c",shape=box];
+  "a" -> NODE_T330 [color=blue];
+  NODE_T332 [label="d",shape=circle];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/proparty2.png]]
+
+
+#+SRCNAME: minimum-graph.lisp
+#+BEGIN_SRC lisp
+(& () "")
+#+END_SRC
+
+
+- Node： http://www.graphviz.org/content/attrs
+- Node-Shape： http://www.graphviz.org/node-shapes.html
+- Edge-Shape： http://www.graphviz.org/arrow-shapes.html
+- Color： http://www.graphviz.org/color-names.html
+
+　
+
+##--------------------------------------
+** Labels
+##--------------------------------------
+
+#+SRCNAME: label.lisp
+#+BEGIN_SRC lisp
+  (& () (<> "12\\ 34\\n56\\l78\\r\\N" :shape :note))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/label.png
+digraph graph_T64 {
+  node_T63 [label="12\ 34\n56\l78\r\N",shape=note];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/label.png]]
+
+　
+
+##--------------------------------------------------------------------
+** Output
+##--------------------------------------------------------------------
+
+
+*** dot-output, dot-pprint
+
+#+BEGIN_SRC lisp
+  (dot-output
+   (& (:rankdir :LR)
+     (-> (<> "Japan" :shape :house) (<> "Head" :shape :diamond) :label "Go to Diamond Head!")))
+#+END_SRC
+
+#+BEGIN_SRC dot :exports code
+  digraph graph_T68 {
+    rankdir=LR;
+    node_T65 [label="Japan",shape=house];
+    node_T66 [label="Head",shape=diamond];
+    node_T65 -> node_T66 [label="Go to Diamond Head!"];
+  }
+#+END_SRC
+
+
+*** $
+
+
+#+BEGIN_SRC lisp
+  ($ (:outfile "diamond.png")
+   (& (:rankdir :LR)
+     (-> (<> "Japan" :shape :house) (<> "Head" :shape :diamond) :label "Go to Diamond Head!")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/output1.png
+digraph graph_T68 {
+  rankdir=LR;
+  node_T65 [label="Japan",shape=house];
+  node_T66 [label="Head",shape=diamond];
+  node_T65 -> node_T66 [label="Go to Diamond Head!"];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/output1.png]]
+
+| Keywords | To specify                | Default          |
+|----------+---------------------------+------------------|
+| :outfile | image file name to create | "DONUTS-TMP.png" |
+| :show    | Boot viewer               | t                |
+| :layout  | layout algorithims        | :dot             |
+
+
+　
+
+##--------------------------------------
+** Subgraphes, Clusteres
+##--------------------------------------
+
+
+#+SRCNAME: subgraph.lisp
+#+BEGIN_SRC lisp
+  (& (:label "BIG" :labelloc t :size "1,1") ;グラフBIGを生成する
+    (& (:label "small" :size "10,10")       ;部分グラフsmallを生成する、部分グラフの属性は無効！！
+      (-> "a" "b"))                         ;small内でエッジa->bを生成する
+    (-> "A" "B"))                           ;BIG内でエッジA->Bを生成する
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/subgraph.png
+digraph graph_T986 {
+  label="BIG";
+  labelloc=true;
+  size="1.5,1.5";
+  "a" -> "b";
+  "A" -> "B";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/subgraph.png]]
+
+
+
+#+SRCNAME: subgraph-cluster.lisp
+#+BEGIN_SRC lisp -n
+  (& (:rankdir :LR)
+    ([&] (:label "Here is in the cluster!")       ;クラスタは部分グラフだが属性はつねに有効！！
+      (-> "a" "b")
+      (-> "b" "c"))
+    (-> "Out of the cluster" "c"))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/subgraph-cluster.png
+digraph SUBGRUPH_T49 {
+  rankdir=LR;
+  subgraph cluster_T50 {
+  label="Here is in the cluster!";
+  "a" -> "b";
+  "b" -> "c";
+  }
+  "Out of the cluster" -> "c";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/subgraph-cluster.png]]
+
+　
+
+##--------------------------------------
+** Rank
+##--------------------------------------
+
+
+| rank-keyword   | :same    | :min | :max | :source | :sink |
+| 指定される配置 | 同じ高さ | 左上 | 右下 | 左上    | 右下  |
+
+----------------------------------------------------------------------
+
+#+BEGIN_SRC lisp -n
+  (& (:size "2,2")
+    (let ((a (<> 0 :color :red)) (b (<> 1 :color :blue))
+          (c (<> 2 :color :red)) (d (<> 3 :color :blue))
+          (e (<> 4 :color :red)) (f (<> 5 :color :blue)))
+      (rank :same a c e) (rank :same b d f)
+      (-> a c) (-> c e) (-> b d) (-> d f) (-> a b) (-> c d) (-> e f)))
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/rank.png
+digraph graph_T183 {
+  size="2,2";
+  node_T184 [label=0,color=red];
+  node_T185 [label=1,color=blue];
+  node_T186 [label=2,color=red];
+  node_T187 [label=3,color=blue];
+  node_T188 [label=4,color=red];
+  node_T189 [label=5,color=blue];
+  {rank=same; node_T184; node_T186; node_T188};
+  {rank=same; node_T185; node_T187; node_T189};
+  node_T184 -> node_T186;
+  node_T186 -> node_T188;
+  node_T185 -> node_T187;
+  node_T187 -> node_T189;
+  node_T184 -> node_T185;
+  node_T186 -> node_T187;
+  node_T188 -> node_T189;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/rank.png]]
+
+
+　
+
+##--------------------------------------------------------------------
+** Ports
+##--------------------------------------------------------------------
+
+| compass-keyword | :n | :ne  | :e | :se  | :s | :sw  | :w | :nw  | :c | :_ |
+| 方位            | 北 | 北東 | 東 | 南東 | 南 | 南西 | 西 | 北西 |    |    |
+
+----------------------------------------------------------------------
+
+#+SRCNAME: port.lisp
+#+BEGIN_SRC lisp -n
+(& (:size "2,2")
+  (-> (@ "a" :s) (@ "b" :n))
+  (-> (@ "b" :w) "c")
+  (-> (@ "b" :s) "d")
+  (-> (@ "b" :e) "e"))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/port.png
+digraph graph_T203 {
+  size="2,2";
+  "a":s -> "b":n;
+  "b":w -> "c";
+  "b":s -> "d";
+  "b":e -> "e";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/port.png]]
+
+
+
+　
+
+##--------------------------------------------------------------------
+** Records
+##--------------------------------------------------------------------
+
+##--------------------------------------
+*** Fields
+##--------------------------------------
+
+#+SRCNAME: record-field.lisp
+#+BEGIN_SRC lisp
+(& ()
+  (-> "A" ([] "a|b|c"))
+  (-> "A" ([] "d|{1|{e|{2|f|3}|g}|4}|h")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/record-field.png
+digraph graph_T228 {
+  record_T229 [shape=record,label="a|b|c"];
+  "A" -> record_T229;
+  record_T231 [shape=record,label="d|{1|{e|{2|f|3}|g}|4}|h"];
+  "A" -> record_T231;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/record-field.png]]
+
+
+##--------------------------------------
+*** Feild Ports
+##--------------------------------------
+
+
+#+SRCNAME: record-port.lisp
+#+BEGIN_SRC lisp -n
+  (let ((abc   ([] ":a a|:b b|:c c" :shape :Mrecord))
+        (defgh ([] "d|{1|{e|{:2 2|:f f|:3 3}|g}|4}|h")))
+    (& ()
+       (rank :same abc defgh)
+       (-> "A" (@ abc :b))
+       (-> "A" (@ defgh :f))
+       (-> (@ abc :a) (@ abc :c))
+       (-> (@ defgh :2) (@ defgh :3))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/record-port.png
+digraph graph_T184 {
+  record_T185 [shape=record,label="<a> a|<b> b|<c> c",shape=Mrecord];
+  record_T186 [shape=record,label="d|{1|{e|{<2> 2|<f> f|<3> 3}|g}|4}|h"];
+  {rank=same; record_T185; record_T186};
+  "A" -> record_T185:b;
+  "A" -> record_T186:f;
+  record_T185:a -> record_T185:c;
+  record_T186:2 -> record_T186:3;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/record-port.png]]
+
+　
+
+##--------------------------------------------------------------------
+** Utilities
+##--------------------------------------------------------------------
+
+　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティ集です。
+
+# ##--------------------------------------
+# *** 2文字省略するためのユーティリティ
+# ##--------------------------------------
+
+# 　&&は今まで何度も出てきたグラフコンストラクタです。
+# しかし、真の姿は、属性を指定する必要のない場合に、2文字省略するためのスーパーユーティリティです(同様のユーティリティとしてもあります)。
+# 2文字省略することにより、指の疲労が軽減され、キーボードの摩耗も減り、電力の消費も抑えられ、カッコの数も減り、コードの可読性も向上し、世の中が少しだけ良くなる究極のワンダフルユーティリティです。
+
+
+##--------------------------------------
+*** コンテキストを作り出すもの
+##--------------------------------------
+
+　
+
+*!!バグ!!: with-node, with-edge;let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。*
+
+　
+
+　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
+コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
+ with-node,  with-edgeをネストした場合、属性値は上書きされます。
+
+ *注: with-node, with-edgeは、&,[&],&&の内部でのみ、期待通りの動作が保証されます。* 
+with-node, with-edgeは、暗黙の部分グラフを生成します。
+そのため、トップレベルでwith-node, with-edgeを使用した場合、コンテキスト内のグラフ属性が無効になってしまいます。
+次の上のコードは期待通りに動作しますが、下のコードは期待通りに動作しません。
+#+BEGIN_SRC lisp
+  ;; 出力されるグラフにラベルが付く
+  (& (:label "このグラフ属性は有効")  ;トップレベルのグラフなので、属性が有効になる
+    (with-node (:color :red)
+      (-> "a" "b")))
+  
+  ;; 出力されるグラフにはラベルが付かない
+  (with-node (:color :red)
+    (& (:label "このグラフ属性は無効") ;with-nodeによって生成される暗黙の部分グラフの部分グラフなので、属性が無効になる
+      (-> "a" "b")))
+#+END_SRC
+*with-node, with-edgeは、&,[&],&&の内部でのみ、使用できると考えた方が無難です。*
+
+--------------------------------------
+
+##--------------------------------------
+**** with-node
+##--------------------------------------
+#+SRCNAME: with-node.lisp
+#+BEGIN_SRC lisp -n
+  (& (:rankdir :LR)
+    "a"
+    (with-node (:color :red)
+      (-> "a" "b")
+      (with-node (:shape :box)
+        (-> "b" "c")
+        (with-node (:color :blue)
+          (-> "c" "d")
+          (-> "d" (<> "e" :color :goldenrod :shape :box3d))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/with-node.png
+digraph graph_T79 {
+  rankdir=LR;
+"a";
+  { node [color=red];
+  "a" -> "b";
+  { node [shape=box];
+  "b" -> "c";
+  { node [color=blue];
+  "c" -> "d";
+  node_T83 [label="e",color=goldenrod,shape=box3d];
+  "d" -> node_T83;
+  };
+  };
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/with-node.png]]
+
+詳しくコード内容を説明します。
+
+2行目、ノードaはデフォルトの属性値を持ったノードとして生成されます。
+
+3行目、ノードの色属性のデフォルト値が赤のコンテキストがwith-nodeによって作り出されます。
+これより深いコンテキストで生成されるノードのデフォルト色は赤になります。
+
+4行目、ノードbが生成され、エッジa->bが生成されます。
+ノードbの色は赤です。
+
+5行目、ノードの形属性のデフォルトがboxのコンテキストがwith-nodeによって作り出されます。
+これより深いコンテキストで生成されるノードは、デフォルトで形がbox、色が赤のものになります。
+
+6行目、色が赤、形がboxのノードcが生成され、エッジb->cが生成されます。
+
+7行目、青がノードの色属性のデフォルトである、コンテキストがwith-nodeによって作り出されます。
+これより深いコンテキストで生成されるノードは、デフォルトで形がbox、色が青のものとなります。
+ここで、注目してもらいたいことは、 _デフォルトの色属性値が、(3行目で指定された)赤から青に上書きされた_ ということです。
+
+8行目、色が青、形がboxのノードdが生成され、エッジc->dが生成されます。
+
+9行目、色がgoldenrod、形がbox3dのノードeが生成され、エッジd->eが生成されます。
+ここで、注目して欲しいことは、 _デフォルトの属性値が変更されているコンテキスト内でも、生成するノードの属性値を自由に指定するができる_ ということです。
+
+以上をまとめると、with-nodeコンテキスト用いる際に注意することは、次の3点です（これらは次に見るwith-edgeでも同様です）。
+1. 属性のデフォルト値がすべて変更される。
+2. ネストした場合、デフォルト値が上書きされていく。
+3. コンテキスト内でも、通常のようにコンストラクタで属性値を指定することができる。
+
+
+----------------------------------------------------------------------
+##--------------------------------------
+**** with-edge
+##--------------------------------------
+
+　with-edgeの使い方もwith-nodeと同様です。
+解説すると冗長になってしまいますので、ここでは例の提示のみにとどめます。
+#+SRCNAME: with-edge.lisp
+#+BEGIN_SRC lisp -n
+  (& (:rankdir :LR)
+    (with-edge (:arrowhead :onormal)
+      (-> "a" "b")
+      (with-edge (:color :red)
+        (-> "b" "c")
+        (-> "c" "d" :color :green :arrowhead :dot)))
+    (-> "d" "e"))          ;エッジd->eはコンテキスト外
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/with-edge.png
+digraph graph_T167 {
+  rankdir=LR;
+  { edge [arrowhead=onormal];
+  "a" -> "b";
+  { edge [color=red];
+  "b" -> "c";
+  "c" -> "d" [color=green,arrowhead=dot];
+  };
+  };
+  "d" -> "e";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/with-edge.png]]
+
+
+
+##--------------------------------------
+
+***  自己ループを生成する関数：?
+
+　関数 =?= は単一のノードとエッジ属性を引数に取り、自己ループを生成します。
+#+BEGIN_SRC lisp
+(? (<> 42 :shape :Mcircle) :label " Life, the Universe and Everything")
+#+END_SRC
+
+(dot-output
+  (& ()
+    (? (<> 42 :shape :Mcircle)
+       :label " Life, the Universe and Everything")))
+
+#+BEGIN_SRC dot :file ./images/self-loop.png
+digraph graph_T10 {
+  node_T11 [label=42,shape=Mcircle];
+  node_T11 -> node_T11 [label=" Life, the Universe and Everything"];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/self-loop.png]]
+
+
+
+***  複数のノードを同じ高さに設定する関数：~
+
+　 =~= は、引数に複数のノードを取り、グラフ内でそれらのノードを同じ高さに配置する副作用を行い、NILを返します。
+=~= の定義は次のものです。
+#+BEGIN_SRC lisp
+(defun ~ (&rest nodes)
+  (apply #'rank :same nodes))
+#+END_SRC
+
+　定義からわかるように、 =(~ ****)= はランクオペレータ =(rank :same ****)= と同等の働きをします。
+つまり、 =~= はコードの省略のためだけのユーティリティです。
+実際にDonutsを使ってみて、ノードの高さを揃える頻度がわりと多いこと、記号 =~= は視覚的にわかりやすいことを鑑み、ユーティリティとして新たに定義することにしました。
+
+
+# ***  複数のノードを数珠つなぎに結ぶ関数：-->
+#+BEGIN_HTML
+<div id="outline-container-4-9-4" class="outline-4">
+<h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> 複数のノードを数珠つなぎに結ぶ関数：&ndash;&ndash;&gt;</h4>
+<div class="outline-text-4" id="text-4-9-4">
+#+END_HTML
+
+#+BEGIN_SRC lisp
+  (--> "a" "b" (<> "d" :color :red) "e")
+#+END_SRC
+
+# (& (:rankdir :LR)
+#     (--> "a" "b" (<> "d" :color :red) "e"))
+
+#+BEGIN_SRC dot :file ./images/edges.png
+digraph graph_T41 {
+  rankdir=LR;
+  node_T42 [label="d",color=red];
+  "a" -> "b" -> node_T42 -> "e";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/edges.png]]
+
+ *注：* 個別にエッジの属性を指定することはできません。
+
+
+***  1つのノードから他のノードへ、エッジを放射状に張る関数：->>
+
+　 =->>= は、複数のノードを引数に取り、先頭のノードから2番目以降のすべてのノードへのエッジを張る関数です。
+
+#+BEGIN_SRC lisp
+(->> "a"
+     "b" (<> "c" :color :goldenrod) (<> "d" :style :filled))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/radial-edge.png
+digraph graph_ID_229 {
+  node_ID_225 [label="c",color=goldenrod];
+  node_ID_226 [label="d",style=filled];
+  "a" -> {"b"; node_ID_225; node_ID_226};
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/radial-edge.png]]
+
+
+***  他のノードから1つのノードへ、エッジを収束状に張る関数：==>
+
+　 ==> は、複数のノード（とエッジの属性）を引数に取り、
+最後尾のノードへ他のノードから収束状（放射状の逆）のエッジを張る関数です。
+#+BEGIN_SRC lisp
+(==> "a" "b" (<> "c" :color :goldenrod)
+     (<> "d" :style :filled))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/converge-edge.png
+digraph graph_ID_233 {
+  node_ID_231 [label="d",style=filled];
+  node_ID_230 [label="c",color=goldenrod];
+  "a" -> node_ID_231;
+  "b" -> node_ID_231;
+  node_ID_230 -> node_ID_231;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/converge-edge.png]]
+
+
+　
+
+##--------------------------------------------------------------------
+
+** Undirected Graphes, Layout Algorithms
+##--------------------------------------------------------------------
+
+# dot   	"hierarchical" or layered drawings of directed graphs.
+#         This is the default tool to use if edges have directionality.
+
++ *:dot* :: 
+#+BEGIN_SRC lisp
+  ($ (:layout :dot)     ;デフォルトは:dotなのであえて指定しなくとも良いが解説のため
+     (& (:rankdir :LR)
+       (O "n0" "n1" "n2" "n3"))) 
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/layout-dot.png
+graph graph_T101 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-dot.png]]
+
+# neato 	"spring model'' layouts.
+#         This is the default tool to use if the graph is not too large (about 100 nodes)
+#         and you don't know anything else about it. Neato attempts to minimize a global energy function,
+#         which is equivalent to statistical multi-dimensional scaling.
+
++ *:neato* :: 
+#+BEGIN_SRC lisp
+  ($ (:layout :neato)
+     (& (:rankdir :LR)
+       (O "n0" "n1" "n2" "n3"))) 
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/layout-neato.png :cmdline -Kneato -Tpng
+graph graph_T101 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-neato.png]]
+
+# twopi 	radial layouts, after Graham Wills 97.
+#         Nodes are placed on concentric circles depending their distance from a given root node.
+
++ *:twopi* :: 
+#+BEGIN_SRC lisp
+  ($ (:layout :twopi)
+     (& (:rankdir :LR)
+       (-< "n0" "n1" "n2" "n3")))
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/layout-twopi.png :cmdline -Ktwopi -Tpng
+graph graph_T111 {
+  rankdir=LR;
+  "n0" -- "n1";
+  "n0" -- "n2";
+  "n0" -- "n3";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-twopi.png]]
+
+# circo 	circular layout, after Six and Tollis 99, Kauffman and Wiese 02.
+#         This is suitable for certain diagrams of multiple cyclic structures,
+#         such as certain telecommunications networks.
+
++ *:circo* :: 
+#+BEGIN_SRC lisp
+  ($ (:layout :circo)
+     (& (:rankdir :LR)
+       (O "n0" "n1" "n2" "n3"))) 
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/layout-circo.png :cmdline -Kcirco -Tpng
+graph graph_T101 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-circo.png]]
+
+
+# fdp   	"spring model'' layouts similar to those of neato, 
+#         but does this by reducing forces rather than working with energy.
+
++ *:fdp*  :: 
+#+BEGIN_SRC lisp
+  ($ (:layout :fdp)
+     (& (:rankdir :LR)
+       (O "n0" "n1" "n2" "n3")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/layout-fdp.png :cmdline -Kfdp -Tpng
+graph graph_T101 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-fdp.png]]
+
+# sfdp   	multiscale version of fdp for the layout of large graphs.
+
++ *:sfdp*  :: 
+#+BEGIN_SRC lisp
+  ($ (:layout :sfdp)
+     (& (:rankdir :LR)
+       (O "n0" "n1" "n2" "n3"))) 
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/layout-sfdp.png :cmdline -Ksfdp -Tpng
+graph graph_T101 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/layout-sfdp.png]]
+
+
+　
+
+** Utilities2
+
+
+# *** 複数のノードを直線状につなぐ関数：---
+#+BEGIN_HTML
+<div id="outline-container-4-11-1" class="outline-4">
+<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> 複数のノードを直線状につなぐ関数：&ndash;&ndash;&ndash;</h4>
+<div class="outline-text-4" id="text-4-11-1">
+#+END_HTML
+
+#+BEGIN_SRC lisp
+  (--- "a" "b" (<> "d" :color :red) "e")
+#+END_SRC
+
+# (& (:rankdir :LR)
+#     (--- "a" "b" (<> "d" :color :red) "e"))
+
+#+BEGIN_SRC dot :file ./images/liner.png
+graph graph_T41 {
+  rankdir=LR;
+  node_T42 [label="d",color=red];
+  "a" -- "b" -- node_T42 -- "e";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/liner.png]]
+
+ *注：* 個別にエッジの属性を指定することはできません。
+
+
+*** 複数のノードを環状につなぐ関数：O
+
+#+BEGIN_SRC lisp
+(defun O (&rest nodes)
+  (apply #'--- (conc1 nodes (1st nodes))))
+#+END_SRC
+
+
+
+*** 1つのノードを多数のノードとつなぐ関数：-<
+
+　 =-<= は、複数のノード（とエッジの属性）を引数に取り、
+先頭のノードとそれ以外のすべてのノードとを結んだ部分グラフを生成する関数です。
+ =->>= の無向グラフ版です。
+#+BEGIN_SRC lisp
+(-< "a"
+    "b" (<> "c" :color :goldenrod) (<> "d" :style :filled))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/radiate-path.png
+graph graph_ID_257 {
+  node_ID_253 [label="c",color=goldenrod];
+  node_ID_254 [label="d",style=filled];
+  "a" -- {"b"; node_ID_253; node_ID_254};
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/radiate-path.png]]
+
+　
+
+##--------------------------------------------------------------------
+** Html-Like-Labels
+
+#+BEGIN_SRC lisp :exports code -n
+  (&& (<> (html
+           (table :bgcolor :khaki
+                  (tr (td "!!WANTED!!" (br)
+                          (font :point-size "10" "Dead or Alive")
+                          :border 0))
+                  (tr (td :bgcolor :ghostwhite :border 0
+                          (img :src "/home/tkych/lisplogo_alien_128.png")))
+                  (tr (td :border 0 "$1,000,000" (br) "REWARD"))))
+          :shape :plaintext))
+#+END_SRC
+
+
+
+#+BEGIN_SRC dot :file ./images/html-like-label1.png
+digraph graph_ID_71 {
+  node_ID_70 [label=<<TABLE BGCOLOR="khaki"><TR><TD BORDER="0">!!WANTED!!<BR/><FONT POINT-SIZE="10">Dead or Alive</FONT></TD></TR><TR><TD BGCOLOR="ghostwhite" BORDER="0"><IMG SRC="/home/tkych/lisplogo_alien_128.png"/></TD></TR><TR><TD BORDER="0">$1,000,000<BR/>REWARD</TD></TR></TABLE>>
+    ,shape=plaintext];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/html-like-label1.png]]
+
+　
+
++ cf.[[Example12 Html-like label]]
+
+
++ html-like-labels in Graphviz manual: http://www.graphviz.org/node-shapes.html
+
+
++ Witness information!!: http://www.lisperati.com/logo.html
+
+　
+
+##--------------------------------------------------------------------
+** Small Programs --- Calendar, Binary-Tree, Cons-Cell, Finite-Automaton
+##--------------------------------------------------------------------
+
+*** Calendar
+
+　Grapvizによってカレンダーを描くという例は、Mihalis Tsoukalos氏による[[http://www.linuxjournal.com/article/7275][An Introduction to GraphViz]]より拝借しました。
+もとの例は、カレンダーを描くためのdotコードファイルを生成するPerlプログラムを書くというものです。
+
+#+BEGIN_SRC lisp
+($$ (& (:size "8,6":rankdir :LR) (generate-monthly-calendar 'may 2012 31 2)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/calendar.png
+digraph graph_ID_1124 {
+  size="8,6";
+  rankdir=LR;
+  node_ID_1074 [label="May\n2012",shape=Msquare];
+  node_ID_1075 [label="Sun",shape=egg,style=filled,color=lightgray];
+  node_ID_1076 [label="Mon",shape=egg,style=filled,color=lightgray];
+  node_ID_1077 [label="Tue",shape=egg,style=filled,color=lightgray];
+  node_ID_1078 [label="Wed",shape=egg,style=filled,color=lightgray];
+  node_ID_1079 [label="Thu",shape=egg,style=filled,color=lightgray];
+  node_ID_1080 [label="Fri",shape=egg,style=filled,color=lightgray];
+  node_ID_1081 [label="Sat",shape=egg,style=filled,color=lightgray];
+  node_ID_1074 -> node_ID_1075 -> node_ID_1076 -> node_ID_1077 -> node_ID_1078 -> node_ID_1079 -> node_ID_1080 -> node_ID_1081;
+  node_ID_1082 [label="",shape=box];
+  node_ID_1083 [label="",shape=box];
+  node_ID_1084 [label=1,shape=box];
+  node_ID_1085 [label=2,shape=box];
+  node_ID_1086 [label=3,shape=box];
+  node_ID_1087 [label=4,shape=box];
+  node_ID_1088 [label=5,shape=box];
+  node_ID_1074 -> node_ID_1082 -> node_ID_1083 -> node_ID_1084 -> node_ID_1085 -> node_ID_1086 -> node_ID_1087 -> node_ID_1088;
+  node_ID_1089 [label=6,shape=box];
+  node_ID_1090 [label=7,shape=box];
+  node_ID_1091 [label=8,shape=box];
+  node_ID_1092 [label=9,shape=box];
+  node_ID_1093 [label=10,shape=box];
+  node_ID_1094 [label=11,shape=box];
+  node_ID_1095 [label=12,shape=box];
+  node_ID_1074 -> node_ID_1089 -> node_ID_1090 -> node_ID_1091 -> node_ID_1092 -> node_ID_1093 -> node_ID_1094 -> node_ID_1095;
+  node_ID_1096 [label=13,shape=box];
+  node_ID_1097 [label=14,shape=box];
+  node_ID_1098 [label=15,shape=box];
+  node_ID_1099 [label=16,shape=box];
+  node_ID_1100 [label=17,shape=box];
+  node_ID_1101 [label=18,shape=box];
+  node_ID_1102 [label=19,shape=box];
+  node_ID_1074 -> node_ID_1096 -> node_ID_1097 -> node_ID_1098 -> node_ID_1099 -> node_ID_1100 -> node_ID_1101 -> node_ID_1102;
+  node_ID_1103 [label=20,shape=box];
+  node_ID_1104 [label=21,shape=box];
+  node_ID_1105 [label=22,shape=box];
+  node_ID_1106 [label=23,shape=box];
+  node_ID_1107 [label=24,shape=box];
+  node_ID_1108 [label=25,shape=box];
+  node_ID_1109 [label=26,shape=box];
+  node_ID_1074 -> node_ID_1103 -> node_ID_1104 -> node_ID_1105 -> node_ID_1106 -> node_ID_1107 -> node_ID_1108 -> node_ID_1109;
+  node_ID_1110 [label=27,shape=box];
+  node_ID_1111 [label=28,shape=box];
+  node_ID_1112 [label=29,shape=box];
+  node_ID_1113 [label=30,shape=box];
+  node_ID_1114 [label=31,shape=box];
+  node_ID_1115 [label="",shape=box];
+  node_ID_1116 [label="",shape=box];
+  node_ID_1074 -> node_ID_1110 -> node_ID_1111 -> node_ID_1112 -> node_ID_1113 -> node_ID_1114 -> node_ID_1115 -> node_ID_1116;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/calendar.png]]
+
+#+BEGIN_SRC lisp
+  (defun generate-monthly-calendar (month year num-days starting-day)
+    (let ((month (<> (format nil "~@(~A~)\\n~D" month year) :shape :Msquare))
+          (luminary7 (loop :for day :in '("Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat")
+                           :collect (<> day :shape :egg :style :filled :color :lightgray)))
+          (days (loop :for day :in (nconc (loop :repeat starting-day :collect "")
+                                          (loop :for d :from 1 :to num-days :collect d)
+                                          (loop :repeat (- (* 7 (if (and (= 28 num-days) (= 0 starting-day))
+                                                                    4 5)) ;for Feb starting Sun in common year 
+                                                           starting-day num-days)
+                                                :collect ""))
+                      :collect (<> day :shape :box))))
+      (apply #'&& (loop :for week :in (cons luminary7 (group 7 days))
+                        :collect (apply #'--> month week)))))
+  
+  ;; from On Lisp
+  (defun group (n lst)
+    (if (zerop n) (error "zero length"))
+    (labels ((rec (lst acc)
+               (let ((rest (nthcdr n lst)))
+                 (if (consp rest)
+                     (rec rest (cons (subseq lst 0 n) acc))
+                     (nreverse (cons lst acc))))))
+      (if lst (rec lst nil) nil)))
+#+END_SRC
+
+　関数generate-monthly-calendarは、引数として、月の名前month、年year、 月の日数num-days、1日の曜日starting-dayを取り、
+カレンダーを表すグラフを返します。
+'1日の曜日'とは、日曜を0、月曜を1、...土曜を6に、それぞれ対応させた数値です。
+
+　
+
+*** Binary Tree
+
+#+BEGIN_SRC lisp
+  ($ () (& (:size "6,8")
+          (binary-tree-graph '("a" ("b" ("d" "h" "i")
+                                        ("e" "j" "k"))
+                                   ("c" ("f" "l" "m")
+                                        ("g" "n" "o"))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/bin-tree-graph.png
+digraph GRAPH_T283 {
+  size="6,8";
+  "d" -> "h";  "d" -> "i";  "b" -> "d";  "e" -> "j";
+  "e" -> "k";  "b" -> "e";  "a" -> "b";  "f" -> "l";
+  "f" -> "m";  "c" -> "f";  "g" -> "n";  "g" -> "o";
+  "c" -> "g";  "a" -> "c";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/bin-tree-graph.png]]
+
+#+BEGIN_SRC lisp -n
+  (defun binary-tree-graph (tree)
+    (labels ((rec (x)
+               (let ((p (first x)) (lc (second x)) (rc (third x)))
+                 (&& (when lc
+                       (if (atom lc)
+                           (-> p lc)
+                           (&& (-> p (car lc)) (rec lc))))
+                     (when rc
+                       (if (atom rc)
+                           (-> p rc)
+                           (&& (-> p (car rc)) (rec rc))))))))
+      (if (null (cdr tree))
+          (car tree)
+          (rec tree))))
+#+END_SRC
+
+　関数 =binary-tree-graph= は、(parent left-child right-child)構造のツリーを再帰的に下り2分木グラフを生成します。
+3行目、マッチに失敗した場合にエラーが発生するので、letをdestructuring-bindに置き換えることはできません。
+12行目、ツリーがルートのみで構成されているかどうかをチェック。
+
+
+
+　
+
+##--------------------------------------
+*** Cons Cell
+
+#+SRCNAME: cons-cell.lisp
+#+BEGIN_SRC lisp
+  ($ () (& (:size "5,5") (cons-cell-of (a (b c) (d (e f)) g))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/cons-cell.png
+digraph graph_T189 {
+  size="5,5";
+  record_T190 [shape=record,label="<car> |<cdr>"];
+  record_T190:car -> "A";
+  record_T192 [shape=record,label="<car> |<cdr>"];
+  record_T193 [shape=record,label="<car> |<cdr>"];
+  record_T193:car -> "B";
+  record_T195 [shape=record,label="<car> |<cdr>"];
+  record_T195:car -> "C";
+  {rank=same; record_T193; record_T195};
+  record_T193:e -> record_T195:w;
+  record_T192:car -> record_T193:car:n;
+  record_T199 [shape=record,label="<car> |<cdr>"];
+  record_T200 [shape=record,label="<car> |<cdr>"];
+  record_T200:car -> "D";
+  record_T202 [shape=record,label="<car> |<cdr>"];
+  record_T203 [shape=record,label="<car> |<cdr>"];
+  record_T203:car -> "E";
+  record_T205 [shape=record,label="<car> |<cdr>"];
+  record_T205:car -> "F";
+  {rank=same; record_T203; record_T205};
+  record_T203:e -> record_T205:w;
+  record_T202:car -> record_T203:car:n;
+  {rank=same; record_T200; record_T202};
+  record_T200:e -> record_T202:w;
+  record_T199:car -> record_T200:car:n;
+  record_T211 [shape=record,label="<car> |<cdr>"];
+  record_T211:car -> "G";
+  {rank=same; record_T199; record_T211};
+  record_T199:e -> record_T211:w;
+  {rank=same; record_T192; record_T199};
+  record_T192:e -> record_T199:w;
+  {rank=same; record_T190; record_T192};
+  record_T190:e -> record_T192:w;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/cons-cell.png]]
+
+
+#+SRCNAME: cons-cell-of.lisp
+#+BEGIN_SRC lisp
+  (defmacro cons-cell-of (tree)
+    (labels ((rec (x root-cons nest)
+               (cond ((null x) nil)
+                     ((atom x) `(set-car ,root-cons ,(format nil "~S" x)))
+                     (t        (let* ((name (gensym "CONS-"))
+                                      (car-struct (rec (car x) name t)))
+                                 (list 'cons-cell name car-struct
+                                       (rec (cdr x) name nil)
+                                       (when root-cons
+                                         (list (if nest 'set-car 'set-cdr)
+                                               root-cons name))))))))
+      (rec tree nil nil)))
+  
+  (defmacro cons-cell (name &body body)
+    `(let ((,name ([] ":car |:cdr")))
+       (&& ,@(delete nil body))))
+  
+  (defmacro set-car (cell obj)
+    `(-> (@ ,cell :car)
+         ,(if (stringp obj) obj `(@ ,obj :car :n))))
+  
+  (defmacro set-cdr (cell obj)
+    `(&& (~ ,cell ,obj)
+         (-> (@ ,cell :e)
+             ,(if (stringp obj) obj `(@ ,obj :w)))))
+#+END_SRC
+
+　マクロcons-cell-of[fn:gentle]は、ツリーを引数に取り、ツリーのコンスセル構造を描くグラフを生成します。
+展開の過程で、いったんツリーをツリー構造を表すコードに変換し、その後、グラフを生成するコードに変換します。
+
+[fn:gentle]
+マクロcons-cell-ofを書く際に、
+David S. Touretzkyによる素晴らしいLisp入門書、
+[[http://www.cs.cmu.edu/~dst/LispBook/][Common Lisp: A Gentle Introduction to Symbolic Computation]]のAppendix AのSDRAWのコードが大変参考になりました。
+SDRAWは、ループ構造も含む任意のリストを引数に取り、そのコンスセル構造を標準出力にディスプレイするライブラリです。
+ただし、ここで紹介したマクロcons-cell-ofは、コードが複雑になってしまうため、ループ構造のリストには対応していません。
+
+#+BEGIN_SRC lisp
+(cons-cell-of (a b))
+->
+(CONS-CELL #:CONS-1347                       ;ツリー構造を表すコード
+  (SET-CAR #:CONS-1347 "A")
+  (CONS-CELL #:CONS-1348
+    (SET-CAR #:CONS-1348 "B") NIL            ;NILはマクロcons-cellの展開時に除かれる
+    (SET-CDR #:CONS-1347 #:CONS-1348)) NIL)
+->
+(LET ((#:CONS-1347 ([] ":car |:cdr")))       ;グラフを生成するコード
+  (&&
+    (-> (@ #:CONS-1347 :CAR) "A")
+    (LET ((#:CONS-1348 ([] ":car |:cdr")))
+      (&&
+        (-> (@ #:CONS-1348 :CAR) "B")
+        (&&
+          (~ #:CONS-1347 #:CONS-1348)
+          (-> (@ #:CONS-1347 :E) (@ #:CONS-1348 :W)))))))
+#+END_SRC
+
+　展開途中のツリーの構造は、cons-cell, set-car, set-cdr等のマクロによって表現されます。
+cons-cellは、nameを引数に取り、（レコードで表現された）コンスセルがnameに束縛されているコンテキストを作ります。
+set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛されたコンスセルのcar（またはcdr）にobjを連結します。
+
+
+　
+
+##--------------------------------------
+*** Finite Automaton
+
+#+SRCNAME: finite-automaton.lisp
+#+BEGIN_SRC lisp  
+  ($ () (& (:rankdir :LR :size "3,2")
+          (trans-diagram S1 (S2) ((S1 (0 S1) (1 S2))
+                                  (S2 (0 S3) (1 S2))
+                                  (S3 (0 S2) (1 S1))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/finite-automaton.png
+digraph graph_T862 {
+  rankdir=LR;
+  size="3,2";
+  { edge [fontsize=9];
+  node_T847 [label="",shape=point];
+  node_T848 [label="S1",shape=circle];
+  node_T847 -> node_T848;
+  node_T848 -> node_T848 [label=0];
+  node_T849 [label="S2",shape=doublecircle];
+  node_T848 -> node_T849 [label=1];
+  node_T850 [label="S3",shape=circle];
+  node_T849 -> node_T850 [label=0];
+  node_T849 -> node_T849 [label=1];
+  node_T850 -> node_T849 [label=0];
+  node_T850 -> node_T848 [label=1];
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/finite-automaton.png]]
+
+
+#+BEGIN_SRC lisp
+  (defmacro trans-diagram (start-state final-states trans-fn-list)
+    (let* ((states (mapcar #'first trans-fn-list))
+           (gs     (loop :repeat (length states) :collect (gensym)))
+           (s-gs   (mapcar #'list states gs)))
+      (with-gensyms (s0)
+        `(let ,(cons `(,s0 (<> "" :shape :point))
+                     (mapcar (lambda (s g) (if (member s final-states :test #'equal)
+                                               `(,g (<> ,(format nil "~S" s) :shape :doublecircle))
+                                               `(,g (<> ,(format nil "~S" s) :shape :circle))))
+                             states gs))
+           (&& (with-edge (:fontsize 9)
+                 (-> ,s0 ,(s->g start-state s-gs))
+                 ,@(loop :for g :in gs
+                         :for lst :in trans-fn-list
+                         :collect `(->> ,g
+                                     ,@(loop :for e :in (rest lst)
+                                             :collect `(,(s->g (second e) s-gs) :label ,(first e)))))))))))
+  
+  (defun s->g (state state-gensyms)
+    (second (assoc state state-gensyms :test #'equal)))
+#+END_SRC
+
+　マクロtrans-diagramは、有限オートマトンの遷移図グラフを生成します。
+引数として、初期状態、最終状態のリスト、遷移関数リストの3つを取ります。
+遷移関数リストとは、遷移関数をリストで表現したものです。
+例えば、下表の遷移関数：
+| ＼ | 0  | 1  |
+| S1 | S1 | S2 |
+| S2 | S3 | S2 |
+| S3 | S2 | S1 |
+は、リスト =((S1 (0 S1) (1 S2)) (S2 (0 S3) (1 S2)) (S3 (0 S2) (1 S1)))= によって表すことができます。
+
+
+　
+
+##--------------------------------------------------------------------
+* Examples from Graphviz manual
+##--------------------------------------------------------------------
+
+- http://www.graphviz.org/pdf/dotguide.pdf
+
+- http://www.graphviz.org/pdf/neatoguide.pdf
+
+##--------------------------------------------------------------------
+** Examples from dot guide
+##--------------------------------------------------------------------
+*** Example1 Small graph
+
+#+SRCNAME: example1.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ () (&& (->> "main" "parse" "init" "cleanup" "printf")
+            (->  "parse" "execute")
+            (->  "init" "make_string")
+            (->> "execute" "make_string" "printf" "compare")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example1.png
+digraph T30 {
+  "main" -> "parse";
+  "main" -> "init";
+  "main" -> "cleanup";
+  "main" -> "printf";
+  "parse" -> "execute";
+  "init" -> "make_string";
+  "execute" -> "make_string";
+  "execute" -> "printf";
+  "execute" -> "compare";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example1.png]]
+
+
+##--------------------------------------
+*** Example2 Fancy graph
+#+SRCNAME: example2.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ ()
+     (let ((main (<> "main" :shape :box))
+           (make-string (<> "make a\\nstring")))
+       (& (:size "4,4")
+         (->> main ("parse" :weight 8) ("init" :style :dotted) "cleanup")
+         (->  "parse" "execute")
+         (->> "execute" make-string "printf")
+         (->  "init" make-string)
+         (with-edge (:color :red)
+           (-> main "printf" :style :bold :label "100 times")
+           (-> "execute" (<> "compare" :shape :box :style :filled :color ".7 .3 1.0"))))))
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/example2.png
+digraph graph_T224 {
+  size="4,4";
+  node_T225 [label="main",shape=box];
+  node_T226 [label="make a\nstring"];
+  node_T225 -> "parse" [weight=8];
+  node_T225 -> "init" [style=dotted];
+  node_T225 -> "cleanup";
+  node_T225 -> "printf" [color=red,style=bold,label="100 times"];
+  "parse" -> "execute";
+  "init" -> node_T226;
+  "execute" -> node_T226;
+  "execute" -> "printf";
+  node_T235 [label="compare",shape=box,style=filled,color=".7 .3 1.0"];
+  "execute" -> node_T235 [color=red];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example2.png]]
+
+
+##--------------------------------------
+*** Example3 Graph with polygonal shapes
+
+#+SRCNAME: example3.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ () (&& (--> (<> "a" :shape :polygon :side 5 :peripheries 3 :color :lightblue :style :filled)
+                 "b"
+                 (<> "hello world" :shape :polygon :sides 4 :skew .4))
+            (-> "b" (<> "d" :shape :invtriangle))
+            (<> "e" :shape :polygon :sides 4 :distortion .7)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example3.png
+digraph graph_T246 {
+  node_T247 [label="a",shape=polygon,side=5,peripheries=3,color=lightblue,style=filled];
+  node_T248 [label="hello world",shape=polygon,sides=4,skew=0.4];
+  node_T247 -> "b" -> node_T248;
+  node_T250 [label="d",shape=invtriangle];
+  "b" -> node_T250;
+  node_T252 [label="e",shape=polygon,sides=4,distortion=0.7];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example3.png]]
+
+
+##--------------------------------------
+*** Example4 Records with nested fields
+
+#+SRCNAME: example4.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ () (&& (->> ([] ":f0 left|:f1 mid\\ dle|:f2 right")
+                 ([] ":f0 one|:f1 two")
+                 ([] "hello\\nworld|{b|{c|:here d|e}|f}|g|h"))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example4.png
+digraph graph_T19 {
+  record_T20 [shape=record,label="<f0> left|<f1> mid\ dle|<f2> right"];
+  record_T21 [shape=record,label="<f0> one|<f1> two"];
+  record_T20 -> record_T21;
+  record_T23 [shape=record,label="hello\nworld|{b|{c|<here> d|e}|f}|g|h"];
+  record_T20 -> record_T23;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example4.png]]
+
+
+##--------------------------------------
+*** Example5 Constrained ranks
+
+#+SRCNAME: example5.lisp :exports code
+#+BEGIN_SRC lisp
+  ($()
+    (& (:name "asde91" :ranksep .75 :size "7.5,7.5")
+      (with-node (:shape :plaintext :fontsize 16)
+        ;; the time-line graph
+        (--> "past" 1978 1980 1982 1983 1985 1986 1987 1988 1989 1990 "future")
+        ;; ancestor programs
+        "Bourne sh" "make" "SCCS" "yacc" "cron" "Reiser cpp"
+        "Cshell" "emacs" "build" "vi" "<curses>" "RCS" "C*")
+      (~ "Software IS" "Configuration Mgt" "Architecture & Libraries" "Process")
+      (with-node (:shape :box)
+        (~ "past" "SCCS" "make" "Bourne sh" "yacc" "cron")
+        (~ 1978 "Reiser cpp" "Cshell")
+        (~ 1980 "build" "emacs" "vi")
+        (~ 1982 "RCS" "<curses>" "IMX" "SYNED")
+        (~ 1983 "ksh" "IFS" "TTU")
+        (~ 1985 "nmake" "Peggy")
+        (~ 1986 "C*" "ncpp" "ksh-i" "<curses-i>" "PG2")
+        (~ 1987 "Ansi cpp" "nmake 2.0" "3D File System" "fdelta" "DAG" "CSAS")
+        (~ 1988 "CIA" "SBCS" "ksh-88" "PEGASUS/PML" "PAX" "backtalk")
+        (~ 1989 "CIA++" "APP" "SHIP" "DataShare" "ryacc" "Mosaic")
+        (~ 1990 "libft" "CoShell" "DIA" "IFS-i" "kyacc" "sfio" "yeast" "ML-X" "DOT")
+        (~ "future" "Adv. Software Technology")
+        (->  "PEGASUS/PML" "ML-X")
+        (->> "SCCS" "nmake" "3D File System" "RCS")
+        (->> "make" "nmake" "build")
+        (->> "Bourne sh" "Cshell" "ksh")
+        (->  "Reiser cpp" "ncpp")
+        (->  "Cshell" "ksh")
+        (->  "build" "nmake 2.0")
+        (->  "emacs" "ksh")
+        (->> "vi" "ksh" "<curses>")
+        (->> "IFS" "<curses-i>" "IFS-i" "sfio")
+        (--> "<curses>" "<curses-i>" "fdelta")
+        (->> "RCS" "SBCS" "fdelta")
+        (->> "ksh" "nmake" "ksh-i" "ksh-88")
+        (->  "ksh-i" "ksh-88")
+        (->> "nmake" "ksh" "ncpp" "3D File System" "nmake 2.0")
+        (->  "ncpp" "Ansi cpp")
+        (->  "C*" "CSAS")
+        (->  "fdelta" "SBCS")
+        (->  "CSAS" "CIA")
+        (->> "ksh-88" "sfio" "Configuration Mgt" "Architecture & Libraries")
+        (->  "IFS-i" "Architecture & Libraries")
+        (->  "SYNED" "Peggy")
+        (->> "Peggy" "PEGASUS/PML" "ryacc")
+        (->  "PEGASUS/PML" "Architecture & Libraries")
+        (--> "yacc" "ryacc" "kyacc" "Architecture & Libraries")
+        (->  "ML-X" "Architecture & Libraries")
+        (->  "APP" "Software IS")
+        (->  "SBCS" "Configuration Mgt")
+        (->> "DAG" "Software IS" "DOT")
+        (->  "CIA++" "Software IS")
+        (==> "Ansi cpp" "nmake 2.0" "3D File System" "Configuration Mgt")
+        (->  "CIA" "CIA++")
+        (--> "IMX" "TTU" "PG2" "backtalk" "DataShare" "Architecture & Libraries")
+        (->  "nmake 2.0" "CoShell")
+        (==> "CIA" "APP" "DAG" "DIA")
+        (--> "fdelta" "PAX" "SHIP" "Configuration Mgt")
+        (==> "DIA" "DOT" "libft" "Software IS")
+        (->  "sfio" "Architecture & Libraries")
+        (->> "CoShell" "Configuration Mgt" "Architecture & Libraries")
+        (->  "Mosaic" "Process")
+        (-->  "cron" "yeast" "Process")
+        (==> "Software IS" "Configuration Mgt" "Architecture & Libraries" "Process" "Adv. Software Technology"))))
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/example5.png
+digraph asde91 {
+  ranksep=0.75;
+  size="7.5,7.5";
+  { node [shape=plaintext,fontsize=16];
+  "past" -> 1978 -> 1980 -> 1982 -> 1983 -> 1985 -> 1986 -> 1987 -> 1988 -> 1989 -> 1990 -> "future";
+"Bourne sh";
+"make";
+"SCCS";
+"yacc";
+"cron";
+"Reiser cpp";
+"Cshell";
+"emacs";
+"build";
+"vi";
+"<curses>";
+"RCS";
+"C*";
+  };
+  {rank=same; "Software IS"; "Configuration Mgt"; "Architecture & Libraries"; "Process"};
+  { node [shape=box];
+  {rank=same; "past"; "SCCS"; "make"; "Bourne sh"; "yacc"; "cron"};
+  {rank=same; 1978; "Reiser cpp"; "Cshell"};
+  {rank=same; 1980; "build"; "emacs"; "vi"};
+  {rank=same; 1982; "RCS"; "<curses>"; "IMX"; "SYNED"};
+  {rank=same; 1983; "ksh"; "IFS"; "TTU"};
+  {rank=same; 1985; "nmake"; "Peggy"};
+  {rank=same; 1986; "C*"; "ncpp"; "ksh-i"; "<curses-i>"; "PG2"};
+  {rank=same; 1987; "Ansi cpp"; "nmake 2.0"; "3D File System"; "fdelta"; "DAG"; "CSAS"};
+  {rank=same; 1988; "CIA"; "SBCS"; "ksh-88"; "PEGASUS/PML"; "PAX"; "backtalk"};
+  {rank=same; 1989; "CIA++"; "APP"; "SHIP"; "DataShare"; "ryacc"; "Mosaic"};
+  {rank=same; 1990; "libft"; "CoShell"; "DIA"; "IFS-i"; "kyacc"; "sfio"; "yeast"; "ML-X"; "DOT"};
+  {rank=same; "future"; "Adv. Software Technology"};
+  "PEGASUS/PML" -> "ML-X";
+  "SCCS" -> "nmake";
+  "SCCS" -> "3D File System";
+  "SCCS" -> "RCS";
+  "make" -> "nmake";
+  "make" -> "build";
+  "Bourne sh" -> "Cshell";
+  "Bourne sh" -> "ksh";
+  "Reiser cpp" -> "ncpp";
+  "Cshell" -> "ksh";
+  "build" -> "nmake 2.0";
+  "emacs" -> "ksh";
+  "vi" -> "ksh";
+  "vi" -> "<curses>";
+  "IFS" -> "<curses-i>";
+  "IFS" -> "IFS-i";
+  "IFS" -> "sfio";
+  "<curses>" -> "<curses-i>" -> "fdelta";
+  "RCS" -> "SBCS";
+  "RCS" -> "fdelta";
+  "ksh" -> "nmake";
+  "ksh" -> "ksh-i";
+  "ksh" -> "ksh-88";
+  "ksh-i" -> "ksh-88";
+  "nmake" -> "ksh";
+  "nmake" -> "ncpp";
+  "nmake" -> "3D File System";
+  "nmake" -> "nmake 2.0";
+  "ncpp" -> "Ansi cpp";
+  "C*" -> "CSAS";
+  "fdelta" -> "SBCS";
+  "CSAS" -> "CIA";
+  "ksh-88" -> "sfio";
+  "ksh-88" -> "Configuration Mgt";
+  "ksh-88" -> "Architecture & Libraries";
+  "IFS-i" -> "Architecture & Libraries";
+  "SYNED" -> "Peggy";
+  "Peggy" -> "PEGASUS/PML";
+  "Peggy" -> "ryacc";
+  "PEGASUS/PML" -> "Architecture & Libraries";
+  "yacc" -> "ryacc" -> "kyacc" -> "Architecture & Libraries";
+  "ML-X" -> "Architecture & Libraries";
+  "APP" -> "Software IS";
+  "SBCS" -> "Configuration Mgt";
+  "DAG" -> "Software IS";
+  "DAG" -> "DOT";
+  "CIA++" -> "Software IS";
+  "Ansi cpp" -> "Configuration Mgt";
+  "nmake 2.0" -> "Configuration Mgt";
+  "3D File System" -> "Configuration Mgt";
+  "CIA" -> "CIA++";
+  "IMX" -> "TTU" -> "PG2" -> "backtalk" -> "DataShare" -> "Architecture & Libraries";
+  "nmake 2.0" -> "CoShell";
+  "CIA" -> "DIA";
+  "APP" -> "DIA";
+  "DAG" -> "DIA";
+  "fdelta" -> "PAX" -> "SHIP" -> "Configuration Mgt";
+  "DIA" -> "Software IS";
+  "DOT" -> "Software IS";
+  "libft" -> "Software IS";
+  "sfio" -> "Architecture & Libraries";
+  "CoShell" -> "Configuration Mgt";
+  "CoShell" -> "Architecture & Libraries";
+  "Mosaic" -> "Process";
+  "cron" -> "yeast" -> "Process";
+  "Software IS" -> "Adv. Software Technology";
+  "Configuration Mgt" -> "Adv. Software Technology";
+  "Architecture & Libraries" -> "Adv. Software Technology";
+  "Process" -> "Adv. Software Technology";
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example5.png]]
+
+##--------------------------------------
+*** Example6 Binary search tree using records
+
+#+SRCNAME: example6.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$
+    (&& (with-node (:height .1)
+          (let ((n0 ([] ":f0 |:f1 G|:f2")) (n1 ([] ":f0 |:f1 E|:f2"))
+                (n2 ([] ":f0 |:f1 B|:f2")) (n3 ([] ":f0 |:f1 F|:f2"))
+                (n4 ([] ":f0 |:f1 R|:f2")) (n5 ([] ":f0 |:f1 H|:f2"))
+                (n6 ([] ":f0 |:f1 Y|:f2")) (n7 ([] ":f0 |:f1 A|:f2"))
+                (n8 ([] ":f0 |:f1 C|:f2")))
+            (&& (-> (@ n0 :f2) (@ n4 :f1)) (-> (@ n0 :f0) (@ n1 :f1))
+                (-> (@ n1 :f0) (@ n2 :f1)) (-> (@ n1 :f2) (@ n3 :f1))
+                (-> (@ n2 :f2) (@ n8 :f1)) (-> (@ n2 :f0) (@ n7 :f1))
+                (-> (@ n4 :f2) (@ n6 :f1)) (-> (@ n4 :f0) (@ n5 :f1)))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example6.png
+digraph graph_T385 {
+  node [height=0.1];
+  record_T386 [shape=record,label="<f0> |<f1> G|<f2>"];
+  record_T387 [shape=record,label="<f0> |<f1> E|<f2>"];
+  record_T388 [shape=record,label="<f0> |<f1> B|<f2>"];
+  record_T389 [shape=record,label="<f0> |<f1> F|<f2>"];
+  record_T390 [shape=record,label="<f0> |<f1> R|<f2>"];
+  record_T391 [shape=record,label="<f0> |<f1> H|<f2>"];
+  record_T392 [shape=record,label="<f0> |<f1> Y|<f2>"];
+  record_T393 [shape=record,label="<f0> |<f1> A|<f2>"];
+  record_T394 [shape=record,label="<f0> |<f1> C|<f2>"];
+  record_T386:f2 -> record_T390:f1;
+  record_T386:f0 -> record_T387:f1;
+  record_T387:f0 -> record_T388:f1;
+  record_T387:f2 -> record_T389:f1;
+  record_T388:f2 -> record_T394:f1;
+  record_T388:f0 -> record_T393:f1;
+  record_T390:f2 -> record_T392:f1;
+  record_T390:f0 -> record_T391:f1;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example6.png]]
+
+
+　以下の様に関数bst-graphを定義することで任意の二分探索木をグラフとして出力することもできます。
+関数bst-graphは、(parent left-child right-child)の形の二分探索木を再帰的に下り、グラフを生成します(cf. [[2分木]])。
+#+BEGIN_SRC lisp
+  (defun bst-graph (tree)
+    (if (null tree)
+        (&&)
+        (labels ((rec (root-node tree)
+                   (let ((lc (second tree)) (rc (third tree)))
+                     (&& (when lc
+                           (if (atom lc)
+                               (-> (@ root-node :f0) (@ (bst-node lc) :f1))
+                               (let ((lc-node (bst-node (first lc))))
+                                 (&& (-> (@ root-node :f0) (@ lc-node :f1))
+                                     (rec lc-node lc)))))
+                         (when rc
+                           (if (atom rc)
+                               (-> (@ root-node :f2) (@ (bst-node rc) :f1))
+                               (let ((rc-node (bst-node (first rc))))
+                                 (&& (-> (@ root-node :f2) (@ rc-node :f1))
+                                     (rec rc-node rc)))))))))
+          (if (null (cdr tree))
+              (bst-node (first tree))
+              (rec (bst-node (first tree)) tree)))))
+  
+  (defun bst-node (symb)
+    ([] (format nil "~@{~A~}" ":f0 |:f1 " symb "|:f2")))
+  
+  ($$ (with-node (:height .1)             ;上と同様のグラフが出力される。
+        (bst-graph '(g (e (b a c)
+                          f)
+                       (r h y)))))
+#+END_SRC
+
+
+##--------------------------------------
+*** Example7 Records with nested fields (revisited)
+#+BEGIN_SRC dot
+digraph structs {
+node [shape=record];
+    struct1 [shape=record,label="<f0> left|<f1> middle|<f2> right"];
+    struct2 [shape=record,label="<f0> one|<f1> two"];
+    struct3 [shape=record,label="hello\nworld|{b|{c|<here> d|e}|f}|g|h"];
+    struct1:f1 -> struct2:f0;
+    struct1:f2 -> struct3:here;
+}
+#+END_SRC
+
+#+SRCNAME: example7.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ () (let ((s1 ([] ":f0 left|:f1 mid\\ dle|:f2 right"))
+              (s2 ([] ":f0 one|:f1 two"))
+              (s3 ([] "hello\\nworld|{b|{c|:here d|e}|f}|g|h")))
+          (&& (-> (@ s1 :f1) (@ s2 :f0))
+              (-> (@ s1 :f2) (@ s3 :here)))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example7.png
+digraph graph_T290 {
+  record_T291 [shape=record,label="<f0> left|<f1> mid\ dle|<f2> right"];
+  record_T292 [shape=record,label="<f0> one|<f1> two"];
+  record_T293 [shape=record,label="hello\nworld|{b|{c|<here> d|e}|f}|g|h"];
+  record_T291:f1 -> record_T292:f0;
+  record_T291:f2 -> record_T293:here;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example7.png]]
+
+
+##--------------------------------------
+*** Example8 Hash table
+
+#+BEGIN_SRC dot
+digraph G {
+    nodesep=.05;
+    rankdir=LR;
+    node [shape=record,width=.1,height=.1];
+    node0 [label = "<f0> |<f1> |<f2> |<f3> |<f4> |<f5> |<f6> | ",height=2.5];
+    node [width = 1.5];
+    node1 [label = "{<n> n14 | 719 |<p> }"];
+    node2 [label = "{<n> a1  | 805 |<p> }"];
+    node3 [label = "{<n> i9  | 718 |<p> }"];
+    node4 [label = "{<n> e5  | 989 |<p> }"];
+    node5 [label = "{<n> t20 | 959 |<p> }"];
+    node6 [label = "{<n> o15 | 794 |<p> }"];
+    node7 [label = "{<n> s19 | 659 |<p> }"];
+    node0:f0 -> node1:n;
+    node0:f1 -> node2:n;
+    node0:f2 -> node3:n;
+    node0:f5 -> node4:n;
+    node0:f6 -> node5:n;
+    node2:p -> node6:n;
+    node4:p -> node7:n;
+}
+#+END_SRC
+
+#+SRCNAME: example8.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ ()
+     (& (:nodesep .05 :rankdir :LR)
+       (with-node (:width 1.5 :height .1)
+         (let ((n0 ([] ":f0 |:f1 |:f2 |:f3 |:f4 |:f5 |:f6 | " :height 2.5 :width .1))
+               (n1 ([] "{:n n14 | 719 |:p }")) (n2 ([] "{:n a1  | 805 |:p }"))
+               (n3 ([] "{:n i9  | 718 |:p }")) (n4 ([] "{:n e5  | 989 |:p }"))
+               (n5 ([] "{:n t20 | 959 |:p }")) (n6 ([] "{:n o15 | 794 |:p }"))
+               (n7 ([] "{:n s19 | 659 |:p }")))
+           (&& (-> (@ n0 :f0) (@ n1 :n)) (-> (@ n0 :f1) (@ n2 :n))
+               (-> (@ n0 :f2) (@ n3 :n)) (-> (@ n0 :f5) (@ n4 :n))
+               (-> (@ n0 :f6) (@ n5 :n)) (-> (@ n2 :p)  (@ n6 :n))
+               (-> (@ n4 :p)  (@ n7 :n)))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example8.png
+digraph graph_T368 {
+  nodesep=0.05;
+  rankdir=LR;
+  node [width=1.5,height=0.1];
+  record_T369 [shape=record,label="<f0> |<f1> |<f2> |<f3> |<f4> |<f5> |<f6> | ",height=2.5,width=0.1];
+  record_T370 [shape=record,label="{<n> n14 | 719 |<p> }"];
+  record_T371 [shape=record,label="{<n> a1  | 805 |<p> }"];
+  record_T372 [shape=record,label="{<n> i9  | 718 |<p> }"];
+  record_T373 [shape=record,label="{<n> e5  | 989 |<p> }"];
+  record_T374 [shape=record,label="{<n> t20 | 959 |<p> }"];
+  record_T375 [shape=record,label="{<n> o15 | 794 |<p> }"];
+  record_T376 [shape=record,label="{<n> s19 | 659 |<p> }"];
+  record_T369:f0 -> record_T370:n;
+  record_T369:f1 -> record_T371:n;
+  record_T369:f2 -> record_T372:n;
+  record_T369:f5 -> record_T373:n;
+  record_T369:f6 -> record_T374:n;
+  record_T371:p -> record_T375:n;
+  record_T373:p -> record_T376:n;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example8.png]]
+
+
+##--------------------------------------
+*** Example9 Clusters
+#+BEGIN_SRC dot
+digraph G {
+  subgraph cluster0 {
+    node [style=filled,color=white];
+    style=filled;
+    color=lightgrey;
+    a0 -> a1 -> a2 -> a3;
+    label = "process #1";
+  }
+  subgraph cluster1 {
+    node [style=filled];
+    b0 -> b1 -> b2 -> b3;
+    label = "process #2";
+    color=blue
+  }
+  start -> a0;
+  start -> b0;
+  a1 -> b3;
+  b2 -> a3;
+  a3 -> a0;
+  a3 -> end;
+  b3 -> end;
+  start [shape=Mdiamond];
+  end [shape=Msquare];
+}
+#+END_SRC
+
+#+SRCNAME: example9.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ ()
+     (&& ([&] (:label "process #1" :style :filled :color :lightgrey)
+           (with-node (:style :filled :color :white)
+             (--> "a0" "a1" "a2" "a3")))
+         ([&] (:label "process #2" :color :blue)
+           (with-node (:style :filled)
+             (--> "b0" "b1" "b2" "b3")))
+         (->> (<> "start" :shape :Mdiamond) "a0" "b0")
+         (==> "a3" "b3" (<> "end" :shape :Msquare))
+         (->  "a1" "b3")
+         (->  "a3" "a0")
+         (->  "b2" "a3")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example9.png
+digraph graph_T153 {
+  subgraph cluster_T154 {
+  label="process #1";
+  style=filled;
+  color=lightgrey;
+  { node [style=filled,color=white];
+  "a0" -> "a1" -> "a2" -> "a3";
+  };
+  }
+  subgraph cluster_T155 {
+  label="process #2";
+  color=blue;
+  { node [style=filled];
+  "b0" -> "b1" -> "b2" -> "b3";
+  };
+  }
+  node_T158 [label="start",shape=Mdiamond];
+  node_T158 -> "a0";
+  node_T158 -> "b0";
+  node_T161 [label="end",shape=Msquare];
+  "a3" -> node_T161;
+  "b3" -> node_T161;
+  "a1" -> "b3";
+  "a3" -> "a0";
+  "b2" -> "a3";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example9.png]]
+
+##--------------------------------------
+*** Example10 Call graph with labeled
+
+　出力される画像がマニュアルのものと違いますが、グラフとしては同等です。
+グラフを構成する要素(ノード、エッジ、グラフ)の順によって、グラフとしては同等でも、グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります(これはGraphvizの仕様です)。
+
+
+#+BEGIN_SRC dot :file ./tmp.png
+  digraph G {
+    size="8,6"; ratio=fill; node[fontsize=24];
+  
+  ciafan->computefan; fan->increment; computefan->fan; stringdup->fatal;
+  main->exit; main->interp_err; main->ciafan; main->fatal; main->malloc;
+  main->strcpy; main->getopt; main->init_index; main->strlen; fan->fatal;
+  fan->ref; fan->interp_err; ciafan->def; fan->free; computefan->stdprintf;
+  computefan->get_sym_fields; fan->exit; fan->malloc; increment->strcmp;
+  computefan->malloc; fan->stdsprintf; fan->strlen; computefan->strcmp;
+  computefan->realloc; computefan->strlen; debug->sfprintf; debug->strcat;
+  stringdup->malloc; fatal->sfprintf; stringdup->strcpy; stringdup->strlen;
+  fatal->exit;
+  
+  subgraph "cluster_error.h" { label="error.h"; interp_err; }
+  subgraph "cluster_sfio.h" { label="sfio.h"; sfprintf; }
+  subgraph "cluster_ciafan.c" { label="ciafan.c"; ciafan; computefan; increment; }
+  subgraph "cluster_util.c" { label="util.c"; stringdup; fatal; debug; }
+  subgraph "cluster_query.h" { label="query.h"; ref; def; }
+  subgraph "cluster_field.h" { get_sym_fields; }
+  subgraph "cluster_stdio.h" { label="stdio.h"; stdprintf; stdsprintf; }
+  subgraph "cluster_<libc.a>" { getopt; }
+  subgraph "cluster_stdlib.h" { label="stdlib.h"; exit; malloc; free; realloc; }
+  subgraph "cluster_main.c" { main; }
+  subgraph "cluster_index.h" { init_index; }
+  subgraph "cluster_string.h" { label="string.h"; strcpy; strlen; strcmp; strcat; }
+  }
+#+END_SRC
+
+
+#+SRCNAME: example10.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ ()
+     (& (:size "8,6" :ratio :fill)
+       (with-node (:fontsize 24)
+         ([&] (:label "error.h") "interp_err")
+         ([&] (:label "sfio.h") "sfprintf")
+         ([&] (:label "ciafan.c") "ciafan" "computefan" "increment")
+         ([&] (:label "util.c") "stringdup" "fatal" "debug")
+         ([&] (:label "query.h") "ref" "def")
+         ([&] () "get_sym_fields")
+         ([&] (:label "stdio.h") "stdprintf" "stdsprintf")
+         ([&] () "getopt")
+         ([&] (:label "stdlib.h") "exit" "malloc" "free" "realloc")
+         ([&] () "main")
+         ([&] () "init_index")
+         ([&] (:label "string.h") "strcpy" "strlen" "strcmp" "strcat")
+         (->> "main" "strcpy" "strlen" "getopt" "init_index" "fatal" "ciafan" "interp_err" "malloc" "exit")
+         (->> "debug" "strcat" "sfprintf")
+         (->> "stringdup" "strcpy" "strlen" "malloc" "fatal")
+         (->> "fatal" "sfprintf" "exit")
+         (->  "increment" "strcmp")
+         (->> "ciafan" "computefan" "def")
+         (->> "computefan" "strlen" "strcmp" "get_sym_fields" "stdprintf" "realloc" "malloc" "fan")
+         (->> "fan" "increment" "fatal" "ref" "strlen" "stdsprintf" "malloc" "exit" "free" "interp_err"))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example10.png
+digraph graph_T656 {
+  size="8,6";
+  ratio=fill;
+  { node [fontsize=24];
+  subgraph cluster_T657 {
+  label="error.h";
+"interp_err";
+  }
+  subgraph cluster_T658 {
+  label="sfio.h";
+"sfprintf";
+  }
+  subgraph cluster_T659 {
+  label="ciafan.c";
+"ciafan";
+"computefan";
+"increment";
+  }
+  subgraph cluster_T660 {
+  label="util.c";
+"stringdup";
+"fatal";
+"debug";
+  }
+  subgraph cluster_T661 {
+  label="query.h";
+"ref";
+"def";
+  }
+  subgraph cluster_T662 {
+"get_sym_fields";
+  }
+  subgraph cluster_T663 {
+  label="stdio.h";
+"stdprintf";
+"stdsprintf";
+  }
+  subgraph cluster_T664 {
+"getopt";
+  }
+  subgraph cluster_T665 {
+  label="stdlib.h";
+"exit";
+"malloc";
+"free";
+"realloc";
+  }
+  subgraph cluster_T666 {
+"main";
+  }
+  subgraph cluster_T667 {
+"init_index";
+  }
+  subgraph cluster_T668 {
+  label="string.h";
+"strcpy";
+"strlen";
+"strcmp";
+"strcat";
+  }
+  "main" -> "strcpy";
+  "main" -> "strlen";
+  "main" -> "getopt";
+  "main" -> "init_index";
+  "main" -> "fatal";
+  "main" -> "ciafan";
+  "main" -> "interp_err";
+  "main" -> "malloc";
+  "main" -> "exit";
+  "debug" -> "strcat";
+  "debug" -> "sfprintf";
+  "stringdup" -> "strcpy";
+  "stringdup" -> "strlen";
+  "stringdup" -> "malloc";
+  "stringdup" -> "fatal";
+  "fatal" -> "sfprintf";
+  "fatal" -> "exit";
+  "increment" -> "strcmp";
+  "ciafan" -> "computefan";
+  "ciafan" -> "def";
+  "computefan" -> "strlen";
+  "computefan" -> "strcmp";
+  "computefan" -> "get_sym_fields";
+  "computefan" -> "stdprintf";
+  "computefan" -> "realloc";
+  "computefan" -> "malloc";
+  "computefan" -> "fan";
+  "fan" -> "increment";
+  "fan" -> "fatal";
+  "fan" -> "ref";
+  "fan" -> "strlen";
+  "fan" -> "stdsprintf";
+  "fan" -> "malloc";
+  "fan" -> "exit";
+  "fan" -> "free";
+  "fan" -> "interp_err";
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example10.png]]
+
+##--------------------------------------
+*** Example11 Graph with edges on clusters
+#+SRCNAME: example11.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ ()
+     (& (:compound t)
+       (let ((c0 ([&] () (->> "a" "b" "c")
+                      (==> "b" "c" "d")))
+             (c1 ([&] () (->> "e" "g" "f"))))
+         (&& c0 c1
+             (-> "b" "f" :lhead c1)
+             (->> "c" ("g" :ltail c0 :lhead c1) ("e" :ltail c0))
+             (->> "d" "e" "h")))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example11.png
+digraph graph_T325 {
+  compound=true;
+  subgraph cluster_T326 {
+  "a" -> "b";
+  "a" -> "c";
+  "b" -> "d";
+  "c" -> "d";
+  }
+  subgraph cluster_T327 {
+  "e" -> "g";
+  "e" -> "f";
+  }
+  "b" -> "f" [lhead=cluster_T327];
+  "c" -> "g" [ltail=cluster_T326,lhead=cluster_T327];
+  "c" -> "e" [ltail=cluster_T326];
+  "d" -> "e";
+  "d" -> "h";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example11.png]]
+
+
+##--------------------------------------
+*** Example12 Html-like label
+
+#+BEGIN_SRC dot
+  digraph html {
+    abc [shape=none, margin=0, label=<
+         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+         <TR><TD ROWSPAN="3"><FONT COLOR="red">hello</FONT><BR/>world</TD>
+             <TD COLSPAN="3">b</TD>
+             <TD ROWSPAN="3" BGCOLOR="lightgrey">g</TD>
+             <TD ROWSPAN="3">h</TD></TR>
+         <TR><TD>c</TD>
+             <TD PORT="here">d</TD>
+             <TD>e</TD> </TR>
+         <TR><TD COLSPAN="3">f</TD></TR></TABLE>>];
+       }
+#+END_SRC
+
+# 　html-likeラベルの詳細については、チュートリアルの[[Html-Likeラベル]]の節をご確認ください。
+
+#+SRCNAME: example12.lisp
+#+BEGIN_SRC lisp :exports code
+  ($$ (& (:name "html")
+        (<> (html
+              (table :border 0 :cellborder 1 :cellspacing 0 :cellpadding 4
+                     (tr (td (font "hello" :color :red)
+                             (br)
+                             "world" :rowspan 3)
+                         (td "b" :colspan 3)
+                         (td "g" :rowspan 3 :bgcolor :lightgrey)
+                         (td "h" :rowspan 3))
+                     (tr (td "c")
+                         (td "d" :port "here")
+                         (td "e"))
+                     (tr (td "f" :colspan 3))))
+            :shape :none :margin 0)))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example12.png
+digraph graph_T10 {
+  node_T9 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD ROWSPAN="3"><FONT COLOR="red">hello</FONT><BR/>world</TD><TD COLSPAN="3">b</TD><TD ROWSPAN="3" BGCOLOR="lightgrey">g</TD><TD ROWSPAN="3">h</TD></TR><TR><TD>c</TD><TD PORT="here">d</TD><TD>e</TD></TR><TR><TD COLSPAN="3">f</TD></TR></TABLE>>,shape=none,margin=0];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example12.png]]
+
+
+----------------------------------------------------------------------
+
+from http://www.graphviz.org/doc/info/html3.gv
+
+#+BEGIN_SRC dot
+digraph structs {
+    node [shape=plaintext];
+
+    struct1 [label=<<TABLE>
+	<TR>
+	    <TD>line 1</TD>
+	    <TD BGCOLOR="blue"><FONT COLOR="white">line2</FONT></TD>
+	    <TD BGCOLOR="gray"><FONT POINT-SIZE="24.0">line3</FONT></TD>
+	    <TD BGCOLOR="yellow"><FONT POINT-SIZE="24.0" FACE="ambrosia">line4</FONT></TD>
+	    <TD>
+	      <TABLE CELLPADDING="0" BORDER="0" CELLSPACING="0">
+          <TR>
+            <TD><FONT COLOR="green">Mixed</FONT></TD>
+            <TD><FONT COLOR="red">fonts</FONT></TD>
+          </TR>
+	      </TABLE>
+        </TD>
+	</TR>
+    </TABLE>>];
+}
+#+END_SRC
+
+#+SRCNAME: example12-2.lisp
+#+BEGIN_SRC lisp :exports code
+($$ (&&
+  (with-node (:shape :plaintext)
+    (<> (html
+         (table
+          (tr (td "line 1")
+              (td :bgcolor :blue (font :color :white "line 2"))
+              (td :bgcolor :gray (font :point-size "24.0" "line 3"))
+              (td :bgcolor :yellow (font :point-size "24.0" :face "ambrosia" "line 4"))
+              (td (table :colorpadding 0 :border 0 :cellspacing 0
+                         (tr (td (font :color :green "Mixed"))
+                             (td (font :color :red "fonts"))))))))))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example12-2.png
+digraph graph_ID_36 {
+  { node [shape=plaintext];
+  node_ID_34 [label=<<TABLE><TR><TD>line 1</TD>
+<TD BGCOLOR="blue"><FONT COLOR="white">line2</FONT></TD>
+<TD BGCOLOR="gray"><FONT POINT-SIZE="24.0">line3</FONT></TD>
+<TD BGCOLOR="yellow"><FONT POINT-SIZE="24.0" FACE="ambrosia">line4</FONT></TD>
+<TD><TABLE COLORPADDING="0" BORDER="0" CELLSPACING="0"><TR><TD><FONT COLOR="green">Mixed</FONT></TD>
+<TD><FONT COLOR="red">fonts</FONT></TD></TR></TABLE></TD></TR></TABLE>>
+    ];
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example12-2.png]]
+
+
+----------------------------------------------------------------------
+
+
+from http://www.graphviz.org/doc/info/html2.gv
+#+BEGIN_SRC lisp :exports code
+  ($$ (& (:rankdir :LR)
+    (with-node (:shape :plaintext)
+      (let ((a (<> (html (table :border 0 :cellborder 1 :cellspacing 0
+                                (tr (td :rowspan 3 :bgcolor :yellow "class"))
+                                (tr (td :port "here" :bgcolor :lightblue "qualfier"))))))
+            (b (<> (html (table :bgcolor :bisque
+                                (tr (td :colspan 3 "elephant")
+                                    (td :rowspan 2 :bgcolor :chartreuse
+                                        :valign :bottom :align :right "two"))
+                                (tr (td :colspan 2 :rowspan 2
+                                        (table :bgcolor :grey
+                                               (tr (td "corn"))
+                                               (tr (td :bgcolor :yellow "c"))
+                                               (tr (td "f"))))
+                                    (td :bgcolor :white "penguin"))
+                                (tr (td :colspan 2 :border 4 :align :right :port "there" "4"))))
+                    :shape :ellipse :style :filled))
+            (c (<> (html "long line 1" (br) "line 2" (br :align :left) "line 3" (br :align :right))))
+            (d (<> "d" :shape :triangle)))
+        (&&
+          (~ b c)
+          (-> (@ a :here) (@ b :there) :dir :both :arrowtail :diamond)
+          (-> c b)
+          (-> d c :label (html (table (tr (td :bgcolor :red :width 10)
+                                          (td "Edge labels" (br) "also")
+                                          (td :bgcolor :blue :width 10))))))))))
+#+END_SRC
+
+
+#+BEGIN_SRC dot :file ./images/example12-3.png
+digraph graph_ID_179 {
+  rankdir=LR;
+  { node [shape=plaintext];
+  {rank=same; node_ID_171; node_ID_172};
+  node_ID_170:here [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0"><TR><TD ROWSPAN="3" BGCOLOR="yellow">class</TD></TR><TR><TD PORT="here" BGCOLOR="lightblue">qualfier</TD></TR></TABLE>>
+    ];
+  node_ID_171:there [label=<<TABLE BGCOLOR="bisque"><TR><TD COLSPAN="3">elephant</TD><TD ROWSPAN="2" BGCOLOR="chartreuse" VALIGN="bottom" ALIGN="right">two</TD></TR><TR><TD COLSPAN="2" ROWSPAN="2"><TABLE BGCOLOR="grey"><TR><TD>corn</TD></TR><TR><TD BGCOLOR="yellow">c</TD></TR><TR><TD>f</TD></TR></TABLE></TD><TD BGCOLOR="white">penguin</TD></TR><TR><TD COLSPAN="2" BORDER="4" ALIGN="right" PORT="there">4</TD></TR></TABLE>>
+    ,shape=ellipse,style=filled];
+  node_ID_170:here -> node_ID_171:there [dir=both,arrowtail=diamond];
+  node_ID_172 [label=<long line 1<BR/>line 2<BR ALIGN="left"/>line 3<BR ALIGN="right"/>>
+    ];
+  node_ID_171 [label=<<TABLE BGCOLOR="bisque"><TR><TD COLSPAN="3">elephant</TD><TD ROWSPAN="2" BGCOLOR="chartreuse" VALIGN="bottom" ALIGN="right">two</TD></TR><TR><TD COLSPAN="2" ROWSPAN="2"><TABLE BGCOLOR="grey"><TR><TD>corn</TD></TR><TR><TD BGCOLOR="yellow">c</TD></TR><TR><TD>f</TD></TR></TABLE></TD><TD BGCOLOR="white">penguin</TD></TR><TR><TD COLSPAN="2" BORDER="4" ALIGN="right" PORT="there">4</TD></TR></TABLE>>
+    ,shape=ellipse,style=filled];
+  node_ID_172 -> node_ID_171;
+  node_ID_173 [label="d",shape=triangle];
+  node_ID_173 -> node_ID_172 [label=<<TABLE><TR><TD BGCOLOR="red" WIDTH="10"></TD><TD>Edge labels<BR/>also</TD><TD BGCOLOR="blue" WIDTH="10"></TD></TR></TABLE>>
+    ];
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example12-3.png]]
+
+　
+
+##--------------------------------------------------------------------
+
+** Examples from neato guide
+##--------------------------------------------------------------------
+
+*** Example13 Process States in an Operating System Kernel 
+
+#+BEGIN_SRC dot
+graph G {
+    run -- intr;
+    intr -- runbl;
+    runbl -- run;
+    run -- kernel;
+    kernel -- zombie;
+    kernel -- sleep;
+    kernel -- runmem;
+    sleep -- swap;
+    swap -- runswap;
+    runswap -- new;
+    runswap -- runmem;
+    new -- runmem;
+    sleep -- runmem;
+}
+#+END_SRC
+
+#+SRCNAME: example13-1.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ ()
+     (& (:size "3,3")
+       (O   "run" "intr" "runbl")
+       (-<  "kernel" "run" "zombie" "sleep" "runmen")
+       (--- "sleep" "swap" "runswap" "new")
+       (-<  "runmen" "runswap" "new" "sleep")))
+#+END_SRC
+
+　上のコードをREPLで評価すると、ビューアが起動し、次のグラフ画像が出力されます。
+シェルインターフェイス =$= のプロパティリストが空のため、レイアウトアルゴリズムはデフォルトの:dotです。
+
+#+BEGIN_SRC dot :file ./images/example13-1.png
+graph graph_T135 {
+  size="3,3";
+  "run" -- "intr" -- "runbl" -- "run";
+  "kernel" -- "run";
+  "kernel" -- "zombie";
+  "kernel" -- "sleep";
+  "kernel" -- "runmen";
+  "sleep" -- "swap" -- "runswap" -- "new";
+  "runmen" -- "runswap";
+  "runmen" -- "new";
+  "runmen" -- "sleep";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example13-1.png]]
+
+
+
+#+SRCNAME: example13-2.lisp
+#+BEGIN_SRC lisp -n :exports code
+  ($ (:layout :neato)
+     (& (:size "4,4")
+       (with-edge (:len 2)
+         (O   "run" "intr" "runbl")
+         (-<  "kernel" "run" "zombie" "sleep" "runmen")
+         (--- "sleep" "swap" "runswap" "new")
+         (-<  "runmen" "runswap" "new" "sleep"))))
+#+END_SRC
+
+　上のコードをREPLで評価すると、ビューアが起動し、下のグラフ画像が出力されます。
+ =$= のプロパティリストでレイアウトアルゴリズムを:neatoに指定しているため、:dotと異なったレイアウトで画像が出力されます。
+3行目のエッジ属性:lenはエッジの長さを指定する属性です。
+:lenはレイアウトアルゴリズム:dotでは無効の属性です。
+
+#+BEGIN_SRC dot :file ./images/example13-2.png :cmdline -Kneato -Tpng
+graph graph_T281 {
+  size="4,4";
+  { edge [len=1.5];
+  "run" -- "intr" -- "runbl" -- "run";
+  "kernel" -- "run";
+  "kernel" -- "zombie";
+  "kernel" -- "sleep";
+  "kernel" -- "runmen";
+  "sleep" -- "swap" -- "runswap" -- "new";
+  "runmen" -- "runswap";
+  "runmen" -- "new";
+  "runmen" -- "sleep";
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example13-2.png]]
+
+
+##--------------------------------------
+*** Example14 Example
+
+#+BEGIN_SRC dot
+graph G {
+    n0 -- n1 -- n2 -- n3 -- n0;
+}
+#+END_SRC
+
+
+#+SRCNAME: example14-2.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ (:layout :neato)
+     (&& (O "n0" "n1" "n2" "n3")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example14-2.png :cmdline -Kneato -Tpng
+graph graph_T327 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example14-2.png]]
+
+#+SRCNAME: example14-3.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ (:layout :circo)
+     (&& (O "n0" "n1" "n2" "n3")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example14-3.png :cmdline -Kcirco -Tpng
+graph graph_T327 {
+  rankdir=LR;
+  "n0" -- "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example14-3.png]]
+
+
+##--------------------------------------
+*** Example15 Node and Edge Options
+
+#+SRCNAME: 
+#+BEGIN_SRC dot
+graph G {
+    node [shape=box,style=filled];
+    {node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue]
+ A1 A2 A3}
+    A -- A1 [label="l #6"];
+    A -- A2 [label="l #7"];
+    A -- A3 [label="l #8"];
+    {edge [style=invis]; A1 -- A2 -- A3}
+    edge [len=3];   /* applies to  all following edges */
+    A -- B [label="l #1"]; A -- C  [label="l #2"]; A -- D [label="l #3"];
+    A -- E [label="l #4"]; A -- F  [label="l #5"]; B -- C [label="l #1"];
+    B -- E [label="l #2"]; B -- F  [label="l #3"]; C -- D [label="l #1"];
+    D -- E [label="l #1"];
+}
+#+END_SRC
+
+#+SRCNAME: example15.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ (:layout :neato)
+     (& (:size "5,5")
+       (with-node (:shape :box :style :filled)
+         (with-node (:width .3 :height .3 :shape :octagon :style :filled :color :skyblue)
+           "A1" "A2" "A3")
+         (-< "A" ("A1" :label "l #6") ("A2" :label "l #7") ("A3" :label "l #8"))
+         (with-edge (:style :invis :len 1.3) (--- "A1" "A2" "A3"))
+         (with-edge (:len 3)
+           (-< "A" ("B" :label "l #1") ("C" :label "l #2") ("D" :label "l #3")
+                   ("E" :label "l #4") ("F" :label "l #5"))
+           (-< "B" ("C" :label "l #1") ("E" :label "l #2") ("F" :label "l #3"))
+           (-- "C" "D" :label "l #1")
+           (-- "D" "E" :label "l #1")))))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example15.png :cmdline -Kneato -Tpng
+graph graph_T487 {
+  size="5,5";
+  { node [shape=box,style=filled];
+  { node [width=0.3,height=0.3,shape=octagon,style=filled,color=skyblue];
+"A1";
+"A2";
+"A3";
+  };
+  "A" -- "A1" [label="l #6"];
+  "A" -- "A2" [label="l #7"];
+  "A" -- "A3" [label="l #8"];
+  { edge [style=invis,len=1.3];
+  "A1" -- "A2" -- "A3";
+  };
+  { edge [len=3];
+  "A" -- "B" [label="l #1"];
+  "A" -- "C" [label="l #2"];
+  "A" -- "D" [label="l #3"];
+  "A" -- "E" [label="l #4"];
+  "A" -- "F" [label="l #5"];
+  "B" -- "C" [label="l #1"];
+  "B" -- "E" [label="l #2"];
+  "B" -- "F" [label="l #3"];
+  "C" -- "D" [label="l #1"];
+  "D" -- "E" [label="l #1"];
+  };
+  };
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example15.png]]
+
+##--------------------------------------
+*** Example16
+#+BEGIN_SRC dot
+graph G {
+        n0 -- n1 [len=2, style=bold];
+        n1 -- n2 -- n3 -- n0;
+}
+#+END_SRC
+
+#+SRCNAME: example16.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ (:layout :neato)
+     (&& (--  "n0" "n1" :len 2 :style :bold)
+         (--- "n1" "n2" "n3" "n0")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example16.png :cmdline -Kneato -Tpng
+graph graph_T514 {
+  "n0" -- "n1" [len=2,style=bold];
+  "n1" -- "n2" -- "n3" -- "n0";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example16.png]]
+
+
+##--------------------------------------
+*** Example17
+
+#+BEGIN_SRC dot
+graph G {
+    n0 [ pos = "0,0!" ];
+    n1 [ pos = "2,0" ];
+    n2 [ pos = "2,2!" ];
+    n0 -- n1 -- n2 -- n3 -- n0;
+}
+#+END_SRC
+
+#+SRCNAME: example17.lisp
+#+BEGIN_SRC lisp :exports code
+  ($ (:layout :neato)
+     (&& (O (<> "n0" :pos "0,0!")
+            (<> "n1" :pos "2,0!")
+            (<> "n2" :pos "2,2!")
+            "n3")))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/example17.png :cmdline -Kneato -Tpng
+graph graph_T527 {
+  node_T528 [label="n0",pos="0,0!"];
+  node_T529 [label="n1",pos="2,0!"];
+  node_T530 [label="n2",pos="2,2!"];
+  node_T528 -- node_T529 -- node_T530 -- "n3" -- node_T528;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/example17.png]]
+
+
+
+##--------------------------------------------------------------------
+
+
+
+##--------------------------------------------------------------------
+* Reference Manual
+##--------------------------------------------------------------------
+
+Graphvizで使用できる属性は大方のものをサポートしている(URL属性類は未実装)。
+レイアウトアルゴリズムごとにサポートしている属性が異なるので注意。
+
+
+##--------------------------------------------------------------------
+** NODES
+##--------------------------------------------------------------------
+
+　ノードコンストラクタ<>によって生成されるオブジェクトはnode型のオブジェクトである。
+プレノード(数値、ストリング)、[]によって生成されるレコードもnodeのオブジェクト型とみなされる。
+これら以外のものはnode型のオブジェクトではない。
+
+ノード属性の種類については、下記のリンク先を参照せよ。
+- 属性について： http://www.graphviz.org/content/attrs
+- shape属性について： http://www.graphviz.org/node-shapes.html
+- color属性について： http://www.graphviz.org/color-names.html
+
+
+
+　
+
++ *<>* /label/ &rest /node-attributes/ => node ::
+　[Function]　ノードを生成する。
+
+　
+
++ *[]* /label/ &rest /node-attributes/ => record ::
+　[Function]　レコードを生成する。
+
+　
+
++ *@* /node/ /port-keyword1/ &optional /port-keyword2/ => pre-node, or node ::
+　[Function]　
+
+　
+
++ *rank* /rank-keyward/ &rest /nodes/ => NIL ::
+　[Function]
+
+　
+
++ *~* &rest /nodes/ => NIL ::
+　[Function]
+
+　
+
++  *with-node* (&rest /node-attributes/) &body /body/ => graph ::
+　[Macro]　with-nodeは &, &&, [&]の引き数内で使うのが無難。
+
+　
+
+# Dot-Node-Attributes
+# :color :colorscheme :comment :distortion
+# :fillcolor :fixedsize :fontcolor :fontname :fontsize
+# :group :height :id :image :imagescale
+# :label :labelloc :layer :margin :nojustify :orientation
+# :penwidth :peripheries :regular
+# :samplepoints :shape :sides :skew :style :target
+
+# Neato-Node-Attributes
+# :shape :height :width :label :fontsize :fontname :fontcolor
+# :style :color :pos
+
+##--------------------------------------------------------------------
+** EDGES
+##--------------------------------------------------------------------
+
+
+
+　エッジコンストラクタ->とエッジユーティリティ(---,<-,--->,----,?,O)によって生成されるオブジェクトのみがedge型のオブジェクトである。
+
+エッジ属性の種類については、下記のリンク先を参照せよ。
+- 属性について： http://www.graphviz.org/content/attrs
+- shape属性について： http://www.graphviz.org/arrow-shapes.html
+- color属性について： http://www.graphviz.org/color-names.html
+
+　
+
++ *->*  /node1/ /node2/ &rest /edge-attributes/ => edge ::
+　[Function]　
+
+　
+
+# + *---*  /node1/ /node2/ &rest /edge-attributes/ => path ::
+# 　[Function]　---は2つのdashを表す。
+#+BEGIN_HTML
+</p>
+<dl>
+<dt><b>&ndash;&ndash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; edge</dt><dd>
+
+</dd>
+</dl>
+
+<p>　[Function]　
+</p>
+<p>
+#+END_HTML
+
+
+　
+
++ *?*  /node/ &rest /edge-attributes/ => edge ::
+　[Function]　
+
+　
+
++ *<-*  /node1/ /node2/ &rest /edge-attributes/ => edge ::
+　[Function]　
+
+　
+
+# + *--->*  &rest /nodes/ => edges ::
+# 　[Function]　---は2つのdashを表す。
+#+BEGIN_HTML
+</p>
+<dl>
+<dt><b>&ndash;&ndash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edge</dt><dd>
+
+</dd>
+</dl>
+
+<p>　[Function]　
+</p>
+<p>
+#+END_HTML
+
+　
+
++ *->>*  &rest /nodes/ => edge ::
+　[Function]　
+
+　
+
++ *==>*  &rest /nodes/ => graph ::
+　[Function]　
+
+　
+
++ *-<*  &rest /nodes/ => graph ::
+　[Function]　
+
+　
+
+# + *---*  &rest /nodes/ => paths ::
+# 　[Macro]　
+#+BEGIN_HTML
+</p>
+<dl>
+<dt><b>&ndash;&ndash;&ndash;</b>  &amp;rest <i>nodes</i> =&gt; edges</dt><dd>
+
+</dd>
+</dl>
+
+<p>　[Function]　
+</p>
+<p>
+#+END_HTML
+　
+
++ *O*  &rest /nodes/ => paths ::
+　[Function]　
+
+　
+
++ *with-edge* (&rest /edge-attributes/) &body /body/ => graph ::
+　[Macro]　with-edgeは &, &&, [&]の引き数内で使うのが無難。
+
+　
+
+# Edge-Attrs
+# :arrowhead :arrowsize :arrowtail
+# :color :colorscheme :comment :constraint
+# :decorate :dir :edgeURL :edgehref :edgetarget :edgetooltip
+# :fontcolor :fontname :fontsize :headclip :headhref :headlabel
+# :headport :headtarget :headtooltip :headURL :href :id
+# :label :labelangle :labeldistance :labelfloat :labelfontcolor
+# :labelfontname :labelfontsize :labelhref :labelURL :labeltarget
+# :labeltooltip :layer :lhead :ltail
+# :minlen :penwidth :samehead :sametail :style
+# :tailclip :tailhref :taillabel :tailport :tailtarget :tailtooltip
+# :tailURL :target :tooltip :weight
+
+# Neato-Edge-Attrs
+# :weight :label :fontsize :fontname :fontcolor :style
+# :color :len :dir :decorate :id
+
+
+##--------------------------------------------------------------------
+** GRAPHES
+##--------------------------------------------------------------------
+
+　グラフコンストラクタ& (or &&)によって生成されるオブジェクトはgraph型のオブジェクトである。
+with-系のユーティリティの返り値、エッジユーティリティ(->>,==>,<==,-<,>-)の返り値、[&]によって生成されるクラスタもgraphのオブジェクト型とみなされる。
+これら以外のものはgraph型のオブジェクトではない。
+
+　クラスター以外のグラフ属性値はトップレベルのもののみ有効。
+クラスター以外のサブグラフのグラフ属性は無視される。
+Graphvizがサポートする属性に加え、:name、:strictもグラフ属性として追加されている。
+:name値はトップレベルグラフの名前で、ビューアのタイトルとして使用されることがある。
+:strict値をtに設定すると、同一のノード組に張ることのできるエッジの数が1本に制限される（デフォルト値はnil）。
+
+グラフ属性の種類については、下記のリンク先を参照せよ。
+- 属性について： http://www.graphviz.org/content/attrs
+- クラスターのcolor属性について： http://www.graphviz.org/color-names.html
+
+
+　
+
++ *&*  (&rest /graph-attributes/) &body /nodes-edges-graphs/ => graph ::
+　[Macro]　グラフ属性リストとグラフ構成要素(ノード、エッジ、グラフ)からグラフを生成する。
+
+　
+
++ *&&*  &body /nodes-edges-graphs/ => graph ::
+　[Function]　グラフ属性リストがnilに指定されているグラフを生成する。
+
+　
+
++ *[&]*  (&rest /graph-attributes/) &body /nodes-edges-graphs/ => cluster ::
+　[Macro]　グラフ属性リストとグラフ構成要素(ノード、エッジ、グラフ)からクラスターを生成する。
+
+　
+
+
+
+# Graph-Attrs
+# :aspect :bgcolor
+# :center :clusterrank :color :colorscheme :comment :compound
+# :concentrate
+# :dpi :fillcolor :fontcolor :fontname :fontnames :fontpath :fontsize
+# :id :label :labeljust :labelloc :landscape :layers :layersep
+# :margin :mindist :nodesep :nojustify
+# :ordering :orientation :outputorder
+# :page :pagedir :pencolor :penwidth :peripheries
+# :rank :rankdir :ranksep :ratio :minimization :rotate
+# :samplepoints :searchsize :size :splines :style :stylesheet
+# :target :tooltip :truecolor :viewport :URL
+
+# Neato-Graph-Attrs
+# :start :size :page :margin :label :fontsize :fontname :fontcolor
+# :orientation :center :overlap :splines :sep
+
+
+##--------------------------------------------------------------------
+** OUTPUT-TOOLS
+##--------------------------------------------------------------------
+
+　
+
++ *dot-output*  /graph/ => NIL ::
+　[Function]　
+
+　
+
++ *dot-pprint*  /graph/ => NIL ::
+　[Function]　
+
+　
+
++ *$*  (&rest /shell-proparties/) /graph/ => NIL  ::
+　[Macro]　
+
+　
+
++ *$$*  /graph/ => NIL  ::
+　[Macro]　プロパティリストをnilに指定する以外、$と同様の動作を行う。
+
+　
+
+##--------------------------------------------------------------------
+** HTML-LIKE-LABELS
+##--------------------------------------------------------------------
+
+　HTML-LIKEラベルは古いヴァージョンのGraphvizではサポートしていない可能性がある。
+HTML-LIKEラベルはレコードに比べ、より詳細にノードの修飾を指定できる。
+HTML-LIKEラベルはエッジやグラフのラベル属性値としても用いることができる(動作未確認)。
+タグ関数(br, hr, vr, img, font, i, b, u, sub, sup, table, tr, td)によってのみtag型のオブジェクトは生成される。
+
+　参考： http://www.graphviz.org/node-shapes.html
+
+　
+
++ *タグ関数* &rest /attrs-tag-body/ => tag ::
+　[Function]　タグ関数: *br*, *hr*, *vr*, *img*, *font*, *i*, *b*, *u*, *sub*, *sup*, *table*, *tr*, *td*.
+タグ関数は任意数の、タグ、タグボディ、タグ属性、タグ属性値を引数に取る。
+引数の順は任意。
+ただし、タグ属性の次には必ずタグ属性値を置かなければならない。
+
+　
+
++ *html* /tag/ => html-like-labels ::
+　[Macro]　
+
+　
+
+##====================================================================

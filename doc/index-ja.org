@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/18 02:00:03 tkych
+### Last Updated : 2012/05/18 02:35:39 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -1418,10 +1418,10 @@ digraph graph_T167 {
 (? (<> 42 :shape :Mcircle) :label " Life, the Universe and Everything")
 #+END_SRC
 
-(dot-output
-  (& ()
-    (? (<> 42 :shape :Mcircle)
-       :label " Life, the Universe and Everything")))
+# (dot-output
+#   (& ()
+#     (? (<> 42 :shape :Mcircle)
+#        :label " Life, the Universe and Everything")))
 
 #+BEGIN_SRC dot :file ./images/self-loop.png
 digraph graph_T10 {

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-11 17:34:02 JST"/>
+<meta name="generated" content="2012-05-18 02:42:57 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -134,8 +134,8 @@
 <li><a href="#sec-4">4 Tutorial</a>
 <ul>
 <li><a href="#sec-4-1">4.1 Simple Graphes</a></li>
-<li><a href="#sec-4-2">4.2 Labels</a></li>
-<li><a href="#sec-4-3">4.3 Attributes</a></li>
+<li><a href="#sec-4-2">4.2 Attributes</a></li>
+<li><a href="#sec-4-3">4.3 Labels</a></li>
 <li><a href="#sec-4-4">4.4 Output</a></li>
 <li><a href="#sec-4-5">4.5 Subgraphes, Clusteres</a></li>
 <li><a href="#sec-4-6">4.6 Rank</a></li>
@@ -143,7 +143,9 @@
 <li><a href="#sec-4-8">4.8 Records</a></li>
 <li><a href="#sec-4-9">4.9 Utilities</a></li>
 <li><a href="#sec-4-10">4.10 Undirected Graphes, Layout Algorithms</a></li>
-<li><a href="#sec-4-11">4.11 Small Programs &mdash; Binary-Tree, Cons-Cell, Finite-Automaton</a></li>
+<li><a href="#sec-4-11">4.11 Utilities2</a></li>
+<li><a href="#sec-4-12">4.12 Html-Like-Labels</a></li>
+<li><a href="#sec-4-13">4.13 Small Programs &mdash; Calendar, Binary-Tree, Cons-Cell, Finite-Automaton</a></li>
 </ul>
 </li>
 <li><a href="#sec-5">5 Examples from Graphviz manual</a>
@@ -164,8 +166,6 @@
 </ul>
 </div>
 </div>
-
-
 
 
 
@@ -497,32 +497,8 @@ whereas in computer science we are usually concerned with imperative (how to) de
 </div>
 
 <div id="outline-container-4-2" class="outline-3">
-<h3 id="sec-4-2"><span class="section-number-3">4.2</span> Labels</h3>
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> Attributes</h3>
 <div class="outline-text-3" id="text-4-2">
-
-
-
-
-
-<pre class="src src-lisp">(&amp; () (&lt;&gt; <span style="color: #90ee90;">"12\\ 34\\n56\\l78\\r\\N"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:note</span>))
-</pre>
-
-
-
-
-<p>
-<img src="./images/label.png"  alt="./images/label.png" />
-</p>
-<p>
-　
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-4-3" class="outline-3">
-<h3 id="sec-4-3"><span class="section-number-3">4.3</span> Attributes</h3>
-<div class="outline-text-3" id="text-4-3">
 
 
 
@@ -567,6 +543,30 @@ whereas in computer science we are usually concerned with imperative (how to) de
 </ul>
 
 
+<p>
+　
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> Labels</h3>
+<div class="outline-text-3" id="text-4-3">
+
+
+
+
+
+<pre class="src src-lisp">(&amp; () (&lt;&gt; <span style="color: #90ee90;">"12\\ 34\\n56\\l78\\r\\N"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:note</span>))
+</pre>
+
+
+
+
+<p>
+<img src="./images/label.png"  alt="./images/label.png" />
+</p>
 <p>
 　
 </p>
@@ -863,34 +863,40 @@ whereas in computer science we are usually concerned with imperative (how to) de
 <div class="outline-text-3" id="text-4-9">
 
 
+<p>
+　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティ集です。
+</p>
+
+
+
 
 </div>
 
 <div id="outline-container-4-9-1" class="outline-4">
-<h4 id="sec-4-9-1"><span class="section-number-4">4.9.1</span> Two chars</h4>
+<h4 id="sec-4-9-1"><span class="section-number-4">4.9.1</span> コンテキストを作り出すもの</h4>
 <div class="outline-text-4" id="text-4-9-1">
 
 
-
-
-
-<pre class="src src-lisp">(<span style="color: #eeee00;">&amp;&amp;</span> nodes-edges-graphs)
--&gt;
-(&amp; () nodes-edges-graphs)
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-4-9-2" class="outline-4">
-<h4 id="sec-4-9-2"><span class="section-number-4">4.9.2</span> コンテキストを作り出すもの</h4>
-<div class="outline-text-4" id="text-4-9-2">
-
-
-
-
+<p>
+　
+</p>
+<p>
+<b>!!バグ!!: with-node, with-edge;let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。</b>
+</p>
+<p>
+　
+</p>
+<p>
+　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
+コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
+ with-node,  with-edgeをネストした場合、属性値は上書きされます。
+</p>
+<p>
+ <b>注: with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、期待通りの動作が保証されます。</b> 
+with-node, with-edgeは、暗黙の部分グラフを生成します。
+そのため、トップレベルでwith-node, with-edgeを使用した場合、コンテキスト内のグラフ属性が無効になってしまいます。
+次の上のコードは期待通りに動作しますが、下のコードは期待通りに動作しません。
+</p>
 
 
 <pre class="src src-lisp"><span style="color: #eeee00;">;; </span><span style="color: #eeee00;">&#20986;&#21147;&#12373;&#12428;&#12427;&#12464;&#12521;&#12501;&#12395;&#12521;&#12505;&#12523;&#12364;&#20184;&#12367;</span>
@@ -904,13 +910,14 @@ whereas in computer science we are usually concerned with imperative (how to) de
     (-&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>)))
 </pre>
 
-
-
+<p>
+<b>with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、使用できると考えた方が無難です。</b>
+</p>
 
 <hr/>
 
 <ul>
-<li id="sec-4-9-2-1">with-node<br/>
+<li id="sec-4-9-1-1">with-node<br/>
 
 
 
@@ -931,15 +938,63 @@ whereas in computer science we are usually concerned with imperative (how to) de
 <p>
 <img src="./images/with-node.png"  alt="./images/with-node.png" />
 </p>
+<p>
+詳しくコード内容を説明します。
+</p>
+<p>
+2行目、ノードaはデフォルトの属性値を持ったノードとして生成されます。
+</p>
+<p>
+3行目、ノードの色属性のデフォルト値が赤のコンテキストがwith-nodeによって作り出されます。
+これより深いコンテキストで生成されるノードのデフォルト色は赤になります。
+</p>
+<p>
+4行目、ノードbが生成され、エッジa-&gt;bが生成されます。
+ノードbの色は赤です。
+</p>
+<p>
+5行目、ノードの形属性のデフォルトがboxのコンテキストがwith-nodeによって作り出されます。
+これより深いコンテキストで生成されるノードは、デフォルトで形がbox、色が赤のものになります。
+</p>
+<p>
+6行目、色が赤、形がboxのノードcが生成され、エッジb-&gt;cが生成されます。
+</p>
+<p>
+7行目、青がノードの色属性のデフォルトである、コンテキストがwith-nodeによって作り出されます。
+これより深いコンテキストで生成されるノードは、デフォルトで形がbox、色が青のものとなります。
+ここで、注目してもらいたいことは、 <span style="text-decoration:underline;">デフォルトの色属性値が、(3行目で指定された)赤から青に上書きされた</span> ということです。
+</p>
+<p>
+8行目、色が青、形がboxのノードdが生成され、エッジc-&gt;dが生成されます。
+</p>
+<p>
+9行目、色がgoldenrod、形がbox3dのノードeが生成され、エッジd-&gt;eが生成されます。
+ここで、注目して欲しいことは、 <span style="text-decoration:underline;">デフォルトの属性値が変更されているコンテキスト内でも、生成するノードの属性値を自由に指定するができる</span> ということです。
+</p>
+<p>
+以上をまとめると、with-nodeコンテキスト用いる際に注意することは、次の3点です（これらは次に見るwith-edgeでも同様です）。
+</p><ol>
+<li>属性のデフォルト値がすべて変更される。
+</li>
+<li>ネストした場合、デフォルト値が上書きされていく。
+</li>
+<li>コンテキスト内でも、通常のようにコンストラクタで属性値を指定することができる。
+</li>
+</ol>
+
+
+
 
 <hr/>
 </li>
 </ul>
 <ul>
-<li id="sec-4-9-2-2">with-edge<br/>
+<li id="sec-4-9-1-2">with-edge<br/>
 
-
-
+<p>
+　with-edgeの使い方もwith-nodeと同様です。
+解説すると冗長になってしまいますので、ここでは例の提示のみにとどめます。
+</p>
 
 
 <pre class="src src-lisp"><span class="linenr">1:  </span>(&amp; (<span style="color: #00ee76;">:rankdir</span> <span style="color: #00ee76;">:LR</span>)
@@ -959,49 +1014,33 @@ whereas in computer science we are usually concerned with imperative (how to) de
 </p>
 
 
+
 </li>
 </ul>
 </div>
 
 </div>
 
-<div id="outline-container-4-9-3" class="outline-4">
-<h4 id="sec-4-9-3"><span class="section-number-4">4.9.3</span> ノードを引数にとるもの1：Directed Graphes</h4>
-<div class="outline-text-4" id="text-4-9-3">
-
-
-<ul>
-<li id="sec-4-9-3-1">Inverse of -&gt;：&lt;-<br/>
-
-
-
-
-<pre class="src src-lisp">(&lt;- <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>)
-</pre>
-
-
-
+<div id="outline-container-4-9-2" class="outline-4">
+<h4 id="sec-4-9-2"><span class="section-number-4">4.9.2</span> 自己ループを生成する関数：?</h4>
+<div class="outline-text-4" id="text-4-9-2">
 
 
 <p>
-<img src="./images/inv-edge.png"  alt="./images/inv-edge.png" />
+　関数 <code>?</code> は単一のノードとエッジ属性を引数に取り、自己ループを生成します。
 </p>
-
-
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-3-2">Self-Loop：?<br/>
-
-
 
 
 <pre class="src src-lisp">(? (&lt;&gt; 42 <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:Mcircle</span>) <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">" Life, the Universe and Everything"</span>)
 </pre>
 
 
-
+<p>
+(dot-output
+  (&amp; ()
+    (? (&lt;&gt; 42 :shape :Mcircle)
+       :label " Life, the Universe and Everything")))
+</p>
 
 
 <p>
@@ -1009,11 +1048,14 @@ whereas in computer science we are usually concerned with imperative (how to) de
 </p>
 
 
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-3-3">複数のノードを同じ高さに設定する関数：~<br/>
+</div>
+
+</div>
+
+<div id="outline-container-4-9-3" class="outline-4">
+<h4 id="sec-4-9-3"><span class="section-number-4">4.9.3</span> 複数のノードを同じ高さに設定する関数：~</h4>
+<div class="outline-text-4" id="text-4-9-3">
+
 
 <p>
 　 <code>~</code> は、引数に複数のノードを取り、グラフ内でそれらのノードを同じ高さに配置する副作用を行い、NILを返します。
@@ -1032,12 +1074,11 @@ whereas in computer science we are usually concerned with imperative (how to) de
 実際にDonutsを使ってみて、ノードの高さを揃える頻度がわりと多いこと、記号 <code>~</code> は視覚的にわかりやすいことを鑑み、ユーティリティとして新たに定義することにしました。
 </p>
 
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-3-4">複数のノードを数珠つなぎに結ぶ関数：&ndash;&gt;<br/>
 
+
+<div id="outline-container-4-9-4" class="outline-4">
+<h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> 複数のノードを数珠つなぎに結ぶ関数：&ndash;&ndash;&gt;</h4>
+<div class="outline-text-4" id="text-4-9-4">
 
 
 <pre class="src src-lisp">(--&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) <span style="color: #90ee90;">"e"</span>)
@@ -1050,212 +1091,66 @@ whereas in computer science we are usually concerned with imperative (how to) de
 <p>
 <img src="./images/edges.png"  alt="./images/edges.png" />
 </p>
-
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-3-5">1つのノードから他のノードへ、エッジを放射状に張るマクロ：-&gt;&gt;<br/>
-
-
-
-
-<pre class="src src-lisp">(-&gt;&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>
-         (<span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
-         (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>)
-         ((&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>) <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span>))
-
-<span style="color: #eeee00;">; </span><span style="color: #eeee00;">&#19978;&#12398;&#12467;&#12540;&#12489;&#12399;&#19979;&#12398;&#27096;&#12395;&#12510;&#12463;&#12525;&#23637;&#38283;&#12373;&#12428;&#12414;&#12377;</span>
-
-(<span style="color: #eeee00;">LET</span> ((#<span style="color: #00ee76;">:G1324</span> <span style="color: #90ee90;">"a"</span>))
-  (<span style="color: #eeee00;">&amp;&amp;</span>
-    (-&gt; #<span style="color: #00ee76;">:G1324</span> <span style="color: #90ee90;">"b"</span>)
-    (-&gt; #<span style="color: #00ee76;">:G1324</span> <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:RED</span>)
-    (-&gt; #<span style="color: #00ee76;">:G1324</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GOLDENROD</span>))
-    (-&gt; #<span style="color: #00ee76;">:G1324</span> (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:STYLE</span> <span style="color: #00ee76;">:FILLED</span>) <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GREEN</span>)))
-</pre>
-
-
-
-
 <p>
-<img src="./images/radial-edges.png"  alt="./images/radial-edges.png" />
+ <b>注：</b> 個別にエッジの属性を指定することはできません。
 </p>
 
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-3-6">1つのノードへ他のノードから、エッジを収束状に張るマクロ1：&lt;==<br/>
-
-
-
-
-<pre class="src src-lisp">(&lt;== <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>
-         (<span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
-         (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>)
-         ((&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>) <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span>))
-
-<span style="color: #eeee00;">; </span><span style="color: #eeee00;">&#19978;&#12398;&#12467;&#12540;&#12489;&#12399;&#19979;&#12398;&#27096;&#12395;&#12510;&#12463;&#12525;&#23637;&#38283;&#12373;&#12428;&#12414;&#12377;</span>
-
-(<span style="color: #eeee00;">LET</span> ((#<span style="color: #00ee76;">:G1326</span> <span style="color: #90ee90;">"a"</span>))
-  (<span style="color: #eeee00;">&amp;&amp;</span>
-    (&lt;- #<span style="color: #00ee76;">:G1326</span> <span style="color: #90ee90;">"b"</span>)
-    (&lt;- #<span style="color: #00ee76;">:G1326</span> <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:RED</span>)
-    (&lt;- #<span style="color: #00ee76;">:G1326</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GOLDENROD</span>))
-    (&lt;- #<span style="color: #00ee76;">:G1326</span> (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:STYLE</span> <span style="color: #00ee76;">:FILLED</span>) <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GREEN</span>)))
-</pre>
-
-
-
-
-<p>
-<img src="./images/conv-edges1.png"  alt="./images/conv-edges1.png" />
-</p>
-
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-3-7">他のノードから1つのノードへ、エッジを収束状に張るマクロ2：==&gt;<br/>
-
-
-
-
-<pre class="src src-lisp">(==&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (<span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) ((&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>) <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span>)
-     (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
-
-<span style="color: #eeee00;">; </span><span style="color: #eeee00;">&#19978;&#12398;&#12467;&#12540;&#12489;&#12399;&#19979;&#12398;&#27096;&#12395;&#12510;&#12463;&#12525;&#23637;&#38283;&#12373;&#12428;&#12414;&#12377;</span>
-
-(<span style="color: #eeee00;">LET</span> ((#<span style="color: #00ee76;">:G1328</span> (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:STYLE</span> <span style="color: #00ee76;">:FILLED</span>)))
-  (<span style="color: #eeee00;">&amp;&amp;</span>
-    (-&gt; <span style="color: #90ee90;">"a"</span> #<span style="color: #00ee76;">:G1328</span>)
-    (-&gt; <span style="color: #90ee90;">"b"</span> #<span style="color: #00ee76;">:G1328</span>)
-    (-&gt; <span style="color: #90ee90;">"c"</span> #<span style="color: #00ee76;">:G1328</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:RED</span>)
-    (-&gt; (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GOLDENROD</span>) #<span style="color: #00ee76;">:G1328</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GREEN</span>)))
-</pre>
-
-
-
-
-<p>
-<img src="./images/conv-edges2.png"  alt="./images/conv-edges2.png" />
-</p>
-</li>
-</ul>
 </div>
 
 </div>
 
 <div id="outline-container-4-9-4" class="outline-4">
-<h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> ノードを引数にとるもの2：無向グラフ</h4>
+<h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> 1つのノードから他のノードへ、エッジを放射状に張る関数：-&gt;&gt;</h4>
 <div class="outline-text-4" id="text-4-9-4">
 
 
 <p>
-　無向グラフについては、後の<a href="#">無向グラフ、レイアウトアルゴリズム</a>の節で詳しく解説します。
+　 <code>-&gt;&gt;</code> は、複数のノードを引数に取り、先頭のノードから2番目以降のすべてのノードへのエッジを張る関数です。
 </p>
 
 
-<hr/>
-<ul>
-<li id="sec-4-9-4-1">複数のノードを直線状につなぐ関数：&mdash;<br/>
 
-
-
-<pre class="src src-lisp">(--- <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) <span style="color: #90ee90;">"e"</span>)
-</pre>
-
-
-
-
-
-<p>
-<img src="./images/liner.png"  alt="./images/liner.png" />
-</p>
-
-
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-4-2">複数のノードを環状につなぐ関数：O<br/>
-
-
-
-
-<pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">O</span> (<span style="color: #eeee00;">&amp;rest</span> nodes)
-  (apply #'--- (conc1 nodes (1st nodes))))
-</pre>
-
-
-
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-4-3">1つのノードを多数のノードとつなぐマクロ1：-&lt;<br/>
-
-
-
-
-<pre class="src src-lisp">(-&lt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>
-        (<span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
-        (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>)
-        ((&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>) <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span>))
-
-<span style="color: #eeee00;">; </span><span style="color: #eeee00;">&#19978;&#12398;&#12467;&#12540;&#12489;&#12399;&#19979;&#12398;&#27096;&#12395;&#12510;&#12463;&#12525;&#23637;&#38283;&#12373;&#12428;&#12414;&#12377;</span>
-
-(<span style="color: #eeee00;">LET</span> ((#<span style="color: #00ee76;">:G1198</span> <span style="color: #90ee90;">"a"</span>))
-  (<span style="color: #eeee00;">&amp;&amp;</span>
-    (-- #<span style="color: #00ee76;">:G1198</span> <span style="color: #90ee90;">"b"</span>)
-    (-- #<span style="color: #00ee76;">:G1198</span> <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:RED</span>)
-    (-- #<span style="color: #00ee76;">:G1198</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GOLDENROD</span>))
-    (-- #<span style="color: #00ee76;">:G1198</span> (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:STYLE</span> <span style="color: #00ee76;">:FILLED</span>) <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GREEN</span>)))
+<pre class="src src-lisp">(-&gt;&gt; <span style="color: #90ee90;">"a"</span>
+     <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>) (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
 </pre>
 
 
 
 
 <p>
-<img src="./images/net1.png"  alt="./images/net1.png" />
+<img src="./images/radial-edge.png"  alt="./images/radial-edge.png" />
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-4-9-5" class="outline-4">
+<h4 id="sec-4-9-5"><span class="section-number-4">4.9.5</span> 他のノードから1つのノードへ、エッジを収束状に張る関数：==&gt;</h4>
+<div class="outline-text-4" id="text-4-9-5">
+
+
+<p>
+　 ==&gt; は、複数のノード（とエッジの属性）を引数に取り、
+最後尾のノードへ他のノードから収束状（放射状の逆）のエッジを張る関数です。
 </p>
 
 
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-4-4">1つのノードを多数のノードとつなぐマクロ2：&gt;-<br/>
-
-
-
-
-
-<pre class="src src-lisp">(&gt;- <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (<span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) ((&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>) <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span>)
-    (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
-
-
-
-(<span style="color: #eeee00;">LET</span> ((#<span style="color: #00ee76;">:G1354</span> (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:STYLE</span> <span style="color: #00ee76;">:FILLED</span>)))
-  (<span style="color: #eeee00;">&amp;&amp;</span>
-    (-- <span style="color: #90ee90;">"a"</span> #<span style="color: #00ee76;">:G1354</span>)
-    (-- <span style="color: #90ee90;">"b"</span> #<span style="color: #00ee76;">:G1354</span>)
-    (-- <span style="color: #90ee90;">"c"</span> #<span style="color: #00ee76;">:G1354</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:RED</span>)
-    (-- (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GOLDENROD</span>) #<span style="color: #00ee76;">:G1354</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GREEN</span>)))
+<pre class="src src-lisp">(==&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>)
+     (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
 </pre>
 
 
 
 
 <p>
-<img src="./images/net2.png"  alt="./images/net2.png" />
+<img src="./images/converge-edge.png"  alt="./images/converge-edge.png" />
 </p>
+
 <p>
 　
 </p>
-</li>
-</ul>
+
 </div>
 </div>
 
@@ -1398,16 +1293,214 @@ whereas in computer science we are usually concerned with imperative (how to) de
 </div>
 
 <div id="outline-container-4-11" class="outline-3">
-<h3 id="sec-4-11"><span class="section-number-3">4.11</span> Small Programs &mdash; Binary-Tree, Cons-Cell, Finite-Automaton</h3>
+<h3 id="sec-4-11"><span class="section-number-3">4.11</span> Utilities2</h3>
 <div class="outline-text-3" id="text-4-11">
 
+
+
+
+
+<div id="outline-container-4-11-1" class="outline-4">
+<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> 複数のノードを直線状につなぐ関数：&ndash;&ndash;&ndash;</h4>
+<div class="outline-text-4" id="text-4-11-1">
+
+
+<pre class="src src-lisp">(--- <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) <span style="color: #90ee90;">"e"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="./images/liner.png"  alt="./images/liner.png" />
+</p>
+<p>
+ <b>注：</b> 個別にエッジの属性を指定することはできません。
+</p>
 
 
 </div>
 
 <div id="outline-container-4-11-1" class="outline-4">
-<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> Binary Tree</h4>
+<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> 複数のノードを環状につなぐ関数：O</h4>
 <div class="outline-text-4" id="text-4-11-1">
+
+
+
+
+
+<pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">O</span> (<span style="color: #eeee00;">&amp;rest</span> nodes)
+  (apply #'--- (conc1 nodes (1st nodes))))
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4-11-2" class="outline-4">
+<h4 id="sec-4-11-2"><span class="section-number-4">4.11.2</span> 1つのノードを多数のノードとつなぐ関数：-&lt;</h4>
+<div class="outline-text-4" id="text-4-11-2">
+
+
+<p>
+　 <code>-&lt;</code> は、複数のノード（とエッジの属性）を引数に取り、
+先頭のノードとそれ以外のすべてのノードとを結んだ部分グラフを生成する関数です。
+ <code>-&gt;&gt;</code> の無向グラフ版です。
+</p>
+
+
+<pre class="src src-lisp">(-&lt; <span style="color: #90ee90;">"a"</span>
+    <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>) (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
+</pre>
+
+
+
+
+<p>
+<img src="./images/radiate-path.png"  alt="./images/radiate-path.png" />
+</p>
+<p>
+　
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4-12" class="outline-3">
+<h3 id="sec-4-12"><span class="section-number-3">4.12</span> Html-Like-Labels</h3>
+<div class="outline-text-3" id="text-4-12">
+
+
+
+
+
+<pre class="src src-lisp"><span class="linenr">1:  </span>(<span style="color: #eeee00;">&amp;&amp;</span> (&lt;&gt; (html
+<span class="linenr">2:  </span>         (table <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:khaki</span>
+<span class="linenr">3:  </span>                (tr (td <span style="color: #90ee90;">"!!WANTED!!"</span> (br)
+<span class="linenr">4:  </span>                        (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"10"</span> <span style="color: #90ee90;">"Dead or Alive"</span>)
+<span class="linenr">5:  </span>                        <span style="color: #00ee76;">:border</span> 0))
+<span class="linenr">6:  </span>                (tr (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:ghostwhite</span> <span style="color: #00ee76;">:border</span> 0
+<span class="linenr">7:  </span>                        (img <span style="color: #00ee76;">:src</span> <span style="color: #90ee90;">"/home/tkych/lisplogo_alien_128.png"</span>)))
+<span class="linenr">8:  </span>                (tr (td <span style="color: #00ee76;">:border</span> 0 <span style="color: #90ee90;">"$1,000,000"</span> (br) <span style="color: #90ee90;">"REWARD"</span>))))
+<span class="linenr">9:  </span>        <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:plaintext</span>))
+</pre>
+
+
+
+
+
+
+<p>
+<img src="./images/html-like-label1.png"  alt="./images/html-like-label1.png" />
+</p>
+<p>
+　
+</p>
+<ul>
+<li>cf.<a href="#sec-5-1-12">Example12 Html-like label</a>
+</li>
+</ul>
+
+
+
+<ul>
+<li>html-like-labels in Graphviz manual: <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+</li>
+</ul>
+
+
+
+<ul>
+<li>Witness information!!: <a href="http://www.lisperati.com/logo.html">http://www.lisperati.com/logo.html</a>
+</li>
+</ul>
+
+
+<p>
+　
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-13" class="outline-3">
+<h3 id="sec-4-13"><span class="section-number-3">4.13</span> Small Programs &mdash; Calendar, Binary-Tree, Cons-Cell, Finite-Automaton</h3>
+<div class="outline-text-3" id="text-4-13">
+
+
+
+</div>
+
+<div id="outline-container-4-13-1" class="outline-4">
+<h4 id="sec-4-13-1"><span class="section-number-4">4.13.1</span> Calendar</h4>
+<div class="outline-text-4" id="text-4-13-1">
+
+
+<p>
+　Grapvizによってカレンダーを描くという例は、Mihalis Tsoukalos氏による<a href="http://www.linuxjournal.com/article/7275">An Introduction to GraphViz</a>より拝借しました。
+もとの例は、カレンダーを描くためのdotコードファイルを生成するPerlプログラムを書くというものです。
+</p>
+
+
+
+<pre class="src src-lisp">($$ (&amp; (<span style="color: #00ee76;">:size</span> <span style="color: #90ee90;">"8,6"</span><span style="color: #00ee76;">:rankdir</span> <span style="color: #00ee76;">:LR</span>) (generate-monthly-calendar 'may 2012 31 2)))
+</pre>
+
+
+
+
+<p>
+<img src="./images/calendar.png"  alt="./images/calendar.png" />
+</p>
+
+
+
+<pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">generate-monthly-calendar</span> (month year num-days starting-day)
+  (<span style="color: #eeee00;">let</span> ((month (&lt;&gt; (format nil <span style="color: #90ee90;">"~@(~A~)\\n~D"</span> month year) <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:Msquare</span>))
+        (luminary7 (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> day <span style="color: #00ee76;">:in</span> '(<span style="color: #90ee90;">"Sun"</span> <span style="color: #90ee90;">"Mon"</span> <span style="color: #90ee90;">"Tue"</span> <span style="color: #90ee90;">"Wed"</span> <span style="color: #90ee90;">"Thu"</span> <span style="color: #90ee90;">"Fri"</span> <span style="color: #90ee90;">"Sat"</span>)
+                         <span style="color: #00ee76;">:collect</span> (&lt;&gt; day <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:egg</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:lightgray</span>)))
+        (days (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> day <span style="color: #00ee76;">:in</span> (nconc (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:repeat</span> starting-day <span style="color: #00ee76;">:collect</span> <span style="color: #90ee90;">""</span>)
+                                        (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> d <span style="color: #00ee76;">:from</span> 1 <span style="color: #00ee76;">:to</span> num-days <span style="color: #00ee76;">:collect</span> d)
+                                        (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:repeat</span> (- (* 7 (<span style="color: #eeee00;">if</span> (and (= 28 num-days) (= 0 starting-day))
+                                                                  4 5)) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">for Feb starting Sun in common year </span>
+                                                         starting-day num-days)
+                                              <span style="color: #00ee76;">:collect</span> <span style="color: #90ee90;">""</span>))
+                    <span style="color: #00ee76;">:collect</span> (&lt;&gt; day <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:box</span>))))
+    (apply #'<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> week <span style="color: #00ee76;">:in</span> (cons luminary7 (group 7 days))
+                      <span style="color: #00ee76;">:collect</span> (apply #'--&gt; month week)))))
+
+<span style="color: #eeee00;">;; </span><span style="color: #eeee00;">from On Lisp</span>
+(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">group</span> (n lst)
+  (<span style="color: #eeee00;">if</span> (zerop n) (<span style="color: #ee0000;">error</span> <span style="color: #90ee90;">"zero length"</span>))
+  (<span style="color: #eeee00;">labels</span> ((rec (lst acc)
+             (<span style="color: #eeee00;">let</span> ((rest (nthcdr n lst)))
+               (<span style="color: #eeee00;">if</span> (consp rest)
+                   (rec rest (cons (subseq lst 0 n) acc))
+                   (nreverse (cons lst acc))))))
+    (<span style="color: #eeee00;">if</span> lst (rec lst nil) nil)))
+</pre>
+
+
+<p>
+　関数generate-monthly-calendarは、引数として、月の名前month、年year、 月の日数num-days、1日の曜日starting-dayを取り、
+カレンダーを表すグラフを返します。
+'1日の曜日'とは、日曜を0、月曜を1、&hellip;土曜を6に、それぞれ対応させた数値です。
+</p>
+<p>
+　
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-13-2" class="outline-4">
+<h4 id="sec-4-13-2"><span class="section-number-4">4.13.2</span> Binary Tree</h4>
+<div class="outline-text-4" id="text-4-13-2">
 
 
 
@@ -1460,9 +1553,9 @@ whereas in computer science we are usually concerned with imperative (how to) de
 
 </div>
 
-<div id="outline-container-4-11-2" class="outline-4">
-<h4 id="sec-4-11-2"><span class="section-number-4">4.11.2</span> Cons Cell</h4>
-<div class="outline-text-4" id="text-4-11-2">
+<div id="outline-container-4-13-3" class="outline-4">
+<h4 id="sec-4-13-3"><span class="section-number-4">4.13.3</span> Cons Cell</h4>
+<div class="outline-text-4" id="text-4-13-3">
 
 
 
@@ -1549,9 +1642,9 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 </div>
 
-<div id="outline-container-4-11-3" class="outline-4">
-<h4 id="sec-4-11-3"><span class="section-number-4">4.11.3</span> Finite Automaton</h4>
-<div class="outline-text-4" id="text-4-11-3">
+<div id="outline-container-4-13-4" class="outline-4">
+<h4 id="sec-4-13-4"><span class="section-number-4">4.13.4</span> Finite Automaton</h4>
+<div class="outline-text-4" id="text-4-13-4">
 
 
 
@@ -1849,7 +1942,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 
 
-<pre class="src src-lisp">($() 
+<pre class="src src-lisp">($$
   (<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:height</span> .1)
         (<span style="color: #eeee00;">let</span> ((n0 ([] <span style="color: #90ee90;">":f0 |:f1 G|:f2"</span>)) (n1 ([] <span style="color: #90ee90;">":f0 |:f1 E|:f2"</span>))
               (n2 ([] <span style="color: #90ee90;">":f0 |:f1 B|:f2"</span>)) (n3 ([] <span style="color: #90ee90;">":f0 |:f1 F|:f2"</span>))
@@ -1868,6 +1961,45 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <p>
 <img src="./images/example6.png"  alt="./images/example6.png" />
 </p>
+
+<p>
+　以下の様に関数bst-graphを定義することで任意の二分探索木をグラフとして出力することもできます。
+関数bst-graphは、(parent left-child right-child)の形の二分探索木を再帰的に下り、グラフを生成します(cf. <a href="#2">2分木</a>)。
+</p>
+
+
+<pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">bst-graph</span> (tree)
+  (<span style="color: #eeee00;">if</span> (null tree)
+      (<span style="color: #eeee00;">&amp;&amp;</span>)
+      (<span style="color: #eeee00;">labels</span> ((rec (root-node tree)
+                 (<span style="color: #eeee00;">let</span> ((lc (second tree)) (rc (third tree)))
+                   (<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">when</span> lc
+                         (<span style="color: #eeee00;">if</span> (atom lc)
+                             (-&gt; (@ root-node <span style="color: #00ee76;">:f0</span>) (@ (bst-node lc) <span style="color: #00ee76;">:f1</span>))
+                             (<span style="color: #eeee00;">let</span> ((lc-node (bst-node (first lc))))
+                               (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; (@ root-node <span style="color: #00ee76;">:f0</span>) (@ lc-node <span style="color: #00ee76;">:f1</span>))
+                                   (rec lc-node lc)))))
+                       (<span style="color: #eeee00;">when</span> rc
+                         (<span style="color: #eeee00;">if</span> (atom rc)
+                             (-&gt; (@ root-node <span style="color: #00ee76;">:f2</span>) (@ (bst-node rc) <span style="color: #00ee76;">:f1</span>))
+                             (<span style="color: #eeee00;">let</span> ((rc-node (bst-node (first rc))))
+                               (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; (@ root-node <span style="color: #00ee76;">:f2</span>) (@ rc-node <span style="color: #00ee76;">:f1</span>))
+                                   (rec rc-node rc)))))))))
+        (<span style="color: #eeee00;">if</span> (null (cdr tree))
+            (bst-node (first tree))
+            (rec (bst-node (first tree)) tree)))))
+
+(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">bst-node</span> (symb)
+  ([] (format nil <span style="color: #90ee90;">"~@{~A~}"</span> <span style="color: #90ee90;">":f0 |:f1 "</span> symb <span style="color: #90ee90;">"|:f2"</span>)))
+
+($$ (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:height</span> .1)             <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#19978;&#12392;&#21516;&#27096;&#12398;&#12464;&#12521;&#12501;&#12364;&#20986;&#21147;&#12373;&#12428;&#12427;&#12290;</span>
+      (bst-graph '(g (e (b a c)
+                        f)
+                     (r h y)))))
+</pre>
+
+
+
 </div>
 
 </div>
@@ -2048,7 +2180,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </div>
 
 <div id="outline-container-5-1-12" class="outline-4">
-<h4 id="sec-5-1-12"><span class="section-number-4">5.1.12</span> Example12 HTML-like label</h4>
+<h4 id="sec-5-1-12"><span class="section-number-4">5.1.12</span> Example12 Html-like label</h4>
 <div class="outline-text-4" id="text-5-1-12">
 
 
@@ -2082,6 +2214,83 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </p>
 
 
+<hr/>
+
+<p>
+from <a href="http://www.graphviz.org/doc/info/html3.gv">http://www.graphviz.org/doc/info/html3.gv</a>
+</p>
+
+
+
+
+
+<pre class="src src-lisp">($$ (<span style="color: #eeee00;">&amp;&amp;</span>
+  (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:plaintext</span>)
+    (&lt;&gt; (html
+         (table
+          (tr (td <span style="color: #90ee90;">"line 1"</span>)
+              (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:blue</span> (font <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:white</span> <span style="color: #90ee90;">"line 2"</span>))
+              (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:gray</span> (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"24.0"</span> <span style="color: #90ee90;">"line 3"</span>))
+              (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span> (font <span style="color: #00ee76;">:point-size</span> <span style="color: #90ee90;">"24.0"</span> <span style="color: #00ee76;">:face</span> <span style="color: #90ee90;">"ambrosia"</span> <span style="color: #90ee90;">"line 4"</span>))
+              (td (table <span style="color: #00ee76;">:colorpadding</span> 0 <span style="color: #00ee76;">:border</span> 0 <span style="color: #00ee76;">:cellspacing</span> 0
+                         (tr (td (font <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span> <span style="color: #90ee90;">"Mixed"</span>))
+                             (td (font <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span> <span style="color: #90ee90;">"fonts"</span>))))))))))))
+</pre>
+
+
+
+
+<p>
+<img src="./images/example12-2.png"  alt="./images/example12-2.png" />
+</p>
+
+
+<hr/>
+
+
+<p>
+from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org/doc/info/html2.gv</a>
+</p>
+
+
+<pre class="src src-lisp">($$ (&amp; (<span style="color: #00ee76;">:rankdir</span> <span style="color: #00ee76;">:LR</span>)
+  (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:plaintext</span>)
+    (<span style="color: #eeee00;">let</span> ((a (&lt;&gt; (html (table <span style="color: #00ee76;">:border</span> 0 <span style="color: #00ee76;">:cellborder</span> 1 <span style="color: #00ee76;">:cellspacing</span> 0
+                              (tr (td <span style="color: #00ee76;">:rowspan</span> 3 <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span> <span style="color: #90ee90;">"class"</span>))
+                              (tr (td <span style="color: #00ee76;">:port</span> <span style="color: #90ee90;">"here"</span> <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:lightblue</span> <span style="color: #90ee90;">"qualfier"</span>))))))
+          (b (&lt;&gt; (html (table <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:bisque</span>
+                              (tr (td <span style="color: #00ee76;">:colspan</span> 3 <span style="color: #90ee90;">"elephant"</span>)
+                                  (td <span style="color: #00ee76;">:rowspan</span> 2 <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:chartreuse</span>
+                                      <span style="color: #00ee76;">:valign</span> <span style="color: #00ee76;">:bottom</span> <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:right</span> <span style="color: #90ee90;">"two"</span>))
+                              (tr (td <span style="color: #00ee76;">:colspan</span> 2 <span style="color: #00ee76;">:rowspan</span> 2
+                                      (table <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:grey</span>
+                                             (tr (td <span style="color: #90ee90;">"corn"</span>))
+                                             (tr (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:yellow</span> <span style="color: #90ee90;">"c"</span>))
+                                             (tr (td <span style="color: #90ee90;">"f"</span>))))
+                                  (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:white</span> <span style="color: #90ee90;">"penguin"</span>))
+                              (tr (td <span style="color: #00ee76;">:colspan</span> 2 <span style="color: #00ee76;">:border</span> 4 <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:right</span> <span style="color: #00ee76;">:port</span> <span style="color: #90ee90;">"there"</span> <span style="color: #90ee90;">"4"</span>))))
+                  <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:ellipse</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
+          (c (&lt;&gt; (html <span style="color: #90ee90;">"long line 1"</span> (br) <span style="color: #90ee90;">"line 2"</span> (br <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:left</span>) <span style="color: #90ee90;">"line 3"</span> (br <span style="color: #00ee76;">:align</span> <span style="color: #00ee76;">:right</span>))))
+          (d (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:triangle</span>)))
+      (<span style="color: #eeee00;">&amp;&amp;</span>
+        (~ b c)
+        (-&gt; (@ a <span style="color: #00ee76;">:here</span>) (@ b <span style="color: #00ee76;">:there</span>) <span style="color: #00ee76;">:dir</span> <span style="color: #00ee76;">:both</span> <span style="color: #00ee76;">:arrowtail</span> <span style="color: #00ee76;">:diamond</span>)
+        (-&gt; c b)
+        (-&gt; d c <span style="color: #00ee76;">:label</span> (html (table (tr (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:red</span> <span style="color: #00ee76;">:width</span> 10)
+                                        (td <span style="color: #90ee90;">"Edge labels"</span> (br) <span style="color: #90ee90;">"also"</span>)
+                                        (td <span style="color: #00ee76;">:bgcolor</span> <span style="color: #00ee76;">:blue</span> <span style="color: #00ee76;">:width</span> 10))))))))))
+</pre>
+
+
+
+
+
+<p>
+<img src="./images/example12-3.png"  alt="./images/example12-3.png" />
+</p>
+<p>
+　
+</p>
 
 </div>
 </div>
@@ -2433,7 +2642,7 @@ Graphvizで使用できる属性は大方のものをサポートしている(UR
 
 </p>
 <dl>
-<dt><b>&ndash;&ndash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; path</dt><dd>
+<dt><b>&ndash;&ndash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; edge</dt><dd>
 
 </dd>
 </dl>
@@ -2470,7 +2679,7 @@ Graphvizで使用できる属性は大方のものをサポートしている(UR
 
 </p>
 <dl>
-<dt><b>&ndash;&ndash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edges</dt><dd>
+<dt><b>&ndash;&ndash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edge</dt><dd>
 
 </dd>
 </dl>
@@ -2483,11 +2692,11 @@ Graphvizで使用できる属性は大方のものをサポートしている(UR
 　
 </p>
 <dl>
-<dt><b>-&gt;&gt;</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
+<dt><b>-&gt;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edge</dt><dd>
 </dd>
 </dl>
 
-<p>　[Macro]　
+<p>　[Function]　
 </p>
 <p>
 　
@@ -2497,17 +2706,7 @@ Graphvizで使用できる属性は大方のものをサポートしている(UR
 </dd>
 </dl>
 
-<p>　[Macro]　
-</p>
-<p>
-　
-</p>
-<dl>
-<dt><b>&lt;==</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
-</dd>
-</dl>
-
-<p>　[Macro]　
+<p>　[Function]　
 </p>
 <p>
 　
@@ -2517,17 +2716,7 @@ Graphvizで使用できる属性は大方のものをサポートしている(UR
 </dd>
 </dl>
 
-<p>　[Macro]　
-</p>
-<p>
-　
-</p>
-<dl>
-<dt><b>&gt;-</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
-</dd>
-</dl>
-
-<p>　[Macro]　
+<p>　[Function]　
 </p>
 <p>
 　
@@ -2552,7 +2741,7 @@ Graphvizで使用できる属性は大方のものをサポートしている(UR
 </dd>
 </dl>
 
-<p>　[Macro]　
+<p>　[Function]　
 </p>
 <p>
 　
@@ -2620,7 +2809,7 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 </dd>
 </dl>
 
-<p>　[Macro]　グラフ属性リストがnilに指定されているグラフを生成する。
+<p>　[Function]　グラフ属性リストがnilに指定されているグラフを生成する。
 </p>
 <p>
 　
@@ -2754,7 +2943,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-11 17:34:02 JST</p>
+<p class="date">Date: 2012-05-18 02:42:57 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
