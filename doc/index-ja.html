@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-15 23:08:43 JST"/>
+<meta name="generated" content="2012-05-18 02:00:25 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -133,8 +133,8 @@
 <li><a href="#sec-4">4 チュートリアル</a>
 <ul>
 <li><a href="#sec-4-1">4.1 シンプルなグラフ</a></li>
-<li><a href="#sec-4-2">4.2 ラベル</a></li>
-<li><a href="#sec-4-3">4.3 属性</a></li>
+<li><a href="#sec-4-2">4.2 属性</a></li>
+<li><a href="#sec-4-3">4.3 ラベル</a></li>
 <li><a href="#sec-4-4">4.4 出力</a></li>
 <li><a href="#sec-4-5">4.5 部分グラフ、クラスタ</a></li>
 <li><a href="#sec-4-6">4.6 ランク</a></li>
@@ -142,9 +142,10 @@
 <li><a href="#sec-4-8">4.8 レコード</a></li>
 <li><a href="#sec-4-9">4.9 ユーティリティ集</a></li>
 <li><a href="#sec-4-10">4.10 無向グラフ、レイアウトアルゴリズム</a></li>
-<li><a href="#sec-4-11">4.11 Html-Likeラベル</a></li>
-<li><a href="#sec-4-12">4.12 小さなプログラム &mdash; カレンダー、2分木、コンスセル、有限オートマトン</a></li>
-<li><a href="#sec-4-13">4.13 Tips</a></li>
+<li><a href="#sec-4-11">4.11 無向グラフに関するユーティリティ集</a></li>
+<li><a href="#sec-4-12">4.12 Html-Likeラベル</a></li>
+<li><a href="#sec-4-13">4.13 小さなプログラム &mdash; カレンダー、2分木、コンスセル、有限オートマトン</a></li>
+<li><a href="#sec-4-14">4.14 Tips</a></li>
 </ul>
 </li>
 <li><a href="#sec-5">5 Examples from Graphviz manual</a>
@@ -185,11 +186,11 @@
 
 <p>
 　 <b>DonutsはCommon Lispのためのグラフ作成ドメイン固有言語（DSL）です。</b>
-Donutsのゴールは、lisp環境内でちょっとしたグラフを描くことです。
+Donutsのゴールは、Lisp環境内でちょっとしたグラフを描くことです。
 Donutsは、S式で記述されたグラフ構造を、画像としてビューアに出力します
 (実際の内部動作は、S式を<a href="http://www.graphviz.org/dot-language.html">Dot言語</a>のコードに変換し、<a href="http://graphviz.org/">Graphviz</a>により画像を生成し、ビューアに出力するというものです)。
 ざっくり言うとDonutsはLispがDot言語を吸収した言語です。
-Donutsでグラフを作成する際には、すべてのLisp機能(REPL、マクロ、関数など)を利用できるので、Dot言語では手間がかかることでも容易に成し遂げることができます(cf.<a href="#sec-4-12">小さなプログラム</a>)。
+Donutsでグラフを作成する際には、すべてのLisp機能(REPL、マクロ、関数など)を利用できるので、Dot言語では手間がかかることでも容易に成し遂げることができます(cf.<a href="#sec-4-13">小さなプログラム</a>)。
 </p>
 
 <p>
@@ -215,7 +216,7 @@ Donutsでグラフを作成する際には、すべてのLisp機能(REPL、マ�
 <p>
 　 <b>すぐにDonutsでグラフを描き始められるように。</b>
 Donutsの文法はDot言語のものと似ています。
-そこで、Dot言語になじみのある方ならDot言語との類推によって、すぐにグラフを描き始めることができるよう、<a href="#sec-5">Examples from Graphviz manual</a>の章を用意しています。
+そこで、Dot言語になじみのある方ならDot言語との類推によって、すぐにグラフを描き始めることができるように、<a href="#sec-5">Examples from Graphviz manual</a>の章を用意しています。
 Dot言語になじみのない方でも、もちろん大丈夫です。
 Donutsですぐにグラフを描くことができるように、<a href="#sec-4">チュートリアル</a>の章があります。
 </p>
@@ -227,7 +228,7 @@ Donutsですぐにグラフを描くことができるように、<a href="#sec-
 ライセンスの正確な文言についてはソースコードのヘッダー部分をご確認ください。
 </p>
 <p>
-　 <b>Donutsの最新バージョンは0.2.8です。</b>
+　 <b>Donutsの最新バージョンは0.3.0です。</b>
 現在のところDonutsはベータ版です。
 今後の更新予定は<a href="#sec-7">ToDo</a>をご確認ください。
 </p>
@@ -245,7 +246,7 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 およそいかなるグラフ構造もこれら3つの基本操作のみから作り上げることができます(グラフ画像の見た目やコーディングの手間を気にしなければ)。
 また、Donutsはなるべくlispとぶつからないことを重視して造られています。
 したがって、複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、
-ユーザが自分で好きなように追加できるはずです(cf.<a href="#sec-4-12">小さなプログラム</a>)。
+ユーザが自分で好きなように追加できるはずです(cf.<a href="#sec-4-13">小さなプログラム</a>)。
 </p>
 <p>
 　 <b>Donutsには実用的操作も加えられています。</b>
@@ -294,7 +295,7 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 <div class="outline-text-4" id="text-2-2-1">
 
 <ol>
-<li><a href="http://www.graphviz.org/">Graphviz</a> by AT&amp;T Research Labs
+<li><a href="http://www.graphviz.org/">Graphviz</a> by AT&amp;T Labs
 
 </li>
 <li>画像を見るための適当なビューア
@@ -474,7 +475,7 @@ Hello World
 <p class="verse">
 ボトムアップで[プログラムを]書いたとき、たいてい最後には独特なプログラムに行き着く。<br/>
 単一でモノシリックなプログラムの替わりに、より抽象的なオペレータを持つ大きな言語と、<br/>
-それ[大きな言語]で書かれた<a href="#sec-4-12">小さなプログラム</a>を手に入れるはずだ。<br/>
+それ[大きな言語]で書かれた<a href="#sec-4-13">小さなプログラム</a>を手に入れるはずだ。<br/>
 &hellip;<br/>
 Lispは拡張可能なプログラムを書くために、とりわけみごとな言語である。<br/>
 なぜなら、Lispそれ自体が拡張可能なプログラムだからだ。<br/>
@@ -702,7 +703,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </thead>
 <tbody>
 <tr><td class="left">グラフ</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">with-graph, &amp;&amp;</td></tr>
-<tr><td class="left">エッジ</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, &lt;-, &lt;==, ?, -&lt;, &gt;-, &ndash;&ndash;&ndash;, O</td></tr>
+<tr><td class="left">エッジ</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, ?, -&lt;, &ndash;&ndash;&ndash;, O</td></tr>
 
 <tr><td class="left">ノード</td><td class="left">&lt;&gt;, []</td><td class="left">@, rank</td><td class="left">with-node, ~</td></tr>
 <tr><td class="left">その他</td><td class="left">dot-output, $</td><td class="left"></td><td class="left">dot-pprint, $$</td></tr>
@@ -750,9 +751,9 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </li>
 <li>グラフコンストラクタ <code>&amp;&amp;</code> でエッジやノードやグラフを束ねグラフを生成する。 <code>(&amp;&amp; . nodes-edges-graphs) ＝＞ graph</code>
 </li>
-<li>シェルインターフェイス <code>$$</code> でグラフをビューアに出力する。 <code>($$ graph) ＝＞ NIL ;ビューアに画像が出力</code>
+<li>シェルインターフェイス <code>$$</code> でグラフをビューアに出力する。 <code>($$ graph) ＝＞ NIL ;ビューアに画像を出力</code>
 </li>
-<li><code>dot-output</code> でグラフのdotコードを標準出力に表示する。  <code>(dot-output graph) ＝＞ NIL ;標準出力にdotコードが表示</code>
+<li><code>dot-output</code> でグラフのdotコードを標準出力に表示する。  <code>(dot-output graph) ＝＞ NIL ;標準出力にdotコードを表示</code>
 </li>
 </ul>
 
@@ -799,7 +800,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <code>&lt;&gt;</code> を <b>ノードコンストラクタ</b> と呼んでいます。
 ノードコンストラクタ <code>&lt;&gt;</code> は、引数として文字列や数値を取り、それらでラベルされたノードを生成します。
 オプショナルな引数である属性キーワードによって属性値を指定することで、多様なノードを生成することもできます
-（属性については<a href="#sec-4-3">次節</a>で説明します）。
+（属性については<a href="#sec-4-2">次節</a>で説明します）。
 説明のため <code>(&lt;&gt; "Hello")</code> によって生成されたノードを、ノードHelloのように記します（ノードWorldも同様です）。
 </p>
 <p>
@@ -824,7 +825,8 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </p>
 <p>
 　最後に、S式 <code>(&amp;&amp; ****)</code> の意味は、 <i>グラフ構成要素****を束ねたグラフを生成せよ</i> というものです(****は、任意の数のエッジやノードやグラフ)。
-  <code>&amp;&amp;</code> は、任意数のグラフ構成要素を引数に取りグラフオブジェクトを生成するマクロで、 <b>グラフコンストラクタ</b> と呼んでいます。
+<code>&amp;&amp;</code> は、任意数のグラフ構成要素を引数に取りグラフオブジェクトを生成するマクロで、 <b>グラフコンストラクタ</b> と呼んでいます。
+グラフ構成要素が何も与えられない場合、すなわち <code>(&amp;&amp;)</code> の場合、 <b>空グラフ</b> が生成されます。
 </p>
 <p>
 　この例では、グラフ構成要素としてエッジHello-&gt;Worldが <code>&amp;&amp;</code> に与えられています。
@@ -861,49 +863,8 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </div>
 
 <div id="outline-container-4-2" class="outline-3">
-<h3 id="sec-4-2"><span class="section-number-3">4.2</span> ラベル</h3>
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> 属性</h3>
 <div class="outline-text-3" id="text-4-2">
-
-<p>　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.7" href="#fn.7">7</a></sup>。
-</p>
-<ul>
-<li><code>\\無</code>  空白が印字される<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>('無'はスペースを表す)。
-</li>
-<li><code>\\n</code>  行末に置くと、その行をセンタリングし、改行する。
-</li>
-<li><code>\\l</code>  行末に置くと、その行を左寄せし、改行する。
-</li>
-<li><code>\\r</code>  行末に置くと、その行を右寄せし、改行する。
-</li>
-<li><code>\\N</code>  そのノードの内部名(ノードのアイデンティティ)が印字される。
-</li>
-<li><code>\\\\</code>  '\'が印字される('\'を印字するにはこの方法しかありません)。
-</li>
-</ul>
-
-
-
-
-
-<pre class="src src-lisp">(<span style="color: #eeee00;">&amp;&amp;</span> (&lt;&gt; <span style="color: #90ee90;">"12\\ 34\\n56\\l78\\r\\N\\\\"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:note</span>))
-</pre>
-
-
-
-
-<p>
-<img src="./images/label.png"  alt="./images/label.png" />
-</p>
-<p>
-　
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-4-3" class="outline-3">
-<h3 id="sec-4-3"><span class="section-number-3">4.3</span> 属性</h3>
-<div class="outline-text-3" id="text-4-3">
 
 
 <p>
@@ -934,14 +895,14 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </p>
 
 <p>
-　まず1行目、グラフコンストラクタ <code>&amp;&amp;</code> が <code>&amp;</code> に置き換えられ、 <code>&amp;&amp;</code> の次(グラフ構成要素の前)にグラフ属性リスト <code>(:label "Proparty Example")</code> が置かれています。
+　まず1行目、グラフコンストラクタ <code>&amp;&amp;</code> が <code>&amp;</code> に置き換えられ、 <code>&amp;</code> の次(グラフ構成要素の前)にグラフ属性リスト <code>(:label "Proparty Example")</code> が置かれています。
 このグラフ属性リストによってグラフの見えを調整することができるのです。
 ここでは、グラフの属性 <code>:label</code> が値 "<code>Proparty Example</code>" に指定されていますので、出力されるグラフにラベル"<code>Proparty Example</code>"が付くことになります。
 </p>
 <p>
 　他のグラフ属性値も指定したい場合、例えば、グラフのサイズを小さくしたい場合には、 <code>(:label "Proparty Example" :size "1,1")</code> の様に書きます。
 サイズ属性値は縦横インチ単位、文字列で指定します。
-属性を指定する順番は、出力結果に影響しません<sup><a class="footref" name="fnr.9" href="#fn.9">9</a></sup>。
+属性を指定する順番は、出力結果に影響しません<sup><a class="footref" name="fnr.7" href="#fn.7">7</a></sup>。
  <code>(:label "Proparty Example" :size "1,1")</code> でも、 <code>(:size "1,1" :label "Proparty Example")</code> でも、結果として出力されるグラフは次のものです。
 </p>
 
@@ -975,20 +936,6 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 すなわち、このノードは、孤立ノードとなります。
 このノードはグラフ中の右上に出力されているものです。
 </p>
-<p>
-　この例から分かるように、最小のグラフは単一のノードです。
-もっとも単純なグラフ生成コードは次のものです<sup><a class="footref" name="fnr.10" href="#fn.10">10</a></sup>。
-</p>
-
-
-<pre class="src src-lisp">(<span style="color: #eeee00;">&amp;&amp;</span> <span style="color: #90ee90;">""</span>)
-</pre>
-
-<p>
-このコードは楕円が1つのみのグラフ（まんじゅう1つ）を生成するだけで、あまり興味深いものではありません。
-しかし、Donuts動作の理解のため、あえて内容を解説すると次のようになります。
- <i>空の文字列をラベルとするノードを自動生成し、そのノード1つのみで構成されるグラフを生成せよ</i> です。
-</p>
 
 <hr/>
 
@@ -1014,6 +961,47 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 
 </div>
 
+<div id="outline-container-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> ラベル</h3>
+<div class="outline-text-3" id="text-4-3">
+
+<p>　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>。
+</p>
+<ul>
+<li><code>\\無</code>  空白が印字される<sup><a class="footref" name="fnr.9" href="#fn.9">9</a></sup>('無'はスペースを表す)。
+</li>
+<li><code>\\n</code>  行末に置くと、その行をセンタリングし、改行する。
+</li>
+<li><code>\\l</code>  行末に置くと、その行を左寄せし、改行する。
+</li>
+<li><code>\\r</code>  行末に置くと、その行を右寄せし、改行する。
+</li>
+<li><code>\\N</code>  そのノードの内部名(ノードのアイデンティティ)が印字される。
+</li>
+<li><code>\\\\</code>  '\'が印字される('\'を印字するにはこの方法しかありません)。
+</li>
+</ul>
+
+
+
+
+
+<pre class="src src-lisp">(<span style="color: #eeee00;">&amp;&amp;</span> (&lt;&gt; <span style="color: #90ee90;">"12\\ 34\\n56\\l78\\r\\N\\\\"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:note</span>))
+</pre>
+
+
+
+
+<p>
+<img src="./images/label.png"  alt="./images/label.png" />
+</p>
+<p>
+　
+</p>
+</div>
+
+</div>
+
 <div id="outline-container-4-4" class="outline-3">
 <h3 id="sec-4-4"><span class="section-number-3">4.4</span> 出力</h3>
 <div class="outline-text-3" id="text-4-4">
@@ -1021,7 +1009,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 
 <p>
 　dot-output, dot-pprintによって、生成したグラフオブジェクトのdotコードを標準出力に表示することができます。
-また、生成したグラフオブジェクトをビューアで見るには、シェルインターフェイス $ が便利です<sup><a class="footref" name="fnr.11" href="#fn.11">11</a></sup>。
+また、生成したグラフオブジェクトをビューアで見るには、シェルインターフェイス $ が便利です<sup><a class="footref" name="fnr.10" href="#fn.10">10</a></sup>。
 </p>
 
 </div>
@@ -1204,7 +1192,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 <pre class="src src-lisp"><span class="linenr">1:  </span>(&amp; (<span style="color: #00ee76;">:rankdir</span> <span style="color: #00ee76;">:LR</span>)
-<span class="linenr">2:  </span>  ([&amp;] (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Here is in the cluster!"</span>)  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12463;&#12521;&#12473;&#12479;&#12399;&#37096;&#20998;&#12464;&#12521;&#12501;&#12384;&#12364;&#23646;&#24615;&#12399;&#12388;&#12397;&#12395;&#26377;&#21177;&#65281;&#65281;</span>
+<span class="linenr">2:  </span>  ([&amp;] (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Here is in the cluster!"</span>)  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12463;&#12521;&#12473;&#12479;&#12399;&#37096;&#20998;&#12464;&#12521;&#12501;&#12289;&#12375;&#12363;&#12375;&#12289;&#23646;&#24615;&#12364;&#24120;&#12395;&#26377;&#21177;&#65281;&#65281;</span>
 <span class="linenr">3:  </span>    (-&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>)
 <span class="linenr">4:  </span>    (-&gt; <span style="color: #90ee90;">"b"</span> <span style="color: #90ee90;">"c"</span>))
 <span class="linenr">5:  </span>  (-&gt; <span style="color: #90ee90;">"Out of the cluster"</span> <span style="color: #90ee90;">"c"</span>))
@@ -1269,9 +1257,11 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <span class="linenr">2:  </span>  (<span style="color: #eeee00;">let</span> ((a (&lt;&gt; 0 <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)) (b (&lt;&gt; 1 <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:blue</span>))
 <span class="linenr">3:  </span>        (c (&lt;&gt; 2 <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)) (d (&lt;&gt; 3 <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:blue</span>))
 <span class="linenr">4:  </span>        (e (&lt;&gt; 4 <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)) (f (&lt;&gt; 5 <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:blue</span>)))
-<span class="linenr">5:  </span>    (rank <span style="color: #00ee76;">:same</span> a c e) (rank <span style="color: #00ee76;">:same</span> b d f)
-<span class="linenr">6:  </span>    (-&gt; a c) (-&gt; c e) (-&gt; b d) (-&gt; d f) (-&gt; a b) (-&gt; c d) (-&gt; e f)))
+<span class="linenr">5:  </span>    (<span style="color: #eeee00;">&amp;&amp;</span>
+<span class="linenr">6:  </span>     (rank <span style="color: #00ee76;">:same</span> a c e) (rank <span style="color: #00ee76;">:same</span> b d f)
+<span class="linenr">7:  </span>     (-&gt; a c) (-&gt; c e) (-&gt; b d) (-&gt; d f) (-&gt; a b) (-&gt; c d) (-&gt; e f))))
 </pre>
+
 
 <p>
 　出力されるグラフの画像は次のようになります。
@@ -1281,7 +1271,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <img src="./images/rank.png"  alt="./images/rank.png" />
 </p>
 <p>
-(ノードの高さを揃える操作は使用頻度が高いので、ユーティリティとして再定義しています。cf.<a href="#sec-4-9-2-3">ユーティリティ：~</a>)
+(ノードの高さを揃える操作は使用頻度が高いので、ユーティリティとして再定義しています。cf.<a href="#sec-4-9-3">ユーティリティ：~</a>)
 </p>
 
 <p>
@@ -1455,7 +1445,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 </p>
 <p>
 　フィールドポートを設定するには、ラベルの中でフィールドを設定する際のラベル中の区切り <code>|</code> を、 <code>|:port-name</code> に置き換えます。
- <i>port-name</i> は（空白を含まない）文字列であり<sup><a class="footref" name="fnr.12" href="#fn.12">12</a></sup>、ラベル内で一意にフィールドポートを指定することができるものです。
+ <i>port-name</i> は（空白を含まない）文字列であり<sup><a class="footref" name="fnr.11" href="#fn.11">11</a></sup>、ラベル内で一意にフィールドポートを指定することができるものです。
 つまり、1つのレコード内の異なる2つのフィールドで、同じポート名を使うことはできません。
 </p>
 <p>
@@ -1548,7 +1538,18 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <h4 id="sec-4-9-1"><span class="section-number-4">4.9.1</span> コンテキストを作り出すもの</h4>
 <div class="outline-text-4" id="text-4-9-1">
 
-<p>　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
+
+<p>
+　
+</p>
+<p>
+<b>!!バグ!!: with-node, with-edge;let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。</b>
+</p>
+<p>
+　
+</p>
+<p>
+　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
 コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
  with-node,  with-edgeをネストした場合、属性値は上書きされます。
 </p>
@@ -1675,6 +1676,7 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 </p>
 
 
+
 </li>
 </ul>
 </div>
@@ -1682,33 +1684,9 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 </div>
 
 <div id="outline-container-4-9-2" class="outline-4">
-<h4 id="sec-4-9-2"><span class="section-number-4">4.9.2</span> ノードを引数にとるもの1：有向グラフ</h4>
+<h4 id="sec-4-9-2"><span class="section-number-4">4.9.2</span> 自己ループを生成する関数：?</h4>
 <div class="outline-text-4" id="text-4-9-2">
 
-
-<ul>
-<li id="sec-4-9-2-1">-&gt;の逆：&lt;-<br/>
-
-
-
-
-<pre class="src src-lisp">(&lt;- <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>)
-</pre>
-
-
-
-
-
-<p>
-<img src="./images/inv-edge.png"  alt="./images/inv-edge.png" />
-</p>
-
-
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-2-2">自己ループを生成する関数：?<br/>
 
 <p>
 　関数 <code>?</code> は単一のノードとエッジ属性を引数に取り、自己ループを生成します。
@@ -1719,7 +1697,12 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 </pre>
 
 
-
+<p>
+(dot-output
+  (&amp; ()
+    (? (&lt;&gt; 42 :shape :Mcircle)
+       :label " Life, the Universe and Everything")))
+</p>
 
 
 <p>
@@ -1727,11 +1710,14 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 </p>
 
 
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-2-3">複数のノードを同じ高さに設定する関数：~<br/>
+</div>
+
+</div>
+
+<div id="outline-container-4-9-3" class="outline-4">
+<h4 id="sec-4-9-3"><span class="section-number-4">4.9.3</span> 複数のノードを同じ高さに設定する関数：~</h4>
+<div class="outline-text-4" id="text-4-9-3">
+
 
 <p>
 　 <code>~</code> は、引数に複数のノードを取り、グラフ内でそれらのノードを同じ高さに配置する副作用を行い、NILを返します。
@@ -1750,12 +1736,11 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 実際にDonutsを使ってみて、ノードの高さを揃える頻度がわりと多いこと、記号 <code>~</code> は視覚的にわかりやすいことを鑑み、ユーティリティとして新たに定義することにしました。
 </p>
 
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-2-4">複数のノードを数珠つなぎに結ぶ関数：&ndash;&gt;<br/>
 
+
+<div id="outline-container-4-9-4" class="outline-4">
+<h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> 複数のノードを数珠つなぎに結ぶ関数：&ndash;&ndash;&gt;</h4>
+<div class="outline-text-4" id="text-4-9-4">
 
 
 <pre class="src src-lisp">(--&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) <span style="color: #90ee90;">"e"</span>)
@@ -1772,238 +1757,61 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
  <b>注：</b> 個別にエッジの属性を指定することはできません。
 </p>
 
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-2-5">1つのノードから他のノードへ、エッジを放射状に張るマクロ：-&gt;&gt;<br/>
+</div>
+
+</div>
+
+<div id="outline-container-4-9-4" class="outline-4">
+<h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> 1つのノードから他のノードへ、エッジを放射状に張る関数：-&gt;&gt;</h4>
+<div class="outline-text-4" id="text-4-9-4">
+
 
 <p>
-　 <code>-&gt;&gt;</code> は、複数のノード（とエッジの属性）を引数に取り、先頭のノードから2番目以降のすべてのノードへのエッジを張った部分グラフを生成するマクロです。
-下のコードの3、4行目のように、エッジの属性を個々に指定することができます。
-便利ですがlispの通常の考え方にやや反するため注意が必要です。
+　 <code>-&gt;&gt;</code> は、複数のノードを引数に取り、先頭のノードから2番目以降のすべてのノードへのエッジを張る関数です。
 </p>
 
 
 
-<pre class="src src-lisp">(-&gt;&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>
-         (<span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
-         (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>)
-         ((&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>) <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span>))
-
-<span style="color: #eeee00;">; </span><span style="color: #eeee00;">&#19978;&#12398;&#12467;&#12540;&#12489;&#12399;&#19979;&#12398;&#27096;&#12395;&#12510;&#12463;&#12525;&#23637;&#38283;&#12373;&#12428;&#12414;&#12377;</span>
-
-(<span style="color: #eeee00;">LET</span> ((#<span style="color: #00ee76;">:G1324</span> <span style="color: #90ee90;">"a"</span>))
-  (<span style="color: #eeee00;">&amp;&amp;</span>
-    (-&gt; #<span style="color: #00ee76;">:G1324</span> <span style="color: #90ee90;">"b"</span>)
-    (-&gt; #<span style="color: #00ee76;">:G1324</span> <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:RED</span>)
-    (-&gt; #<span style="color: #00ee76;">:G1324</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GOLDENROD</span>))
-    (-&gt; #<span style="color: #00ee76;">:G1324</span> (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:STYLE</span> <span style="color: #00ee76;">:FILLED</span>) <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GREEN</span>)))
+<pre class="src src-lisp">(-&gt;&gt; <span style="color: #90ee90;">"a"</span>
+     <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>) (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
 </pre>
 
 
 
 
 <p>
-<img src="./images/radial-edges.png"  alt="./images/radial-edges.png" />
+<img src="./images/radial-edge.png"  alt="./images/radial-edge.png" />
 </p>
 
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-2-6">1つのノードへ他のノードから、エッジを収束状に張るマクロ1：&lt;==<br/>
+</div>
 
-<p>
-　 <code>&lt;==</code> は、複数のノード（とエッジの属性）を引数に取り、先頭のノードへ他のノードから収束状（放射の逆）のエッジを張った部分グラフを生成するマクロです。
-下のコードの3、4行目のように、個別にエッジの属性を指定することができます。
-便利ですがlispの通常の考え方にやや反するため注意が必要です。
-</p>
+</div>
 
+<div id="outline-container-4-9-5" class="outline-4">
+<h4 id="sec-4-9-5"><span class="section-number-4">4.9.5</span> 他のノードから1つのノードへ、エッジを収束状に張る関数：==&gt;</h4>
+<div class="outline-text-4" id="text-4-9-5">
 
-<pre class="src src-lisp">(&lt;== <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>
-         (<span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
-         (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>)
-         ((&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>) <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span>))
-
-<span style="color: #eeee00;">; </span><span style="color: #eeee00;">&#19978;&#12398;&#12467;&#12540;&#12489;&#12399;&#19979;&#12398;&#27096;&#12395;&#12510;&#12463;&#12525;&#23637;&#38283;&#12373;&#12428;&#12414;&#12377;</span>
-
-(<span style="color: #eeee00;">LET</span> ((#<span style="color: #00ee76;">:G1326</span> <span style="color: #90ee90;">"a"</span>))
-  (<span style="color: #eeee00;">&amp;&amp;</span>
-    (&lt;- #<span style="color: #00ee76;">:G1326</span> <span style="color: #90ee90;">"b"</span>)
-    (&lt;- #<span style="color: #00ee76;">:G1326</span> <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:RED</span>)
-    (&lt;- #<span style="color: #00ee76;">:G1326</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GOLDENROD</span>))
-    (&lt;- #<span style="color: #00ee76;">:G1326</span> (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:STYLE</span> <span style="color: #00ee76;">:FILLED</span>) <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GREEN</span>)))
-</pre>
-
-
-
-
-<p>
-<img src="./images/conv-edges1.png"  alt="./images/conv-edges1.png" />
-</p>
-
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-2-7">他のノードから1つのノードへ、エッジを収束状に張るマクロ2：==&gt;<br/>
 
 <p>
 　 ==&gt; は、複数のノード（とエッジの属性）を引数に取り、
-最後尾のノードへ他のノードから収束状（放射状の逆）のエッジを張った部分グラフを生成するマクロです。
-実質的には &lt;== と同様のものですが、グラフコードの見た目にこだわる人のために導入しました
-（エッジは左から右でなければならない人のため）。
-</p>
-<p>
-　個別にエッジの属性を指定することができます。
-便利ですがlispの通常の考え方にやや反するため注意が必要です。
+最後尾のノードへ他のノードから収束状（放射状の逆）のエッジを張る関数です。
 </p>
 
 
-<pre class="src src-lisp">(==&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (<span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) ((&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>) <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span>)
-     (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
-
-<span style="color: #eeee00;">; </span><span style="color: #eeee00;">&#19978;&#12398;&#12467;&#12540;&#12489;&#12399;&#19979;&#12398;&#27096;&#12395;&#12510;&#12463;&#12525;&#23637;&#38283;&#12373;&#12428;&#12414;&#12377;</span>
-
-(<span style="color: #eeee00;">LET</span> ((#<span style="color: #00ee76;">:G1328</span> (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:STYLE</span> <span style="color: #00ee76;">:FILLED</span>)))
-  (<span style="color: #eeee00;">&amp;&amp;</span>
-    (-&gt; <span style="color: #90ee90;">"a"</span> #<span style="color: #00ee76;">:G1328</span>)
-    (-&gt; <span style="color: #90ee90;">"b"</span> #<span style="color: #00ee76;">:G1328</span>)
-    (-&gt; <span style="color: #90ee90;">"c"</span> #<span style="color: #00ee76;">:G1328</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:RED</span>)
-    (-&gt; (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GOLDENROD</span>) #<span style="color: #00ee76;">:G1328</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GREEN</span>)))
+<pre class="src src-lisp">(==&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>)
+     (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
 </pre>
 
 
 
 
 <p>
-<img src="./images/conv-edges2.png"  alt="./images/conv-edges2.png" />
-</p>
-</li>
-</ul>
-</div>
-
-</div>
-
-<div id="outline-container-4-9-3" class="outline-4">
-<h4 id="sec-4-9-3"><span class="section-number-4">4.9.3</span> ノードを引数にとるもの2：無向グラフ</h4>
-<div class="outline-text-4" id="text-4-9-3">
-
-
-<p>
-　無向グラフについては、後の<a href="#sec-4-10">無向グラフ、レイアウトアルゴリズム</a>の節で詳しく解説します。
+<img src="./images/converge-edge.png"  alt="./images/converge-edge.png" />
 </p>
 
-
-<hr/>
-<ul>
-<li id="sec-4-9-3-1">複数のノードを直線状につなぐ関数：&mdash;<br/>
-
-
-
-<pre class="src src-lisp">(--- <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) <span style="color: #90ee90;">"e"</span>)
-</pre>
-
-
-
-
-
-<p>
-<img src="./images/liner.png"  alt="./images/liner.png" />
-</p>
-<p>
- <b>注：</b> 個別にエッジの属性を指定することはできません。
-</p>
-
-
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-3-2">複数のノードを環状につなぐ関数：O<br/>
-
-
-
-
-<pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">O</span> (<span style="color: #eeee00;">&amp;rest</span> nodes)
-  (apply #'--- (conc1 nodes (1st nodes))))
-</pre>
-
-
-
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-3-3">1つのノードを多数のノードとつなぐマクロ1：-&lt;<br/>
-
-<p>
-　 <code>-&lt;</code> は、複数のノード（とエッジの属性）を引数に取り、先頭のノードとそれ以外のすべてのノードとを結んだ部分グラフを生成するマクロです。
- <code>-&gt;&gt;</code> の無向グラフ版です。
-</p>
-
-
-<pre class="src src-lisp">(-&lt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>
-        (<span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
-        (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>)
-        ((&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>) <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span>))
-
-<span style="color: #eeee00;">; </span><span style="color: #eeee00;">&#19978;&#12398;&#12467;&#12540;&#12489;&#12399;&#19979;&#12398;&#27096;&#12395;&#12510;&#12463;&#12525;&#23637;&#38283;&#12373;&#12428;&#12414;&#12377;</span>
-
-(<span style="color: #eeee00;">LET</span> ((#<span style="color: #00ee76;">:G1198</span> <span style="color: #90ee90;">"a"</span>))
-  (<span style="color: #eeee00;">&amp;&amp;</span>
-    (-- #<span style="color: #00ee76;">:G1198</span> <span style="color: #90ee90;">"b"</span>)
-    (-- #<span style="color: #00ee76;">:G1198</span> <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:RED</span>)
-    (-- #<span style="color: #00ee76;">:G1198</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GOLDENROD</span>))
-    (-- #<span style="color: #00ee76;">:G1198</span> (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:STYLE</span> <span style="color: #00ee76;">:FILLED</span>) <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GREEN</span>)))
-</pre>
-
-
-
-
-<p>
-<img src="./images/net1.png"  alt="./images/net1.png" />
-</p>
-
-
-<hr/>
-</li>
-</ul>
-<ul>
-<li id="sec-4-9-3-4">1つのノードを多数のノードとつなぐマクロ2：&gt;-<br/>
-
-<p>
-　 <code>&gt;-</code> は、複数のノード（とエッジの属性）を引数に取り、最後尾のノードとそれ以外すべてのノードへのエッジを張った部分グラフを生成するマクロです。
-==&gt;の無向グラフ版です。
-</p>
-
-
-
-<pre class="src src-lisp">(&gt;- <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (<span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) ((&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>) <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:green</span>)
-    (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
-
-<span style="color: #eeee00;">; </span><span style="color: #eeee00;">&#19978;&#12398;&#12467;&#12540;&#12489;&#12399;&#19979;&#12398;&#27096;&#12395;&#12510;&#12463;&#12525;&#23637;&#38283;&#12373;&#12428;&#12414;&#12377;</span>
-
-(<span style="color: #eeee00;">LET</span> ((#<span style="color: #00ee76;">:G1354</span> (&lt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:STYLE</span> <span style="color: #00ee76;">:FILLED</span>)))
-  (<span style="color: #eeee00;">&amp;&amp;</span>
-    (-- <span style="color: #90ee90;">"a"</span> #<span style="color: #00ee76;">:G1354</span>)
-    (-- <span style="color: #90ee90;">"b"</span> #<span style="color: #00ee76;">:G1354</span>)
-    (-- <span style="color: #90ee90;">"c"</span> #<span style="color: #00ee76;">:G1354</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:RED</span>)
-    (-- (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GOLDENROD</span>) #<span style="color: #00ee76;">:G1354</span> <span style="color: #00ee76;">:COLOR</span> <span style="color: #00ee76;">:GREEN</span>)))
-</pre>
-
-
-
-
-<p>
-<img src="./images/net2.png"  alt="./images/net2.png" />
-</p>
 <p>
 　
 </p>
-</li>
-</ul>
 </div>
 </div>
 
@@ -2021,7 +1829,7 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 手っ取り早い方法は、 <b>エッジの属性:shapeを:noneに指定すること</b> です。
 もう一つの方法は、
 <b>-&gt;をすべて&ndash;&ndash;に置き換えること</b>です
-（ <b>注：</b> 1つのグラフ中で <code>-&gt;</code> と <code>--</code> を併用することはできません<sup><a class="footref" name="fnr.13" href="#fn.13">13</a></sup>）。
+（ <b>注：</b> 1つのグラフ中で <code>-&gt;</code> と <code>--</code> を併用することはできません<sup><a class="footref" name="fnr.12" href="#fn.12">12</a></sup>）。
 </p>
 
 <p>
@@ -2167,8 +1975,87 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 </div>
 
 <div id="outline-container-4-11" class="outline-3">
-<h3 id="sec-4-11"><span class="section-number-3">4.11</span> Html-Likeラベル</h3>
+<h3 id="sec-4-11"><span class="section-number-3">4.11</span> 無向グラフに関するユーティリティ集</h3>
 <div class="outline-text-3" id="text-4-11">
+
+
+
+
+
+<div id="outline-container-4-11-1" class="outline-4">
+<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> 複数のノードを直線状につなぐ関数：&ndash;&ndash;&ndash;</h4>
+<div class="outline-text-4" id="text-4-11-1">
+
+
+<pre class="src src-lisp">(--- <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) <span style="color: #90ee90;">"e"</span>)
+</pre>
+
+
+
+
+
+<p>
+<img src="./images/liner.png"  alt="./images/liner.png" />
+</p>
+<p>
+ <b>注：</b> 個別にエッジの属性を指定することはできません。
+</p>
+
+
+</div>
+
+<div id="outline-container-4-11-1" class="outline-4">
+<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> 複数のノードを環状につなぐ関数：O</h4>
+<div class="outline-text-4" id="text-4-11-1">
+
+
+
+
+
+<pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">O</span> (<span style="color: #eeee00;">&amp;rest</span> nodes)
+  (apply #'--- (conc1 nodes (1st nodes))))
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4-11-2" class="outline-4">
+<h4 id="sec-4-11-2"><span class="section-number-4">4.11.2</span> 1つのノードを多数のノードとつなぐ関数：-&lt;</h4>
+<div class="outline-text-4" id="text-4-11-2">
+
+
+<p>
+　 <code>-&lt;</code> は、複数のノード（とエッジの属性）を引数に取り、
+先頭のノードとそれ以外のすべてのノードとを結んだ部分グラフを生成する関数です。
+ <code>-&gt;&gt;</code> の無向グラフ版です。
+</p>
+
+
+<pre class="src src-lisp">(-&lt; <span style="color: #90ee90;">"a"</span>
+    <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"c"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:goldenrod</span>) (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>))
+</pre>
+
+
+
+
+<p>
+<img src="./images/radiate-path.png"  alt="./images/radiate-path.png" />
+</p>
+<p>
+　
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4-12" class="outline-3">
+<h3 id="sec-4-12"><span class="section-number-3">4.12</span> Html-Likeラベル</h3>
+<div class="outline-text-3" id="text-4-12">
 
 
 <p>
@@ -2296,9 +2183,9 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 </div>
 
-<div id="outline-container-4-12" class="outline-3">
-<h3 id="sec-4-12"><span class="section-number-3">4.12</span> 小さなプログラム &mdash; カレンダー、2分木、コンスセル、有限オートマトン</h3>
-<div class="outline-text-3" id="text-4-12">
+<div id="outline-container-4-13" class="outline-3">
+<h3 id="sec-4-13"><span class="section-number-3">4.13</span> 小さなプログラム &mdash; カレンダー、2分木、コンスセル、有限オートマトン</h3>
+<div class="outline-text-3" id="text-4-13">
 
 
 <p>
@@ -2314,14 +2201,14 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 </div>
 
-<div id="outline-container-4-12-1" class="outline-4">
-<h4 id="sec-4-12-1"><span class="section-number-4">4.12.1</span> カレンダー</h4>
-<div class="outline-text-4" id="text-4-12-1">
+<div id="outline-container-4-13-1" class="outline-4">
+<h4 id="sec-4-13-1"><span class="section-number-4">4.13.1</span> カレンダー</h4>
+<div class="outline-text-4" id="text-4-13-1">
 
 
 <p>
 　Grapvizによってカレンダーを描くという例は、Mihalis Tsoukalos氏による<a href="http://www.linuxjournal.com/article/7275">An Introduction to GraphViz</a>より拝借しました。
-ただし、もとの例はカレンダーを描くdotコードを生成するPerlプログラムを書くというものです。
+もとの例は、カレンダーを描くためのdotコードファイルを生成するPerlプログラムを書くというものです。
 </p>
 
 
@@ -2340,19 +2227,19 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 <pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">generate-monthly-calendar</span> (month year num-days starting-day)
   (<span style="color: #eeee00;">let</span> ((month (&lt;&gt; (format nil <span style="color: #90ee90;">"~@(~A~)\\n~D"</span> month year) <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:Msquare</span>))
-        (weeks (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> day <span style="color: #00ee76;">:in</span> '(<span style="color: #90ee90;">"Sun"</span> <span style="color: #90ee90;">"Mon"</span> <span style="color: #90ee90;">"Tue"</span> <span style="color: #90ee90;">"Wed"</span> <span style="color: #90ee90;">"Thu"</span> <span style="color: #90ee90;">"Fri"</span> <span style="color: #90ee90;">"Sat"</span>)
-                     <span style="color: #00ee76;">:collect</span> (&lt;&gt; day <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:egg</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:lightgray</span>)))
+        (luminary7 (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> day <span style="color: #00ee76;">:in</span> '(<span style="color: #90ee90;">"Sun"</span> <span style="color: #90ee90;">"Mon"</span> <span style="color: #90ee90;">"Tue"</span> <span style="color: #90ee90;">"Wed"</span> <span style="color: #90ee90;">"Thu"</span> <span style="color: #90ee90;">"Fri"</span> <span style="color: #90ee90;">"Sat"</span>)
+                         <span style="color: #00ee76;">:collect</span> (&lt;&gt; day <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:egg</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:lightgray</span>)))
         (days (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> day <span style="color: #00ee76;">:in</span> (nconc (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:repeat</span> starting-day <span style="color: #00ee76;">:collect</span> <span style="color: #90ee90;">""</span>)
-                                        (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> day <span style="color: #00ee76;">:from</span> 1 <span style="color: #00ee76;">:to</span> num-days <span style="color: #00ee76;">:collect</span> day)
+                                        (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> d <span style="color: #00ee76;">:from</span> 1 <span style="color: #00ee76;">:to</span> num-days <span style="color: #00ee76;">:collect</span> d)
                                         (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:repeat</span> (- (* 7 (<span style="color: #eeee00;">if</span> (and (= 28 num-days) (= 0 starting-day))
                                                                   4 5)) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">for Feb starting Sun in common year </span>
                                                          starting-day num-days)
                                               <span style="color: #00ee76;">:collect</span> <span style="color: #90ee90;">""</span>))
                     <span style="color: #00ee76;">:collect</span> (&lt;&gt; day <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:box</span>))))
-    (apply #'<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> week <span style="color: #00ee76;">:in</span> (cons weeks (group 7 days))
+    (apply #'<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> week <span style="color: #00ee76;">:in</span> (cons luminary7 (group 7 days))
                       <span style="color: #00ee76;">:collect</span> (apply #'--&gt; month week)))))
 
-<span style="color: #eeee00;">;; </span><span style="color: #eeee00;">from on lisp</span>
+<span style="color: #eeee00;">;; </span><span style="color: #eeee00;">from On Lisp</span>
 (<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">group</span> (n lst)
   (<span style="color: #eeee00;">if</span> (zerop n) (<span style="color: #ee0000;">error</span> <span style="color: #90ee90;">"zero length"</span>))
   (<span style="color: #eeee00;">labels</span> ((rec (lst acc)
@@ -2365,15 +2252,20 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 
 <p>
+　関数generate-monthly-calendarは、引数として、月の名前month、年year、 月の日数num-days、1日の曜日starting-dayを取り、
+カレンダーを表すグラフを返します。
+'1日の曜日'とは、日曜を0、月曜を1、&hellip;土曜を6に、それぞれ対応させた数値です。
+</p>
+<p>
 　
 </p>
 </div>
 
 </div>
 
-<div id="outline-container-4-12-2" class="outline-4">
-<h4 id="sec-4-12-2"><span class="section-number-4">4.12.2</span> 2分木</h4>
-<div class="outline-text-4" id="text-4-12-2">
+<div id="outline-container-4-13-2" class="outline-4">
+<h4 id="sec-4-13-2"><span class="section-number-4">4.13.2</span> 2分木</h4>
+<div class="outline-text-4" id="text-4-13-2">
 
 
 
@@ -2396,26 +2288,28 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 
 <pre class="src src-lisp"><span class="linenr"> 1:  </span>(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">binary-tree-graph</span> (tree)
-<span class="linenr"> 2:  </span>  (<span style="color: #eeee00;">labels</span> ((rec (x)
-<span class="linenr"> 3:  </span>             (<span style="color: #eeee00;">let</span> ((p (first x)) (lc (second x)) (rc (third x)))
-<span class="linenr"> 4:  </span>               (<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">when</span> lc
-<span class="linenr"> 5:  </span>                     (<span style="color: #eeee00;">if</span> (atom lc)
-<span class="linenr"> 6:  </span>                         (-&gt; p lc)
-<span class="linenr"> 7:  </span>                         (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; p (car lc)) (rec lc))))
-<span class="linenr"> 8:  </span>                   (<span style="color: #eeee00;">when</span> rc
-<span class="linenr"> 9:  </span>                     (<span style="color: #eeee00;">if</span> (atom rc)
-<span class="linenr">10:  </span>                         (-&gt; p rc)
-<span class="linenr">11:  </span>                         (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; p (car rc)) (rec rc))))))))
-<span class="linenr">12:  </span>    (<span style="color: #eeee00;">if</span> (null (cdr tree))
-<span class="linenr">13:  </span>        (car tree)
-<span class="linenr">14:  </span>        (rec tree))))
+<span class="linenr"> 2:  </span>  (<span style="color: #eeee00;">if</span> (null tree)
+<span class="linenr"> 3:  </span>      (<span style="color: #eeee00;">&amp;&amp;</span>)
+<span class="linenr"> 4:  </span>      (<span style="color: #eeee00;">labels</span> ((rec (x)
+<span class="linenr"> 5:  </span>                 (<span style="color: #eeee00;">let</span> ((p (first x)) (lc (second x)) (rc (third x)))
+<span class="linenr"> 6:  </span>                   (<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">when</span> lc
+<span class="linenr"> 7:  </span>                         (<span style="color: #eeee00;">if</span> (atom lc)
+<span class="linenr"> 8:  </span>                             (-&gt; p lc)
+<span class="linenr"> 9:  </span>                             (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; p (first lc)) (rec lc))))
+<span class="linenr">10:  </span>                       (<span style="color: #eeee00;">when</span> rc
+<span class="linenr">11:  </span>                         (<span style="color: #eeee00;">if</span> (atom rc)
+<span class="linenr">12:  </span>                             (-&gt; p rc)
+<span class="linenr">13:  </span>                             (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; p (first rc)) (rec rc))))))))
+<span class="linenr">14:  </span>        (<span style="color: #eeee00;">if</span> (null (rest tree))
+<span class="linenr">15:  </span>            (first tree)
+<span class="linenr">16:  </span>            (rec tree)))))
 </pre>
 
 
 <p>
-　関数 <code>binary-tree-graph</code> は、(parent left-child right-child)構造のツリーを再帰的に下り2分木グラフを生成します。
-3行目、マッチに失敗した場合にエラーが発生するので、letをdestructuring-bindに置き換えることはできません。
-12行目、ツリーがルートのみで構成されているかどうかをチェック。
+　関数 <code>binary-tree-graph</code> は、(parent left-child right-child)構造のツリーを再帰的に下り2分木グラフを生成します(cf. <a href="#sec-5-1-6">例6 Binary search tree using records</a>)。
+5行目、マッチに失敗した場合にエラーが発生するので、letをdestructuring-bindに置き換えることはできません。
+14行目、ツリーがルートのみで構成されているかどうかをチェックします。
 </p>
 
 
@@ -2426,9 +2320,9 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 </div>
 
-<div id="outline-container-4-12-3" class="outline-4">
-<h4 id="sec-4-12-3"><span class="section-number-4">4.12.3</span> コンスセル</h4>
-<div class="outline-text-4" id="text-4-12-3">
+<div id="outline-container-4-13-3" class="outline-4">
+<h4 id="sec-4-13-3"><span class="section-number-4">4.13.3</span> コンスセル</h4>
+<div class="outline-text-4" id="text-4-13-3">
 
 
 
@@ -2476,7 +2370,7 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 
 <p>
-　マクロcons-cell-of<sup><a class="footref" name="fnr.14" href="#fn.14">14</a></sup>は、ツリーを引数に取り、ツリーのコンスセル構造を描くグラフを生成します。
+　マクロcons-cell-of<sup><a class="footref" name="fnr.13" href="#fn.13">13</a></sup>は、ツリーを引数に取り、ツリーのコンスセル構造を描くグラフを生成します。
 展開の過程で、いったんツリーをツリー構造を表すコードに変換し、その後、グラフを生成するコードに変換します。
 </p>
 
@@ -2515,9 +2409,9 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 </div>
 
-<div id="outline-container-4-12-4" class="outline-4">
-<h4 id="sec-4-12-4"><span class="section-number-4">4.12.4</span> 有限オートマトン</h4>
-<div class="outline-text-4" id="text-4-12-4">
+<div id="outline-container-4-13-4" class="outline-4">
+<h4 id="sec-4-13-4"><span class="section-number-4">4.13.4</span> 有限オートマトン</h4>
+<div class="outline-text-4" id="text-4-13-4">
 
 
 
@@ -2543,7 +2437,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
   (<span style="color: #eeee00;">let*</span> ((states (mapcar #'first trans-fn-list))
          (gs     (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:repeat</span> (length states) <span style="color: #00ee76;">:collect</span> (gensym)))
          (s-gs   (mapcar #'list states gs)))
-    (<span style="color: #eeee00;">with-gensyms</span> (s0)
+    (<span style="color: #eeee00;">let</span> ((s0 (gensym)))
       `(<span style="color: #eeee00;">let</span> ,(cons `(,s0 (&lt;&gt; <span style="color: #90ee90;">""</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:point</span>))
                    (mapcar (<span style="color: #eeee00;">lambda</span> (s g) (<span style="color: #eeee00;">if</span> (member s final-states <span style="color: #00ee76;">:test</span> #'equal)
                                              `(,g (&lt;&gt; ,(format nil <span style="color: #90ee90;">"~S"</span> s) <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:doublecircle</span>))
@@ -2553,9 +2447,8 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
                (-&gt; ,s0 ,(s-&gt;g start-state s-gs))
                ,@(<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> g <span style="color: #00ee76;">:in</span> gs
                        <span style="color: #00ee76;">:for</span> lst <span style="color: #00ee76;">:in</span> trans-fn-list
-                       <span style="color: #00ee76;">:collect</span> `(-&gt;&gt; ,g
-                                   ,@(<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> e <span style="color: #00ee76;">:in</span> (rest lst)
-                                           <span style="color: #00ee76;">:collect</span> `(,(s-&gt;g (second e) s-gs) <span style="color: #00ee76;">:label</span> ,(first e)))))))))))
+                       <span style="color: #00ee76;">:nconc</span> (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> e <span style="color: #00ee76;">:in</span> (rest lst)
+                                    <span style="color: #00ee76;">:collect</span> `(-&gt; ,g ,(s-&gt;g (second e) s-gs) <span style="color: #00ee76;">:label</span> ,(first e))))))))))
 
 (<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">s-&gt;g</span> (state state-gensyms)
   (second (assoc state state-gensyms <span style="color: #00ee76;">:test</span> #'equal)))
@@ -2589,9 +2482,9 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 </div>
 
-<div id="outline-container-4-13" class="outline-3">
-<h3 id="sec-4-13"><span class="section-number-3">4.13</span> Tips</h3>
-<div class="outline-text-3" id="text-4-13">
+<div id="outline-container-4-14" class="outline-3">
+<h3 id="sec-4-14"><span class="section-number-3">4.14</span> Tips</h3>
+<div class="outline-text-3" id="text-4-14">
 
 
 <p>
@@ -2600,9 +2493,9 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 </div>
 
-<div id="outline-container-4-13-1" class="outline-4">
-<h4 id="sec-4-13-1"><span class="section-number-4">4.13.1</span> letの後には&amp;&amp;を。</h4>
-<div class="outline-text-4" id="text-4-13-1">
+<div id="outline-container-4-14-1" class="outline-4">
+<h4 id="sec-4-14-1"><span class="section-number-4">4.14.1</span> letの後には&amp;&amp;を。</h4>
+<div class="outline-text-4" id="text-4-14-1">
 
 
 
@@ -2631,9 +2524,9 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 </div>
 
-<div id="outline-container-4-13-2" class="outline-4">
-<h4 id="sec-4-13-2"><span class="section-number-4">4.13.2</span> グラフの規則性に着目すべし。</h4>
-<div class="outline-text-4" id="text-4-13-2">
+<div id="outline-container-4-14-2" class="outline-4">
+<h4 id="sec-4-14-2"><span class="section-number-4">4.14.2</span> グラフの規則性に着目すべし。</h4>
+<div class="outline-text-4" id="text-4-14-2">
 
 
 <p>
@@ -2722,13 +2615,16 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <pre class="src src-lisp">($$ (<span style="color: #eeee00;">let</span> ((main (&lt;&gt; <span style="color: #90ee90;">"main"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:box</span>))
           (make-string (&lt;&gt; <span style="color: #90ee90;">"make a\\nstring"</span>)))
       (&amp; (<span style="color: #00ee76;">:size</span> <span style="color: #90ee90;">"4,4"</span>)
-        (-&gt;&gt; main (<span style="color: #90ee90;">"parse"</span> <span style="color: #00ee76;">:weight</span> 8) (<span style="color: #90ee90;">"init"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:dotted</span>) <span style="color: #90ee90;">"cleanup"</span>)
-        (-&gt;  <span style="color: #90ee90;">"parse"</span> <span style="color: #90ee90;">"execute"</span>)
+        (-&gt; main <span style="color: #90ee90;">"parse"</span> <span style="color: #00ee76;">:weight</span> 8)
+        (-&gt; <span style="color: #90ee90;">"parse"</span> <span style="color: #90ee90;">"execute"</span>)
+        (-&gt; main <span style="color: #90ee90;">"init"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:dotted</span>)
+        (-&gt; main <span style="color: #90ee90;">"cleanup"</span>)
         (-&gt;&gt; <span style="color: #90ee90;">"execute"</span> make-string <span style="color: #90ee90;">"printf"</span>)
         (-&gt;  <span style="color: #90ee90;">"init"</span> make-string)
         (<span style="color: #eeee00;">with-edge</span> (<span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
           (-&gt; main <span style="color: #90ee90;">"printf"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:bold</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"100 times"</span>)
-          (-&gt; <span style="color: #90ee90;">"execute"</span> (&lt;&gt; <span style="color: #90ee90;">"compare"</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:box</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:color</span> <span style="color: #90ee90;">".7 .3 1.0"</span>))))))
+          (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:box</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:color</span> <span style="color: #90ee90;">".7 .3 1.0"</span>)
+            (-&gt; <span style="color: #90ee90;">"execute"</span> <span style="color: #90ee90;">"compare"</span>))))))
 </pre>
 
 
@@ -2903,6 +2799,44 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <p>
 <img src="./images/example6.png"  alt="./images/example6.png" />
 </p>
+
+<p>
+　以下の様に関数bst-graphを定義することで任意の二分探索木をグラフとして出力することもできます。
+関数bst-graphは、(parent left-child right-child)の形の二分探索木を再帰的に下り、グラフを生成します(cf. <a href="#sec-4-13-2">2分木</a>)。
+</p>
+
+
+<pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">bst-graph</span> (tree)
+  (<span style="color: #eeee00;">if</span> (null tree)
+      (<span style="color: #eeee00;">&amp;&amp;</span>)
+      (<span style="color: #eeee00;">labels</span> ((rec (root-node tree)
+                 (<span style="color: #eeee00;">let</span> ((lc (second tree)) (rc (third tree)))
+                   (<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">when</span> lc
+                         (<span style="color: #eeee00;">if</span> (atom lc)
+                             (-&gt; (@ root-node <span style="color: #00ee76;">:f0</span>) (@ (bst-node lc) <span style="color: #00ee76;">:f1</span>))
+                             (<span style="color: #eeee00;">let</span> ((lc-node (bst-node (first lc))))
+                               (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; (@ root-node <span style="color: #00ee76;">:f0</span>) (@ lc-node <span style="color: #00ee76;">:f1</span>))
+                                   (rec lc-node lc)))))
+                       (<span style="color: #eeee00;">when</span> rc
+                         (<span style="color: #eeee00;">if</span> (atom rc)
+                             (-&gt; (@ root-node <span style="color: #00ee76;">:f2</span>) (@ (bst-node rc) <span style="color: #00ee76;">:f1</span>))
+                             (<span style="color: #eeee00;">let</span> ((rc-node (bst-node (first rc))))
+                               (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; (@ root-node <span style="color: #00ee76;">:f2</span>) (@ rc-node <span style="color: #00ee76;">:f1</span>))
+                                   (rec rc-node rc)))))))))
+        (<span style="color: #eeee00;">if</span> (null (cdr tree))
+            (bst-node (first tree))
+            (rec (bst-node (first tree)) tree)))))
+
+(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">bst-node</span> (symb)
+  ([] (format nil <span style="color: #90ee90;">"~@{~A~}"</span> <span style="color: #90ee90;">":f0 |:f1 "</span> symb <span style="color: #90ee90;">"|:f2"</span>)))
+
+($$ (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:height</span> .1)             <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#19978;&#12392;&#21516;&#27096;&#12398;&#12464;&#12521;&#12501;&#12364;&#20986;&#21147;&#12373;&#12428;&#12427;&#12290;</span>
+      (bst-graph '(g (e (b a c)
+                        f)
+                     (r h y)))))
+</pre>
+
+
 </div>
 
 </div>
@@ -2971,6 +2905,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <div id="outline-container-5-1-9" class="outline-4">
 <h4 id="sec-5-1-9"><span class="section-number-4">5.1.9</span> 例9 Clusters</h4>
 <div class="outline-text-4" id="text-5-1-9">
+
 
 
 
@@ -3063,7 +2998,8 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
             (c1 ([&amp;] () (-&gt;&gt; <span style="color: #90ee90;">"e"</span> <span style="color: #90ee90;">"g"</span> <span style="color: #90ee90;">"f"</span>))))
         (<span style="color: #eeee00;">&amp;&amp;</span> c0 c1
             (-&gt; <span style="color: #90ee90;">"b"</span> <span style="color: #90ee90;">"f"</span> <span style="color: #00ee76;">:lhead</span> c1)
-            (-&gt;&gt; <span style="color: #90ee90;">"c"</span> (<span style="color: #90ee90;">"g"</span> <span style="color: #00ee76;">:ltail</span> c0 <span style="color: #00ee76;">:lhead</span> c1) (<span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:ltail</span> c0))
+            (-&gt; <span style="color: #90ee90;">"c"</span> <span style="color: #90ee90;">"g"</span> <span style="color: #00ee76;">:ltail</span> c0 <span style="color: #00ee76;">:lhead</span> c1)
+            (-&gt; <span style="color: #90ee90;">"c"</span> <span style="color: #90ee90;">"e"</span> <span style="color: #00ee76;">:ltail</span> c0)
             (-&gt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #90ee90;">"e"</span> <span style="color: #90ee90;">"h"</span>)))))
 </pre>
 
@@ -3316,14 +3252,18 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
      (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:box</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span>)
        (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:width</span> .3 <span style="color: #00ee76;">:height</span> .3 <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:octagon</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:skyblue</span>)
          <span style="color: #90ee90;">"A1"</span> <span style="color: #90ee90;">"A2"</span> <span style="color: #90ee90;">"A3"</span>)
-       (-&lt; <span style="color: #90ee90;">"A"</span> (<span style="color: #90ee90;">"A1"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #6"</span>) (<span style="color: #90ee90;">"A2"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #7"</span>) (<span style="color: #90ee90;">"A3"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #8"</span>))
+       (radiate <span style="color: #90ee90;">"A"</span> '((<span style="color: #90ee90;">"A1"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #6"</span>) (<span style="color: #90ee90;">"A2"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #7"</span>) (<span style="color: #90ee90;">"A3"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #8"</span>)))
        (<span style="color: #eeee00;">with-edge</span> (<span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:invis</span> <span style="color: #00ee76;">:len</span> 1.3) (--- <span style="color: #90ee90;">"A1"</span> <span style="color: #90ee90;">"A2"</span> <span style="color: #90ee90;">"A3"</span>))
        (<span style="color: #eeee00;">with-edge</span> (<span style="color: #00ee76;">:len</span> 3)
-         (-&lt; <span style="color: #90ee90;">"A"</span> (<span style="color: #90ee90;">"B"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #1"</span>) (<span style="color: #90ee90;">"C"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #2"</span>) (<span style="color: #90ee90;">"D"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #3"</span>)
-                 (<span style="color: #90ee90;">"E"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #4"</span>) (<span style="color: #90ee90;">"F"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #5"</span>))
-         (-&lt; <span style="color: #90ee90;">"B"</span> (<span style="color: #90ee90;">"C"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #1"</span>) (<span style="color: #90ee90;">"E"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #2"</span>) (<span style="color: #90ee90;">"F"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #3"</span>))
+         (radiate <span style="color: #90ee90;">"A"</span> '((<span style="color: #90ee90;">"B"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #1"</span>) (<span style="color: #90ee90;">"C"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #2"</span>) (<span style="color: #90ee90;">"D"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #3"</span>)
+                        (<span style="color: #90ee90;">"E"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #4"</span>) (<span style="color: #90ee90;">"F"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #5"</span>)))
+         (radiate <span style="color: #90ee90;">"B"</span> '((<span style="color: #90ee90;">"C"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #1"</span>) (<span style="color: #90ee90;">"E"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #2"</span>) (<span style="color: #90ee90;">"F"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #3"</span>)))
          (-- <span style="color: #90ee90;">"C"</span> <span style="color: #90ee90;">"D"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #1"</span>)
          (-- <span style="color: #90ee90;">"D"</span> <span style="color: #90ee90;">"E"</span> <span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"l #1"</span>)))))
+
+(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">radiate</span> (origin node-edge-attrs-list)
+  (apply #'<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> node-edge-attrs <span style="color: #00ee76;">:in</span> node-edge-attrs-list
+                    <span style="color: #00ee76;">:collect</span> (apply #'-- origin node-edge-attrs))))
 </pre>
 
 
@@ -3507,7 +3447,7 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 
 <p>
-　エッジコンストラクタ-&gt;とエッジユーティリティ(&mdash;,&lt;-,&mdash;&gt;,-&mdash;,?,O)によって生成されるオブジェクトのみがedge型のオブジェクトである。
+　エッジコンストラクタ-&gt;とエッジユーティリティ(&mdash;,&mdash;&gt;,-&mdash;,?,O)によって生成されるオブジェクトのみがedge型のオブジェクトである。
 </p>
 <p>
 エッジ属性の種類については、下記のリンク先を参照せよ。
@@ -3538,7 +3478,7 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 </p>
 <dl>
-<dt><b>&ndash;&ndash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; path</dt><dd>
+<dt><b>&ndash;&ndash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; edge</dt><dd>
 
 </dd>
 </dl>
@@ -3561,21 +3501,11 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 <p>
 　
 </p>
-<dl>
-<dt><b>&lt;-</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; edge</dt><dd>
-</dd>
-</dl>
-
-<p>　[Function]　
-</p>
-<p>
-　
-</p>
 
 
 </p>
 <dl>
-<dt><b>&ndash;&ndash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edges</dt><dd>
+<dt><b>&ndash;&ndash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edge</dt><dd>
 
 </dd>
 </dl>
@@ -3588,51 +3518,31 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 　
 </p>
 <dl>
-<dt><b>-&gt;&gt;</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
+<dt><b>-&gt;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edge</dt><dd>
 </dd>
 </dl>
 
-<p>　[Macro]　
+<p>　[Function]　
 </p>
 <p>
 　
 </p>
 <dl>
-<dt><b>==&gt;</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
+<dt><b>==&gt;</b>  &amp;rest <i>nodes</i> =&gt; edge</dt><dd>
 </dd>
 </dl>
 
-<p>　[Macro]　
+<p>　[Function]　
 </p>
 <p>
 　
 </p>
 <dl>
-<dt><b>&lt;==</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
+<dt><b>-&lt;</b>  &amp;rest <i>nodes</i> =&gt; edge</dt><dd>
 </dd>
 </dl>
 
-<p>　[Macro]　
-</p>
-<p>
-　
-</p>
-<dl>
-<dt><b>-&lt;</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
-</dd>
-</dl>
-
-<p>　[Macro]　
-</p>
-<p>
-　
-</p>
-<dl>
-<dt><b>&gt;-</b>  &amp;rest <i>nodes</i> =&gt; graph</dt><dd>
-</dd>
-</dl>
-
-<p>　[Macro]　
+<p>　[Function]　
 </p>
 <p>
 　
@@ -3653,11 +3563,11 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 　
 </p>
 <dl>
-<dt><b>O</b>  &amp;rest <i>nodes</i> =&gt; paths</dt><dd>
+<dt><b>O</b>  &amp;rest <i>nodes</i> =&gt; edge</dt><dd>
 </dd>
 </dl>
 
-<p>　[Macro]　
+<p>　[Function]　
 </p>
 <p>
 　
@@ -3686,7 +3596,7 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 <p>
 　グラフコンストラクタ&amp; (or &amp;&amp;)によって生成されるオブジェクトはgraph型のオブジェクトである。
-with-系のユーティリティの返り値、エッジユーティリティ(-&gt;&gt;,==&gt;,&lt;==,-&lt;,&gt;-)の返り値、[&amp;]によって生成されるクラスタもgraphのオブジェクト型とみなされる。
+with-系のユーティリティの返り値、[&amp;]によって生成されるクラスタもgraphのオブジェクト型とみなされる。
 これら以外のものはgraph型のオブジェクトではない。
 </p>
 <p>
@@ -3792,7 +3702,7 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 </dd>
 </dl>
 
-<p>　[Macro]　プロパティリストをnilに指定する以外、$と同様の動作を行う。
+<p>　[Macro]　プロパティリストをnilに指定する以外の動作は$と同様のもの。
 </p>
 <p>
 　
@@ -3860,27 +3770,12 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 <b>優先度順</b>
 </p>
 <ul>
-<li><b>!!バグ!!</b>: with-node, with-edge;
-  let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、
-  束縛変数の初期出現時の属性コンテキストに影響されてしまう。
+<li><b>!!バグ!!: with-node, with-edge;</b>
+  <b>let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。</b>
+
 </li>
-</ul>
-
-
-
-<ul>
-<li><b>!変更!</b>: -&gt;&gt;, ==&gt;, &lt;==, -&lt;, &gt;-;
-  マクロではなく関数として定義する。lispに反するため。
-</li>
-</ul>
-
-
-
-<ul>
 <li>日本語版ドキュメントの完成。
 <ul>
-<li>チュートリアル：html-likeラベル。
-</li>
 <li>リファレンスマニュアル。
 </li>
 </ul>
@@ -3998,38 +3893,35 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 したがって、 <code>(-&gt; "a" "a")</code> は自己ループを生成します。
 一方、 <code>(-&gt; (&lt;&gt; "a") (&lt;&gt; "a"))</code> は、aとラベルされた2つの異なるノードを生成し、それらの間にエッジを張ります。
 したがって、 <code>(-&gt; (&lt;&gt; "a") (&lt;&gt; "a"))</code> は、ノードaと別なノードaの間に張られたエッジを生成します。
-コード <code>(&lt;&gt; "a" :color :red)</code> により生成されるノードに自己ループを張るには、 <code>(let ((n (&lt;&gt; "a" :color :red))) (-&gt; n n))</code> とするか、またはユーティリティ<a href="#sec-4-9-2-2">?</a>を使って <code>(? (&lt;&gt; "a" :color :red))</code> とする必要があります。
+コード <code>(&lt;&gt; "a" :color :red)</code> により生成されるノードに自己ループを張るには、 <code>(let ((n (&lt;&gt; "a" :color :red))) (-&gt; n n))</code> とするか、またはユーティリティ<a href="#sec-4-9-2">?</a>を使って <code>(? (&lt;&gt; "a" :color :red))</code> とする必要があります。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.7" href="#fnr.7">7</a></sup> Dot言語に詳しい方のための補足です。
-Donutsでは、縦棒 <code>|</code> 、角カッコ <code>[</code>, <code>]</code> 、三角カッコ <code>&lt;</code>, <code>&gt;</code> をエスケープする必要はありません。
-</p>
-
-<p class="footnote"><sup><a class="footnum" name="fn.8" href="#fnr.8">8</a></sup> 本当は何も印字されないのが空白さ。
-</p>
-
-<p class="footnote"><sup><a class="footnum" name="fn.9" href="#fnr.9">9</a></sup> より正確には、属性を指定する順を変えた場合、出力されるdotコードは別のものです。
+<p class="footnote"><sup><a class="footnum" name="fn.7" href="#fnr.7">7</a></sup> より正確には、属性を指定する順を変えた場合、出力されるdotコードは別のものです。
 しかし、そのdotコードから生成されるグラフ画像の見た目は同じものです。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.10" href="#fnr.10">10</a></sup> より正確には、 <code>(&amp;&amp; "")</code> は最も単純なグラフの生成コードであり、グラフ生成の最も単純なコードは <code>(&amp;&amp; 一桁の数)</code> です。
+<p class="footnote"><sup><a class="footnum" name="fn.8" href="#fnr.8">8</a></sup> Dot言語に詳しい方のための補足です。
+Donutsでは、縦棒 <code>|</code> 、角カッコ <code>[</code>, <code>]</code> 、三角カッコ <code>&lt;</code>, <code>&gt;</code> をエスケープする必要はありません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.11" href="#fnr.11">11</a></sup> もちろん、やや手間はかかりますが、画像ファイルをビューアで見るために、
+<p class="footnote"><sup><a class="footnum" name="fn.9" href="#fnr.9">9</a></sup> 本当は何も印字されないのが空白さ。
+</p>
+
+<p class="footnote"><sup><a class="footnum" name="fn.10" href="#fnr.10">10</a></sup> もちろん、やや手間はかかりますが、画像ファイルをビューアで見るために、
 with-open-file内で*standart-output*を束縛し、
 dot-outputによってdotファイルを出力し、そのdotファイルをGraphvizで画像ファイルに変換し、
 それをビューアで見るという方法もあります。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.12" href="#fnr.12">12</a></sup> ただし、方位ポートで既に使用されているn,ne,se,s,sw,w,nw,c,_ をフィールドポート名に付けることは、
+<p class="footnote"><sup><a class="footnum" name="fn.11" href="#fnr.11">11</a></sup> ただし、方位ポートで既に使用されているn,ne,se,s,sw,w,nw,c,_ をフィールドポート名に付けることは、
 コードの読みやすさの観点から、あまりおすすめできません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.13" href="#fnr.13">13</a></sup> Dot言語に詳しい方のための補足です。
+<p class="footnote"><sup><a class="footnum" name="fn.12" href="#fnr.12">12</a></sup> Dot言語に詳しい方のための補足です。
 グラフ中で1つでも <code>--</code> または <code>---</code> を使用した場合、Donutsで出力されるdotコードの宣言が自動的に <code>digraph</code> ではなく <code>graph</code> になります。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> マクロcons-cell-ofを書く際に、
+<p class="footnote"><sup><a class="footnum" name="fn.13" href="#fnr.13">13</a></sup> マクロcons-cell-ofを書く際に、
 David S. Touretzkyによる素晴らしいLisp入門書、
 <a href="http://www.cs.cmu.edu/~dst/LispBook/">Common Lisp: A Gentle Introduction to Symbolic Computation</a>のAppendix AのSDRAWのコードが大変参考になりました。
 SDRAWは、ループ構造も含む任意のリストを引数に取り、そのコンスセル構造を標準出力にディスプレイするライブラリです。
@@ -4044,7 +3936,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-15 23:08:43 JST</p>
+<p class="date">Date: 2012-05-18 02:00:25 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

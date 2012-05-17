@@ -1,6 +1,6 @@
-;;;; Last Updated : 2012/05/17 11:00:53 tkych
+;;;; Last Updated : 2012/05/17 20:38:45 tkych
 
-;; Application package for donuts
+;; utilities in donuts/src/
 
 ;; Copyright (c) 2012 Takaya OCHIAI
 
@@ -25,20 +25,36 @@
 ;; SOFTWARE.
 
 ;;====================================================================
-;; Packages
+;; Utilities for Donuts
 ;;====================================================================
-(in-package :cl-user)
+(in-package :in-donuts)
 
-(defpackage :donuts
-  (:use :cl)
-  (:import-from :in-donuts :<> :[] :rank :~ :@ :with-node
-                           :-> :--> :->> :==> :? :with-edge
-                           :-- :--- :-< :O
-                           :& :[&] :&& :with-graph
-                           :dot-output :dot-pprint :$ :$$
-                           :html :br :hr :vr :img
-                           :font :i :b :u :sub :sup :table :tr :td
-                           ))
+(defmacro make-with (with-type attrs &body body)
+  (let ((start (make-sesame :with-start
+                            (format nil "~&  { ~(~A~) [~{~A=~A~^,~}];"
+                                    with-type (escape-attrs attrs))))
+        (end (make-sesame :with-end (format nil "~&  };"))))
+    `(& () ',start ,@body ',end)))
 
-(pushnew :donuts *features*)
+(defmacro with-node ((&rest node-attrs) &body body)
+  `(make-with :node ,node-attrs ,@body))
+
+(defmacro with-edge ((&rest edge-attrs) &body body)
+  `(make-with :edge ,edge-attrs ,@body))
+
+(defmacro with-graph ((&rest graph-attrs) &body body)
+  `(make-with :graph ,graph-attrs ,@body))
+
+(defmacro $$ (graph)
+  `($ () ,graph))
+
+(defun ~ (&rest nodes)
+  (apply #'rank :same nodes))
+
+(defun ? (node &rest edge-attrs)
+  (apply #'-> node node edge-attrs))
+
+(defun O (&rest nodes)
+  (apply #'--- (conc1 nodes (1st nodes))))
+
 ;;====================================================================

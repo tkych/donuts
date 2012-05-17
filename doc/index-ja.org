@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/15 23:08:00 tkych
+### Last Updated : 2012/05/18 02:00:03 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -44,7 +44,7 @@ digraph graph_T377 {
 
 #+SRCNAME: reading-algorithm.lisp
 #+BEGIN_SRC lisp :exports none
-  ($ ()
+  ($$
      (& (:size "7,7" :label "このドキュメントを読むためのフローチャート（クリックで拡大します）"
                 :labelloc t :fontsize 22)
        (with-node (:style :bold)
@@ -90,7 +90,7 @@ digraph graph_T377 {
                (apply #'-> c5 draw-graph no-attrs)
                (apply #'-> c6 c6-yes yes-attrs)
                (apply #'-> c6 c6-no no-attrs)
-               (<== draw-graph c6-yes c6-no)))))))
+               (==> c6-yes c6-no draw-graph)))))))
 #+END_SRC
 
 
@@ -159,7 +159,7 @@ digraph graph_T1555 {
 ##--------------------------------------------------------------------
 
 　 *DonutsはCommon Lispのためのグラフ作成ドメイン固有言語（DSL）です。*
-Donutsのゴールは、lisp環境内でちょっとしたグラフを描くことです。
+Donutsのゴールは、Lisp環境内でちょっとしたグラフを描くことです。
 Donutsは、S式で記述されたグラフ構造を、画像としてビューアに出力します
 (実際の内部動作は、S式を[[http://www.graphviz.org/dot-language.html][Dot言語]]のコードに変換し、[[http://graphviz.org/][Graphviz]]により画像を生成し、ビューアに出力するというものです)。
 ざっくり言うとDonutsはLispがDot言語を吸収した言語です。
@@ -184,7 +184,7 @@ Donutsでグラフを作成する際には、すべてのLisp機能(REPL、マ�
 
 　 *すぐにDonutsでグラフを描き始められるように。*
 Donutsの文法はDot言語のものと似ています。
-そこで、Dot言語になじみのある方ならDot言語との類推によって、すぐにグラフを描き始めることができるよう、[[Examples from Graphviz manual]]の章を用意しています。
+そこで、Dot言語になじみのある方ならDot言語との類推によって、すぐにグラフを描き始めることができるように、[[Examples from Graphviz manual]]の章を用意しています。
 Dot言語になじみのない方でも、もちろん大丈夫です。
 Donutsですぐにグラフを描くことができるように、[[%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB][チュートリアル]]の章があります。
 
@@ -194,7 +194,7 @@ Donutsですぐにグラフを描くことができるように、[[%E3%83%81%E3
 また、Donutsの使用の結果として生じた、いかなる不利益に関しても作者は責任を持ちません。
 ライセンスの正確な文言についてはソースコードのヘッダー部分をご確認ください。
 
-　 *Donutsの最新バージョンは0.2.8です。*
+　 *Donutsの最新バージョンは0.3.0です。*
 現在のところDonutsはベータ版です。
 今後の更新予定は[[ToDo]]をご確認ください。
 
@@ -236,7 +236,7 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 
 ** システム依存
 *** 外部システム
-1. [[http://www.graphviz.org/][Graphviz]] by AT&T Research Labs
+1. [[http://www.graphviz.org/][Graphviz]] by AT&T Labs
 
 2. 画像を見るための適当なビューア
 
@@ -548,7 +548,7 @@ Donutsでは、ユーザにはほとんど見えない実装部分で、アイ�
 # |        | コンストラクタ | オペレータ | ユーティティ                                           |
 # |--------+----------------+------------+--------------------------------------------------------|
 # | グラフ | &, [&]         |            | with-graph, &&                                         |
-# | エッジ | ->, ---        |            | with-edge, --->, ->>, ==>, <-, <==, ?, -<, >-, ----, O |
+# | エッジ | ->, ---        |            | with-edge, --->, ->>, ==>, ?, -<, ----, O |
 # | ノード | <>, []         | @, rank    | with-node, ~                                           |
 # | その他 | dot-output     |            | dot-pprint,                                            |
 
@@ -563,7 +563,7 @@ Donutsでは、ユーザにはほとんど見えない実装部分で、アイ�
 </thead>
 <tbody>
 <tr><td class="left">グラフ</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">with-graph, &amp;&amp;</td></tr>
-<tr><td class="left">エッジ</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, &lt;-, &lt;==, ?, -&lt;, &gt;-, &ndash;&ndash;&ndash;, O</td></tr>
+<tr><td class="left">エッジ</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, ?, -&lt;, &ndash;&ndash;&ndash;, O</td></tr>
 
 <tr><td class="left">ノード</td><td class="left">&lt;&gt;, []</td><td class="left">@, rank</td><td class="left">with-node, ~</td></tr>
 <tr><td class="left">その他</td><td class="left">dot-output, $</td><td class="left"></td><td class="left">dot-pprint, $$</td></tr>
@@ -596,8 +596,8 @@ Donutsでは、ユーザにはほとんど見えない実装部分で、アイ�
 - ノードコンストラクタ =<>= でノードを生成する。 =(<> label) ＝＞ node=
 - エッジコンストラクタ =->= で2つのノードを結ぶ。 =(-> node1 node2) ＝＞ edge=
 - グラフコンストラクタ =&&= でエッジやノードやグラフを束ねグラフを生成する。 =(&& . nodes-edges-graphs) ＝＞ graph=
-- シェルインターフェイス =$$= でグラフをビューアに出力する。 =($$ graph) ＝＞ NIL ;ビューアに画像が出力=
-- =dot-output= でグラフのdotコードを標準出力に表示する。  =(dot-output graph) ＝＞ NIL ;標準出力にdotコードが表示=
+- シェルインターフェイス =$$= でグラフをビューアに出力する。 =($$ graph) ＝＞ NIL ;ビューアに画像を出力=
+- =dot-output= でグラフのdotコードを標準出力に表示する。  =(dot-output graph) ＝＞ NIL ;標準出力にdotコードを表示=
 --------------------------------------------------------------------
 
 （ *注：*
@@ -664,7 +664,8 @@ digraph T11 {
 コード =(<> "a" :color :red)= により生成されるノードに自己ループを張るには、 =(let ((n (<> "a" :color :red))) (-> n n))= とするか、またはユーティリティ[[自己ループを生成する関数：?][?]]を使って =(? (<> "a" :color :red))= とする必要があります。
 
 　最後に、S式 =(&& ****)= の意味は、 /グラフ構成要素****を束ねたグラフを生成せよ/ というものです(****は、任意の数のエッジやノードやグラフ)。
-  =&&= は、任意数のグラフ構成要素を引数に取りグラフオブジェクトを生成するマクロで、 *グラフコンストラクタ* と呼んでいます。
+=&&= は、任意数のグラフ構成要素を引数に取りグラフオブジェクトを生成するマクロで、 *グラフコンストラクタ* と呼んでいます。
+グラフ構成要素が何も与えられない場合、すなわち =(&&)= の場合、 *空グラフ* が生成されます。
 
 　この例では、グラフ構成要素としてエッジHello->Worldが =&&= に与えられています。
 その結果、ノードHelloからノードWorldへのエッジを構成要素とする(有向)グラフが生成されています。
@@ -693,41 +694,6 @@ digraph graph_T251 {
 
 #+RESULTS:
 [[file:./images/simple-graph2.png]]
-
-　
-
-##--------------------------------------
-** ラベル
-##--------------------------------------
-　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます[fn:label-diff]。
-
-- =\\無=  空白が印字される[fn:real-space]('無'はスペースを表す)。
-- =\\n=  行末に置くと、その行をセンタリングし、改行する。
-- =\\l=  行末に置くと、その行を左寄せし、改行する。
-- =\\r=  行末に置くと、その行を右寄せし、改行する。
-- =\\N=  そのノードの内部名(ノードのアイデンティティ)が印字される。
-- =\\\\=  '\'が印字される('\'を印字するにはこの方法しかありません)。
-
-#+SRCNAME: label.lisp
-#+BEGIN_SRC lisp
-  (&& (<> "12\\ 34\\n56\\l78\\r\\N\\\\" :shape :note))
-#+END_SRC
-
-#+BEGIN_SRC dot :file ./images/label.png
-digraph graph_T64 {
-  node_T63 [label="12\ 34\n56\l78\r\N\\",shape=note];
-}
-#+END_SRC
-
-#+RESULTS:
-[[file:./images/label.png]]
-
-[fn:label-diff]
-Dot言語に詳しい方のための補足です。
-Donutsでは、縦棒 =|= 、角カッコ =[=, =]= 、三角カッコ =<=, =>= をエスケープする必要はありません。
-
-[fn:real-space]
-本当は何も印字されないのが空白さ。
 
 　
 
@@ -765,7 +731,7 @@ digraph GRAPH_T328 {
 [[file:./images/proparty.png]]
 
 
-　まず1行目、グラフコンストラクタ =&&= が =&= に置き換えられ、 =&&= の次(グラフ構成要素の前)にグラフ属性リスト =(:label "Proparty Example")= が置かれています。
+　まず1行目、グラフコンストラクタ =&&= が =&= に置き換えられ、 =&= の次(グラフ構成要素の前)にグラフ属性リスト =(:label "Proparty Example")= が置かれています。
 このグラフ属性リストによってグラフの見えを調整することができるのです。
 ここでは、グラフの属性 =:label= が値 "=Proparty Example=" に指定されていますので、出力されるグラフにラベル"=Proparty Example="が付くことになります。
 
@@ -814,19 +780,6 @@ digraph GRAPH_T328 {
 すなわち、このノードは、孤立ノードとなります。
 このノードはグラフ中の右上に出力されているものです。
 
-　この例から分かるように、最小のグラフは単一のノードです。
-もっとも単純なグラフ生成コードは次のものです[fn:simple]。
-#+SRCNAME: minimum-graph.lisp
-#+BEGIN_SRC lisp
-(&& "")
-#+END_SRC
-このコードは楕円が1つのみのグラフ（まんじゅう1つ）を生成するだけで、あまり興味深いものではありません。
-しかし、Donuts動作の理解のため、あえて内容を解説すると次のようになります。
- /空の文字列をラベルとするノードを自動生成し、そのノード1つのみで構成されるグラフを生成せよ/ です。
-
-[fn:simple]
-より正確には、 =(&& "")= は最も単純なグラフの生成コードであり、グラフ生成の最も単純なコードは =(&& 一桁の数)= です。
-
 ----------------------------------------------------------------------
 
 　属性についての詳細は、以下のGraphvizマニュアルをご確認ください。
@@ -835,6 +788,41 @@ digraph GRAPH_T328 {
 - ノードのshape属性について： http://www.graphviz.org/node-shapes.html
 - エッジのshape属性について： http://www.graphviz.org/arrow-shapes.html
 - 色属性について： http://www.graphviz.org/color-names.html
+
+　
+
+##--------------------------------------
+** ラベル
+##--------------------------------------
+　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます[fn:label-diff]。
+
+- =\\無=  空白が印字される[fn:real-space]('無'はスペースを表す)。
+- =\\n=  行末に置くと、その行をセンタリングし、改行する。
+- =\\l=  行末に置くと、その行を左寄せし、改行する。
+- =\\r=  行末に置くと、その行を右寄せし、改行する。
+- =\\N=  そのノードの内部名(ノードのアイデンティティ)が印字される。
+- =\\\\=  '\'が印字される('\'を印字するにはこの方法しかありません)。
+
+#+SRCNAME: label.lisp
+#+BEGIN_SRC lisp
+  (&& (<> "12\\ 34\\n56\\l78\\r\\N\\\\" :shape :note))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/label.png
+digraph graph_ID_130 {
+  node_ID_129 [label="12\ 34\n56\l78\r\N\\",shape=note];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/label.png]]
+
+[fn:label-diff]
+Dot言語に詳しい方のための補足です。
+Donutsでは、縦棒 =|= 、角カッコ =[=, =]= 、三角カッコ =<=, =>= をエスケープする必要はありません。
+
+[fn:real-space]
+本当は何も印字されないのが空白さ。
 
 　
 
@@ -955,7 +943,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 digraph graph_T986 {
   label="BIG";
   labelloc=true;
-  size="1.5,1.5";
+  size="1,1";
   "a" -> "b";
   "A" -> "B";
 }
@@ -978,7 +966,7 @@ digraph graph_T986 {
 #+SRCNAME: subgraph-cluster.lisp
 #+BEGIN_SRC lisp -n
   (& (:rankdir :LR)
-    ([&] (:label "Here is in the cluster!")  ;クラスタは部分グラフだが属性はつねに有効！！
+    ([&] (:label "Here is in the cluster!")  ;クラスタは部分グラフ、しかし、属性が常に有効！！
       (-> "a" "b")
       (-> "b" "c"))
     (-> "Out of the cluster" "c"))
@@ -1040,9 +1028,11 @@ digraph SUBGRUPH_T49 {
     (let ((a (<> 0 :color :red)) (b (<> 1 :color :blue))
           (c (<> 2 :color :red)) (d (<> 3 :color :blue))
           (e (<> 4 :color :red)) (f (<> 5 :color :blue)))
-      (rank :same a c e) (rank :same b d f)
-      (-> a c) (-> c e) (-> b d) (-> d f) (-> a b) (-> c d) (-> e f)))
+      (&&
+       (rank :same a c e) (rank :same b d f)
+       (-> a c) (-> c e) (-> b d) (-> d f) (-> a b) (-> c d) (-> e f))))
 #+END_SRC
+
 　出力されるグラフの画像は次のようになります。
 #+BEGIN_SRC dot :file ./images/rank.png
 digraph graph_T183 {
@@ -1285,6 +1275,13 @@ digraph graph_T184 {
 ##--------------------------------------
 *** コンテキストを作り出すもの
 ##--------------------------------------
+
+　
+
+*!!バグ!!: with-node, with-edge;let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。*
+
+　
+
 　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
 コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
  with-node,  with-edgeをネストした場合、属性値は上書きされます。
@@ -1413,43 +1410,18 @@ digraph graph_T167 {
 
 
 ##--------------------------------------
-*** ノードを引数にとるもの1：有向グラフ
-##--------------------------------------
 
-##--------------------------------------
-**** ->の逆：<-
-
-#+BEGIN_SRC lisp
- (<- "a" "b")
-#+END_SRC
-
-# (dot-output
-#   (& (:rankdir :LR)
-#     (<- "a" "b")))
-
-#+BEGIN_SRC dot :file ./images/inv-edge.png
-digraph graph_T64 {
-  rankdir=LR;
-  "b" -> "a";
-}
-#+END_SRC
-
-#+RESULTS:
-[[file:./images/inv-edge.png]]
-
-
-----------------------------------------------------------------------
-****  自己ループを生成する関数：?
+***  自己ループを生成する関数：?
 
 　関数 =?= は単一のノードとエッジ属性を引数に取り、自己ループを生成します。
 #+BEGIN_SRC lisp
 (? (<> 42 :shape :Mcircle) :label " Life, the Universe and Everything")
 #+END_SRC
 
-# (dot-output
-#   (& ()
-#     (? (<> 42 :shape :Mcircle)
-#        :label " Life, the Universe and Everything")))
+(dot-output
+  (& ()
+    (? (<> 42 :shape :Mcircle)
+       :label " Life, the Universe and Everything")))
 
 #+BEGIN_SRC dot :file ./images/self-loop.png
 digraph graph_T10 {
@@ -1462,8 +1434,8 @@ digraph graph_T10 {
 [[file:./images/self-loop.png]]
 
 
-----------------------------------------------------------------------
-****  複数のノードを同じ高さに設定する関数：~
+
+***  複数のノードを同じ高さに設定する関数：~
 
 　 =~= は、引数に複数のノードを取り、グラフ内でそれらのノードを同じ高さに配置する副作用を行い、NILを返します。
 =~= の定義は次のものです。
@@ -1476,8 +1448,14 @@ digraph graph_T10 {
 つまり、 =~= はコードの省略のためだけのユーティリティです。
 実際にDonutsを使ってみて、ノードの高さを揃える頻度がわりと多いこと、記号 =~= は視覚的にわかりやすいことを鑑み、ユーティリティとして新たに定義することにしました。
 
-----------------------------------------------------------------------
-****  複数のノードを数珠つなぎに結ぶ関数：-->
+
+# ***  複数のノードを数珠つなぎに結ぶ関数：-->
+#+BEGIN_HTML
+<div id="outline-container-4-9-4" class="outline-4">
+<h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> 複数のノードを数珠つなぎに結ぶ関数：&ndash;&ndash;&gt;</h4>
+<div class="outline-text-4" id="text-4-9-4">
+#+END_HTML
+
 #+BEGIN_SRC lisp
   (--> "a" "b" (<> "d" :color :red) "e")
 #+END_SRC
@@ -1498,229 +1476,50 @@ digraph graph_T41 {
 
  *注：* 個別にエッジの属性を指定することはできません。
 
-----------------------------------------------------------------------
-****  1つのノードから他のノードへ、エッジを放射状に張るマクロ：->>
 
-　 =->>= は、複数のノード（とエッジの属性）を引数に取り、先頭のノードから2番目以降のすべてのノードへのエッジを張った部分グラフを生成するマクロです。
-下のコードの3、4行目のように、エッジの属性を個々に指定することができます。
-便利ですがlispの通常の考え方にやや反するため注意が必要です。
+***  1つのノードから他のノードへ、エッジを放射状に張る関数：->>
+
+　 =->>= は、複数のノードを引数に取り、先頭のノードから2番目以降のすべてのノードへのエッジを張る関数です。
 
 #+BEGIN_SRC lisp
-(->> "a" "b"
-         ("c" :color :red)
-         (<> "d" :color :goldenrod)
-         ((<> "e" :style :filled) :color :green))
-
-; 上のコードは下の様にマクロ展開されます
-
-(LET ((#:G1324 "a"))
-  (&&
-    (-> #:G1324 "b")
-    (-> #:G1324 "c" :COLOR :RED)
-    (-> #:G1324 (<> "d" :COLOR :GOLDENROD))
-    (-> #:G1324 (<> "e" :STYLE :FILLED) :COLOR :GREEN)))
+(->> "a"
+     "b" (<> "c" :color :goldenrod) (<> "d" :style :filled))
 #+END_SRC
 
-#+BEGIN_SRC dot :file ./images/radial-edges.png
-digraph graph_T50 {
-  size="3,3";
-  "a" -> "b";
-  "a" -> "c" [color=red];
-  node_T53 [label="d",color=goldenrod];
-  "a" -> node_T53;
-  node_T55 [label="e",style=filled];
-  "a" -> node_T55 [color=green];
+#+BEGIN_SRC dot :file ./images/radial-edge.png
+digraph graph_ID_229 {
+  node_ID_225 [label="c",color=goldenrod];
+  node_ID_226 [label="d",style=filled];
+  "a" -> {"b"; node_ID_225; node_ID_226};
 }
 #+END_SRC
 
 #+RESULTS:
-[[file:./images/radial-edges.png]]
+[[file:./images/radial-edge.png]]
 
-----------------------------------------------------------------------
-****  1つのノードへ他のノードから、エッジを収束状に張るマクロ1：<==
 
-　 =<=== は、複数のノード（とエッジの属性）を引数に取り、先頭のノードへ他のノードから収束状（放射の逆）のエッジを張った部分グラフを生成するマクロです。
-下のコードの3、4行目のように、個別にエッジの属性を指定することができます。
-便利ですがlispの通常の考え方にやや反するため注意が必要です。
-#+BEGIN_SRC lisp
-(<== "a" "b"
-         ("c" :color :red)
-         (<> "d" :color :goldenrod)
-         ((<> "e" :style :filled) :color :green))
-
-; 上のコードは下の様にマクロ展開されます
-
-(LET ((#:G1326 "a"))
-  (&&
-    (<- #:G1326 "b")
-    (<- #:G1326 "c" :COLOR :RED)
-    (<- #:G1326 (<> "d" :COLOR :GOLDENROD))
-    (<- #:G1326 (<> "e" :STYLE :FILLED) :COLOR :GREEN)))
-#+END_SRC
-
-#+BEGIN_SRC dot :file ./images/conv-edges1.png
-digraph graph_T57 {
-  size="3,3";
-  "b" -> "a";
-  "c" -> "a" [color=red];
-  node_T60 [label="d",color=goldenrod];
-  node_T60 -> "a";
-  node_T62 [label="e",style=filled];
-  node_T62 -> "a" [color=green];
-}
-#+END_SRC
-
-#+RESULTS:
-[[file:./images/conv-edges1.png]]
-
-----------------------------------------------------------------------
-****  他のノードから1つのノードへ、エッジを収束状に張るマクロ2：==>
+***  他のノードから1つのノードへ、エッジを収束状に張る関数：==>
 
 　 ==> は、複数のノード（とエッジの属性）を引数に取り、
-最後尾のノードへ他のノードから収束状（放射状の逆）のエッジを張った部分グラフを生成するマクロです。
-実質的には <== と同様のものですが、グラフコードの見た目にこだわる人のために導入しました
-（エッジは左から右でなければならない人のため）。
-
-　個別にエッジの属性を指定することができます。
-便利ですがlispの通常の考え方にやや反するため注意が必要です。
+最後尾のノードへ他のノードから収束状（放射状の逆）のエッジを張る関数です。
 #+BEGIN_SRC lisp
-(==> "a" "b" ("c" :color :red) ((<> "d" :color :goldenrod) :color :green)
-     (<> "e" :style :filled))
-
-; 上のコードは下の様にマクロ展開されます
-
-(LET ((#:G1328 (<> "e" :STYLE :FILLED)))
-  (&&
-    (-> "a" #:G1328)
-    (-> "b" #:G1328)
-    (-> "c" #:G1328 :COLOR :RED)
-    (-> (<> "d" :COLOR :GOLDENROD) #:G1328 :COLOR :GREEN)))
+(==> "a" "b" (<> "c" :color :goldenrod)
+     (<> "d" :style :filled))
 #+END_SRC
 
-#+BEGIN_SRC dot :file ./images/conv-edges2.png
-digraph graph_T89 {
-  size="3,3";
-  node_T90 [label="e",style=filled];
-  "a" -> node_T90;
-  "b" -> node_T90;
-  "c" -> node_T90 [color=red];
-  node_T94 [label="d",color=goldenrod];
-  node_T94 -> node_T90 [color=green];
+#+BEGIN_SRC dot :file ./images/converge-edge.png
+digraph graph_ID_233 {
+  node_ID_231 [label="d",style=filled];
+  node_ID_230 [label="c",color=goldenrod];
+  "a" -> node_ID_231;
+  "b" -> node_ID_231;
+  node_ID_230 -> node_ID_231;
 }
 #+END_SRC
 
 #+RESULTS:
-[[file:./images/conv-edges2.png]]
+[[file:./images/converge-edge.png]]
 
-##--------------------------------------
-*** ノードを引数にとるもの2：無向グラフ
-##--------------------------------------
-
-　無向グラフについては、後の[[無向グラフ、レイアウトアルゴリズム]]の節で詳しく解説します。
-
-
-----------------------------------------------------------------------
-**** 複数のノードを直線状につなぐ関数：---
-#+BEGIN_SRC lisp
-  (--- "a" "b" (<> "d" :color :red) "e")
-#+END_SRC
-
-# (& (:rankdir :LR)
-#     (--- "a" "b" (<> "d" :color :red) "e"))
-
-#+BEGIN_SRC dot :file ./images/liner.png
-graph graph_T41 {
-  rankdir=LR;
-  node_T42 [label="d",color=red];
-  "a" -- "b" -- node_T42 -- "e";
-}
-#+END_SRC
-
-#+RESULTS:
-[[file:./images/liner.png]]
-
- *注：* 個別にエッジの属性を指定することはできません。
-
-
-----------------------------------------------------------------------
-**** 複数のノードを環状につなぐ関数：O
-
-#+BEGIN_SRC lisp
-(defun O (&rest nodes)
-  (apply #'--- (conc1 nodes (1st nodes))))
-#+END_SRC
-
-----------------------------------------------------------------------
-**** 1つのノードを多数のノードとつなぐマクロ1：-<
-
-　 =-<= は、複数のノード（とエッジの属性）を引数に取り、先頭のノードとそれ以外のすべてのノードとを結んだ部分グラフを生成するマクロです。
- =->>= の無向グラフ版です。
-#+BEGIN_SRC lisp
-(-< "a" "b"
-        ("c" :color :red)
-        (<> "d" :color :goldenrod)
-        ((<> "e" :style :filled) :color :green))
-
-; 上のコードは下の様にマクロ展開されます
-
-(LET ((#:G1198 "a"))
-  (&&
-    (-- #:G1198 "b")
-    (-- #:G1198 "c" :COLOR :RED)
-    (-- #:G1198 (<> "d" :COLOR :GOLDENROD))
-    (-- #:G1198 (<> "e" :STYLE :FILLED) :COLOR :GREEN)))
-#+END_SRC
-
-#+BEGIN_SRC dot :file ./images/net1.png
-graph graph_T138 {
-  size="3,3";
-  "a" -- "b";
-  "a" -- "c" [color=red];
-  node_T134 [label="d",color=goldenrod];
-  "a" -- node_T134;
-  node_T136 [label="e",style=filled];
-  "a" -- node_T136 [color=green];
-}
-#+END_SRC
-
-#+RESULTS:
-[[file:./images/net1.png]]
-
-
-----------------------------------------------------------------------
-**** 1つのノードを多数のノードとつなぐマクロ2：>-
-
-　 =>-= は、複数のノード（とエッジの属性）を引数に取り、最後尾のノードとそれ以外すべてのノードへのエッジを張った部分グラフを生成するマクロです。
-==>の無向グラフ版です。
-
-#+BEGIN_SRC lisp
-(>- "a" "b" ("c" :color :red) ((<> "d" :color :goldenrod) :color :green)
-    (<> "e" :style :filled))
-
-; 上のコードは下の様にマクロ展開されます
-
-(LET ((#:G1354 (<> "e" :STYLE :FILLED)))
-  (&&
-    (-- "a" #:G1354)
-    (-- "b" #:G1354)
-    (-- "c" #:G1354 :COLOR :RED)
-    (-- (<> "d" :COLOR :GOLDENROD) #:G1354 :COLOR :GREEN)))
-#+END_SRC
-
-#+BEGIN_SRC dot :file ./images/net2.png
-graph graph_T145 {
-  size="3,3";
-  node_T139 [label="e",style=filled];
-  "a" -- node_T139;
-  "b" -- node_T139;
-  "c" -- node_T139 [color=red];
-  node_T143 [label="d",color=goldenrod];
-  node_T143 -- node_T139 [color=green];
-}
-#+END_SRC
-
-#+RESULTS:
-[[file:./images/net2.png]]
 
 　
 
@@ -1880,6 +1679,69 @@ graph graph_T101 {
 
 　
 
+** 無向グラフに関するユーティリティ集
+
+
+# *** 複数のノードを直線状につなぐ関数：---
+#+BEGIN_HTML
+<div id="outline-container-4-11-1" class="outline-4">
+<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> 複数のノードを直線状につなぐ関数：&ndash;&ndash;&ndash;</h4>
+<div class="outline-text-4" id="text-4-11-1">
+#+END_HTML
+
+#+BEGIN_SRC lisp
+  (--- "a" "b" (<> "d" :color :red) "e")
+#+END_SRC
+
+# (& (:rankdir :LR)
+#     (--- "a" "b" (<> "d" :color :red) "e"))
+
+#+BEGIN_SRC dot :file ./images/liner.png
+graph graph_T41 {
+  rankdir=LR;
+  node_T42 [label="d",color=red];
+  "a" -- "b" -- node_T42 -- "e";
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/liner.png]]
+
+ *注：* 個別にエッジの属性を指定することはできません。
+
+
+*** 複数のノードを環状につなぐ関数：O
+
+#+BEGIN_SRC lisp
+(defun O (&rest nodes)
+  (apply #'--- (conc1 nodes (1st nodes))))
+#+END_SRC
+
+
+
+*** 1つのノードを多数のノードとつなぐ関数：-<
+
+　 =-<= は、複数のノード（とエッジの属性）を引数に取り、
+先頭のノードとそれ以外のすべてのノードとを結んだ部分グラフを生成する関数です。
+ =->>= の無向グラフ版です。
+#+BEGIN_SRC lisp
+(-< "a"
+    "b" (<> "c" :color :goldenrod) (<> "d" :style :filled))
+#+END_SRC
+
+#+BEGIN_SRC dot :file ./images/radiate-path.png
+graph graph_ID_257 {
+  node_ID_253 [label="c",color=goldenrod];
+  node_ID_254 [label="d",style=filled];
+  "a" -- {"b"; node_ID_253; node_ID_254};
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:./images/radiate-path.png]]
+
+　
+
 ##--------------------------------------------------------------------
 ** Html-Likeラベル
 
@@ -2023,7 +1885,7 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 *** カレンダー
 
 　Grapvizによってカレンダーを描くという例は、Mihalis Tsoukalos氏による[[http://www.linuxjournal.com/article/7275][An Introduction to GraphViz]]より拝借しました。
-ただし、もとの例はカレンダーを描くdotコードを生成するPerlプログラムを書くというものです。
+もとの例は、カレンダーを描くためのdotコードファイルを生成するPerlプログラムを書くというものです。
 
 #+BEGIN_SRC lisp
 ($$ (& (:size "8,6":rankdir :LR) (generate-monthly-calendar 'may 2012 31 2)))
@@ -2091,19 +1953,19 @@ digraph graph_ID_1124 {
 #+BEGIN_SRC lisp
   (defun generate-monthly-calendar (month year num-days starting-day)
     (let ((month (<> (format nil "~@(~A~)\\n~D" month year) :shape :Msquare))
-          (weeks (loop :for day :in '("Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat")
-                       :collect (<> day :shape :egg :style :filled :color :lightgray)))
+          (luminary7 (loop :for day :in '("Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat")
+                           :collect (<> day :shape :egg :style :filled :color :lightgray)))
           (days (loop :for day :in (nconc (loop :repeat starting-day :collect "")
-                                          (loop :for day :from 1 :to num-days :collect day)
+                                          (loop :for d :from 1 :to num-days :collect d)
                                           (loop :repeat (- (* 7 (if (and (= 28 num-days) (= 0 starting-day))
                                                                     4 5)) ;for Feb starting Sun in common year 
                                                            starting-day num-days)
                                                 :collect ""))
                       :collect (<> day :shape :box))))
-      (apply #'&& (loop :for week :in (cons weeks (group 7 days))
+      (apply #'&& (loop :for week :in (cons luminary7 (group 7 days))
                         :collect (apply #'--> month week)))))
   
-  ;; from on lisp
+  ;; from On Lisp
   (defun group (n lst)
     (if (zerop n) (error "zero length"))
     (labels ((rec (lst acc)
@@ -2113,6 +1975,10 @@ digraph graph_ID_1124 {
                      (nreverse (cons lst acc))))))
       (if lst (rec lst nil) nil)))
 #+END_SRC
+
+　関数generate-monthly-calendarは、引数として、月の名前month、年year、 月の日数num-days、1日の曜日starting-dayを取り、
+カレンダーを表すグラフを返します。
+'1日の曜日'とは、日曜を0、月曜を1、...土曜を6に、それぞれ対応させた数値です。
 
 　
 
@@ -2141,24 +2007,26 @@ digraph GRAPH_T283 {
 
 #+BEGIN_SRC lisp -n
   (defun binary-tree-graph (tree)
-    (labels ((rec (x)
-               (let ((p (first x)) (lc (second x)) (rc (third x)))
-                 (&& (when lc
-                       (if (atom lc)
-                           (-> p lc)
-                           (&& (-> p (car lc)) (rec lc))))
-                     (when rc
-                       (if (atom rc)
-                           (-> p rc)
-                           (&& (-> p (car rc)) (rec rc))))))))
-      (if (null (cdr tree))
-          (car tree)
-          (rec tree))))
+    (if (null tree)
+        (&&)
+        (labels ((rec (x)
+                   (let ((p (first x)) (lc (second x)) (rc (third x)))
+                     (&& (when lc
+                           (if (atom lc)
+                               (-> p lc)
+                               (&& (-> p (first lc)) (rec lc))))
+                         (when rc
+                           (if (atom rc)
+                               (-> p rc)
+                               (&& (-> p (first rc)) (rec rc))))))))
+          (if (null (rest tree))
+              (first tree)
+              (rec tree)))))
 #+END_SRC
 
-　関数 =binary-tree-graph= は、(parent left-child right-child)構造のツリーを再帰的に下り2分木グラフを生成します。
-3行目、マッチに失敗した場合にエラーが発生するので、letをdestructuring-bindに置き換えることはできません。
-12行目、ツリーがルートのみで構成されているかどうかをチェック。
+　関数 =binary-tree-graph= は、(parent left-child right-child)構造のツリーを再帰的に下り2分木グラフを生成します(cf. [[例6 Binary search tree using records]])。
+5行目、マッチに失敗した場合にエラーが発生するので、letをdestructuring-bindに置き換えることはできません。
+14行目、ツリーがルートのみで構成されているかどうかをチェックします。
 
 
 
@@ -2320,7 +2188,7 @@ digraph graph_T862 {
     (let* ((states (mapcar #'first trans-fn-list))
            (gs     (loop :repeat (length states) :collect (gensym)))
            (s-gs   (mapcar #'list states gs)))
-      (with-gensyms (s0)
+      (let ((s0 (gensym)))
         `(let ,(cons `(,s0 (<> "" :shape :point))
                      (mapcar (lambda (s g) (if (member s final-states :test #'equal)
                                                `(,g (<> ,(format nil "~S" s) :shape :doublecircle))
@@ -2330,9 +2198,8 @@ digraph graph_T862 {
                  (-> ,s0 ,(s->g start-state s-gs))
                  ,@(loop :for g :in gs
                          :for lst :in trans-fn-list
-                         :collect `(->> ,g
-                                     ,@(loop :for e :in (rest lst)
-                                             :collect `(,(s->g (second e) s-gs) :label ,(first e)))))))))))
+                         :nconc (loop :for e :in (rest lst)
+                                      :collect `(-> ,g ,(s->g (second e) s-gs) :label ,(first e))))))))))
   
   (defun s->g (state state-gensyms)
     (second (assoc state state-gensyms :test #'equal)))
@@ -2442,31 +2309,36 @@ digraph T30 {
   ($$ (let ((main (<> "main" :shape :box))
             (make-string (<> "make a\\nstring")))
         (& (:size "4,4")
-          (->> main ("parse" :weight 8) ("init" :style :dotted) "cleanup")
-          (->  "parse" "execute")
+          (-> main "parse" :weight 8)
+          (-> "parse" "execute")
+          (-> main "init" :style :dotted)
+          (-> main "cleanup")
           (->> "execute" make-string "printf")
           (->  "init" make-string)
           (with-edge (:color :red)
             (-> main "printf" :style :bold :label "100 times")
-            (-> "execute" (<> "compare" :shape :box :style :filled :color ".7 .3 1.0"))))))
+            (with-node (:shape :box :style :filled :color ".7 .3 1.0")
+              (-> "execute" "compare"))))))
 #+END_SRC
 
 
 #+BEGIN_SRC dot :file ./images/example2.png
-digraph graph_T224 {
+digraph graph_ID_595 {
   size="4,4";
-  node_T225 [label="main",shape=box];
-  node_T226 [label="make a\nstring"];
-  node_T225 -> "parse" [weight=8];
-  node_T225 -> "init" [style=dotted];
-  node_T225 -> "cleanup";
-  node_T225 -> "printf" [color=red,style=bold,label="100 times"];
+  node_ID_583 [label="main",shape=box];
+  node_ID_583 -> "parse" [weight=8];
   "parse" -> "execute";
-  "init" -> node_T226;
-  "execute" -> node_T226;
-  "execute" -> "printf";
-  node_T235 [label="compare",shape=box,style=filled,color=".7 .3 1.0"];
-  "execute" -> node_T235 [color=red];
+  node_ID_583 -> "init" [style=dotted];
+  node_ID_583 -> "cleanup";
+  node_ID_584 [label="make a\nstring"];
+  "execute" -> {node_ID_584; "printf"};
+  "init" -> node_ID_584;
+  { edge [color=red];
+  node_ID_583 -> "printf" [style=bold,label="100 times"];
+  { node [shape=box,style=filled,color=".7 .3 1.0"];
+  "execute" -> "compare";
+  };
+  };
 }
 #+END_SRC
 
@@ -2749,6 +2621,40 @@ digraph graph_T385 {
 #+RESULTS:
 [[file:./images/example6.png]]
 
+
+　以下の様に関数bst-graphを定義することで任意の二分探索木をグラフとして出力することもできます。
+関数bst-graphは、(parent left-child right-child)の形の二分探索木を再帰的に下り、グラフを生成します(cf. [[2分木]])。
+#+BEGIN_SRC lisp
+  (defun bst-graph (tree)
+    (if (null tree)
+        (&&)
+        (labels ((rec (root-node tree)
+                   (let ((lc (second tree)) (rc (third tree)))
+                     (&& (when lc
+                           (if (atom lc)
+                               (-> (@ root-node :f0) (@ (bst-node lc) :f1))
+                               (let ((lc-node (bst-node (first lc))))
+                                 (&& (-> (@ root-node :f0) (@ lc-node :f1))
+                                     (rec lc-node lc)))))
+                         (when rc
+                           (if (atom rc)
+                               (-> (@ root-node :f2) (@ (bst-node rc) :f1))
+                               (let ((rc-node (bst-node (first rc))))
+                                 (&& (-> (@ root-node :f2) (@ rc-node :f1))
+                                     (rec rc-node rc)))))))))
+          (if (null (cdr tree))
+              (bst-node (first tree))
+              (rec (bst-node (first tree)) tree)))))
+  
+  (defun bst-node (symb)
+    ([] (format nil "~@{~A~}" ":f0 |:f1 " symb "|:f2")))
+  
+  ($$ (with-node (:height .1)             ;上と同様のグラフが出力される。
+        (bst-graph '(g (e (b a c)
+                          f)
+                       (r h y)))))
+#+END_SRC
+
 ##--------------------------------------
 *** 例7 Records with nested fields (revisited)
 #+BEGIN_SRC dot
@@ -2856,6 +2762,7 @@ digraph graph_T368 {
 
 ##--------------------------------------
 *** 例9 Clusters
+
 #+BEGIN_SRC dot
 digraph G {
   subgraph cluster0 {
@@ -2937,7 +2844,7 @@ digraph graph_T153 {
 グラフを構成する要素(ノード、エッジ、グラフ)の順によって、グラフ構造としては同等でも、グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります(これはGraphvizの仕様です)。
 
 
-#+BEGIN_SRC dot :file ./tmp.png
+#+BEGIN_SRC dot
   digraph G {
     size="8,6"; ratio=fill; node[fontsize=24];
   
@@ -3107,7 +3014,8 @@ digraph graph_T656 {
               (c1 ([&] () (->> "e" "g" "f"))))
           (&& c0 c1
               (-> "b" "f" :lhead c1)
-              (->> "c" ("g" :ltail c0 :lhead c1) ("e" :ltail c0))
+              (-> "c" "g" :ltail c0 :lhead c1)
+              (-> "c" "e" :ltail c0)
               (->> "d" "e" "h")))))
 #+END_SRC
 
@@ -3471,14 +3379,18 @@ graph G {
        (with-node (:shape :box :style :filled)
          (with-node (:width .3 :height .3 :shape :octagon :style :filled :color :skyblue)
            "A1" "A2" "A3")
-         (-< "A" ("A1" :label "l #6") ("A2" :label "l #7") ("A3" :label "l #8"))
+         (radiate "A" '(("A1" :label "l #6") ("A2" :label "l #7") ("A3" :label "l #8")))
          (with-edge (:style :invis :len 1.3) (--- "A1" "A2" "A3"))
          (with-edge (:len 3)
-           (-< "A" ("B" :label "l #1") ("C" :label "l #2") ("D" :label "l #3")
-                   ("E" :label "l #4") ("F" :label "l #5"))
-           (-< "B" ("C" :label "l #1") ("E" :label "l #2") ("F" :label "l #3"))
+           (radiate "A" '(("B" :label "l #1") ("C" :label "l #2") ("D" :label "l #3")
+                          ("E" :label "l #4") ("F" :label "l #5")))
+           (radiate "B" '(("C" :label "l #1") ("E" :label "l #2") ("F" :label "l #3")))
            (-- "C" "D" :label "l #1")
            (-- "D" "E" :label "l #1")))))
+  
+  (defun radiate (origin node-edge-attrs-list)
+    (apply #'&& (loop :for node-edge-attrs :in node-edge-attrs-list
+                      :collect (apply #'-- origin node-edge-attrs))))
 #+END_SRC
 
 #+BEGIN_SRC dot :file ./images/example15.png :cmdline -Kneato -Tpng
@@ -3652,7 +3564,7 @@ graph graph_T527 {
 
 
 
-　エッジコンストラクタ->とエッジユーティリティ(---,<-,--->,----,?,O)によって生成されるオブジェクトのみがedge型のオブジェクトである。
+　エッジコンストラクタ->とエッジユーティリティ(---,--->,----,?,O)によって生成されるオブジェクトのみがedge型のオブジェクトである。
 
 エッジ属性の種類については、下記のリンク先を参照せよ。
 - 属性について： http://www.graphviz.org/content/attrs
@@ -3666,12 +3578,12 @@ graph graph_T527 {
 
 　
 
-# + *---*  /node1/ /node2/ &rest /edge-attributes/ => path ::
-# 　[Function]　---は2つのdashを表す。
+# + *---*  /node1/ /node2/ &rest /edge-attributes/ => edge ::
+# 　[Function]　
 #+BEGIN_HTML
 </p>
 <dl>
-<dt><b>&ndash;&ndash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; path</dt><dd>
+<dt><b>&ndash;&ndash;</b>  <i>node1</i> <i>node2</i> &amp;rest <i>edge-attributes</i> =&gt; edge</dt><dd>
 
 </dd>
 </dl>
@@ -3689,17 +3601,12 @@ graph graph_T527 {
 
 　
 
-+ *<-*  /node1/ /node2/ &rest /edge-attributes/ => edge ::
-　[Function]　
-
-　
-
 # + *--->*  &rest /nodes/ => edges ::
-# 　[Function]　---は2つのdashを表す。
+# 　[Function]　
 #+BEGIN_HTML
 </p>
 <dl>
-<dt><b>&ndash;&ndash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edges</dt><dd>
+<dt><b>&ndash;&ndash;&gt;</b>  &amp;rest <i>nodes</i> =&gt; edge</dt><dd>
 
 </dd>
 </dl>
@@ -3711,32 +3618,22 @@ graph graph_T527 {
 
 　
 
-+ *->>*  &rest /nodes/ => graph ::
-　[Macro]　
++ *->>*  &rest /nodes/ => edge ::
+　[Function]　
 
 　
 
-+ *==>*  &rest /nodes/ => graph ::
-　[Macro]　
++ *==>*  &rest /nodes/ => edge ::
+　[Function]　
 
 　
 
-+ *<==*  &rest /nodes/ => graph ::
-　[Macro]　
++ *-<*  &rest /nodes/ => edge ::
+　[Function]　
 
 　
 
-+ *-<*  &rest /nodes/ => graph ::
-　[Macro]　
-
-　
-
-+ *>-*  &rest /nodes/ => graph ::
-　[Macro]　
-
-　
-
-# + *---*  &rest /nodes/ => paths ::
+# + *---*  &rest /nodes/ => edge ::
 # 　[Macro]　
 #+BEGIN_HTML
 </p>
@@ -3752,8 +3649,8 @@ graph graph_T527 {
 #+END_HTML
 　
 
-+ *O*  &rest /nodes/ => paths ::
-　[Macro]　
++ *O*  &rest /nodes/ => edge ::
+　[Function]　
 
 　
 
@@ -3785,7 +3682,7 @@ graph graph_T527 {
 ##--------------------------------------------------------------------
 
 　グラフコンストラクタ& (or &&)によって生成されるオブジェクトはgraph型のオブジェクトである。
-with-系のユーティリティの返り値、エッジユーティリティ(->>,==>,<==,-<,>-)の返り値、[&]によって生成されるクラスタもgraphのオブジェクト型とみなされる。
+with-系のユーティリティの返り値、[&]によって生成されるクラスタもgraphのオブジェクト型とみなされる。
 これら以外のものはgraph型のオブジェクトではない。
 
 　クラスター以外のグラフ属性値はトップレベルのもののみ有効。
@@ -3858,7 +3755,7 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 　
 
 + *$$*  /graph/ => NIL  ::
-　[Macro]　プロパティリストをnilに指定する以外、$と同様の動作を行う。
+　[Macro]　プロパティリストをnilに指定する以外の動作は$と同様のもの。
 
 　
 
@@ -3898,17 +3795,10 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 
 *優先度順*
 
-- *!!バグ!!*: with-node, with-edge;
-  let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、
-  束縛変数の初期出現時の属性コンテキストに影響されてしまう。
-
-
-- *!変更!*: ->>, ==>, <==, -<, >-;
-  マクロではなく関数として定義する。lispに反するため。
-
+- *!!バグ!!: with-node, with-edge;*
+  *let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。*
 
 - 日本語版ドキュメントの完成。
-  - チュートリアル：html-likeラベル。
   - リファレンスマニュアル。
 
 

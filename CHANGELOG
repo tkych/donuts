@@ -1,11 +1,19 @@
+Version 0.3.0
+2012-05-18
+Modify /SRC: rm nuts.lisp, fresh.lisp.
+           : add NODE.LISP, EDGE.LISP, GRAPH.LISP, DOT-OUTPUT.LISP, SESAME.LISP, DONUTS-UTILS.LISP.
+Del   Macro: ->>, ==>, -<, >-, <==.
+Del   Fn   : <-.
+Add   Fn   : ->>, ==>, -<.
+
 Version 0.2.8
 2012-05-13
-Fix bug: macro HTML in src/html-like-labels.lisp
+Fix bug: macro HTML in src/html-like-labels.lisp.
 
 Version 0.2.7
 2012-05-10
-Add: src/HTML-LIKE-LABELS.LISP
+Add: src/HTML-LIKE-LABELS.LISP.
 
 Version 0.2.6
 2012-05-08
-Initial release
+Initial release.

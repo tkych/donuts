@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/13 19:13:37 tkych
+;;;; Last Updated : 2012/05/18 02:08:38 tkych
 
 ;; System for donuts
 
@@ -29,18 +29,24 @@
 ;;====================================================================
 ;; donuts.asd       -- system definition (this file)
 ;; in-package.lisp  -- internal package
-;; cl-utils.lisp    -- cl utils
+;; cl-utils.lisp    -- common lisp utilities
 ;; api-package.lisp -- application package
 ;; README.markdown  -- readme file for github
 ;; src/
-;;   nuts.lisp  -- core
-;;   flesh.lisp -- donuts utils
-;;   shell.lisp -- shell interface
+;;   sesame.lisp     -- hide the treasure
+;;   node.lisp       -- node
+;;   edge.lisp       -- edge
+;;   graph.lisp      -- graph
+;;   dot-output.lisp       -- output 
+;;   donuts-utils.lisp     -- donuts utilities
+;;   shell.lisp            -- shell interface
 ;;   html-like-labels.lisp -- html like labels
 ;; doc/
-;;   index-j.html -- Japanese version of donuts documentaion
-;;   index.html   -- English version of donuts documentaion
-;;   images/      -- image files for index-j.html, index.html
+;;   index-ja.org  -- Japanese version of donuts documentaion
+;;   index-ja.html -- Japanese version of donuts documentaion
+;;   index.org     -- English version of donuts documentaion (Under Translation)
+;;   index.html    -- English version of donuts documentaion (Under Translation)
+;;   images/       -- image files for index-ja.html, index.html
 
 ;;====================================================================
 ;; System
@@ -52,7 +58,7 @@
 (defsystem :donuts
   :description "Graph DSL for common lisp"
   :name        "Donuts"
-  :version     "0.2.8"
+  :version     "0.3.0"
   :licence     "MIT licence"
   :author      "Takaya OCHIAI <tkych.repl@gmail.com>"
   :long-description
@@ -63,10 +69,14 @@ It requires the Graphviz system (http://www.graphviz.org/)."
   :components ((:file "in-package")
                (:file "cl-utils")
                (:module "src"
-                        :components ((:file "nuts")
-                                     (:file "flesh")
+                        :components ((:file "sesame")
+                                     (:file "node")
+                                     (:file "edge")
+                                     (:file "graph")
+                                     (:file "dot-output")
                                      (:file "shell")
                                      (:file "html-like-labels")
+                                     (:file "donuts-utils")
                                      ))
                (:file "api-package")))
 

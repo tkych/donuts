@@ -1,4 +1,4 @@
-Last Updated : 2012/05/14 17:54:22 tkych
+Last Updated : 2012/05/18 02:03:35 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -12,18 +12,18 @@ How to use donuts is easy.
 && makes a graph by bundling some nodes, edges and graphs.
 $$ outputs an image of the graph.
 
-The goal of donuts is to draw graphes in lispic way of thinking. 
+The goal of donuts is to draw graphs in lispic way of thinking. 
 
-For more details, see index.html(Under translation) or index-j.html(Japanease) in doc directory.
+For more details, see index(Under translation) or index-ja(Japanease) in doc directory.
 
 
 ## Version
 
-The Current version of the donuts is 0.2.8 (beta).
+The Current version of the donuts is 0.3.0 (beta).
 
 ## Dependencies
 
-* [Graphviz](http://www.graphviz.org/) by AT&T Research Labs
+* [Graphviz](http://www.graphviz.org/) by AT&T Labs
 
 * [cl-ppcre](http://weitz.de/cl-ppcre/) by Dr. Edmund Weitz
 

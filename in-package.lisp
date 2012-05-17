@@ -1,6 +1,6 @@
-;;;; Last Updated : 2012/05/10 20:57:04 tkych
+;;;; Last Updated : 2012/05/17 11:00:24 tkych
 
-;; Internal-packages for donuts
+;; Internal-package for donuts
 
 ;; Copyright (c) 2012 Takaya OCHIAI
 
@@ -32,8 +32,8 @@
 (defpackage :in-donuts
   (:use :cl)
   (:export :<> :[] :rank :~ :@ :with-node
-           :-> :--> :->> :==> :<- :<== :? :with-edge
-           :-- :--- :-< :>- :O
+           :-> :--> :->> :==> :? :with-edge
+           :-- :--- :-< :O
            :& :[&] :&& :with-graph
            :dot-output :dot-pprint :$ :$$
            :html :br :hr :vr :img
