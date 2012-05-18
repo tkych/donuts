@@ -1,5 +1,5 @@
 ;;; -*- Mode: LISP; Syntax: COMMON-LISP; Base: 10 -*-
-;;;     Last Updated : 2012/05/09 20:58:06 tkych
+;;;     Last Updated : 2012/05/18 18:13:46 tkych
 
 ;; cl-utils for donuts
 
@@ -7,6 +7,16 @@
 ;; CL-Utils
 ;;====================================================================
 (in-package :in-donuts)
+
+(defclass sesame ()
+     ((tag      :accessor :tag      :initarg :tag)
+      (treasure :accessor :treasure :initarg :treasure)))
+
+(defun make-sesame (tag treasure)
+  (make-inst 'sesame :tag tag :treasure treasure))
+
+(defun sesame? (x) (typep x 'sesame))
+(defun open-sesame (sesame) (:treasure sesame))
 
 ;;; ^ -> lambda
 ;;; !!! Don't use 1st place. EX. ((^ (x) (1+ x)) 3) => error !!!

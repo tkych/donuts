@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/18 02:08:38 tkych
+;;;; Last Updated : 2012/05/18 18:13:37 tkych
 
 ;; System for donuts
 
@@ -33,7 +33,6 @@
 ;; api-package.lisp -- application package
 ;; README.markdown  -- readme file for github
 ;; src/
-;;   sesame.lisp     -- hide the treasure
 ;;   node.lisp       -- node
 ;;   edge.lisp       -- edge
 ;;   graph.lisp      -- graph
@@ -69,8 +68,7 @@ It requires the Graphviz system (http://www.graphviz.org/)."
   :components ((:file "in-package")
                (:file "cl-utils")
                (:module "src"
-                        :components ((:file "sesame")
-                                     (:file "node")
+                        :components ((:file "node")
                                      (:file "edge")
                                      (:file "graph")
                                      (:file "dot-output")
