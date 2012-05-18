@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-18 02:43:59 JST"/>
+<meta name="generated" content="2012-05-18 18:10:45 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -313,6 +313,8 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 
 
 <ol>
+<li>asdf
+</li>
 <li><a href="http://www.quicklisp.org/">quicklisp</a> by Zachary Beane
 </li>
 <li><a href="http://weitz.de/cl-ppcre/">cl-ppcre</a> by Dr. Edmund Weitz
@@ -427,7 +429,7 @@ Hello World
 <span style="color: #eeee00;">// </span><span style="color: #eeee00;">in shell</span>
 $ javac HelloWorld.java   <span style="color: #eeee00;">// </span><span style="color: #eeee00;">HelloWorld.java&#12434;&#12467;&#12531;&#12497;&#12452;&#12523;&#12377;&#12427;</span>
 $ java HelloWorld         <span style="color: #eeee00;">// </span><span style="color: #eeee00;">HelloWorld&#12434;&#23455;&#34892;&#12377;&#12427;</span>
-Hello World
+Hello World               <span style="color: #eeee00;">// </span><span style="color: #eeee00;">&#27161;&#28310;&#20986;&#21147;&#12395;'Hello World'&#12364;&#20986;&#21147;&#12373;&#12428;&#12427;</span>
 </pre>
 
 <p>
@@ -586,7 +588,7 @@ Lispの上に実現されたその機能は、基盤であるLispの拡張可能
 <p>
 　ここで、まず注意してほしいことは、プログラムを書くために "グラフ作成" を抽象化するのであって、数学的な問題を解くために "グラフ" を抽象化するのではないことです。
 数学的な問題を解くには抽象化されたグラフ構造を扱い、 <span style="text-decoration:underline;">グラフ構造を持つすべてのものに対し、これこれの命題が成り立つかどうか</span> を証明します。
-しかしながら、コンピュータにグラフ作成を命令するプログラムを書くためには、 <span style="text-decoration:underline;">そもそもグラフ構造を作るにはどうするか</span> を探さねばなりません。
+しかしながら、コンピュータにグラフ作成を命令するプログラムを書くためには、 <span style="text-decoration:underline;">そもそもグラフ構造を構築するにはどうするか</span> を探さねばなりません。
 </p>
 
 <p>
@@ -1052,14 +1054,11 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 dot-pprintは、Graphvizライブラリの整形用ユーティリティnopによって処理を行うため、dot-outputに比べ実行コストがかかります。
 dot-outputによる表示が見づらい場合に使うと便利です。
 </p>
-</div>
 
-</div>
 
 <div id="outline-container-4-4-2" class="outline-4">
-<h4 id="sec-4-4-2"><span class="section-number-4">4.4.2</span> シェルインターフェイス $</h4>
+<h4 id="sec-4-4-2"><span class="section-number-4">4.4.2</span> シェルインターフェイス$、$$</h4>
 <div class="outline-text-4" id="text-4-4-2">
-
 
 <p>
 　次のコードを評価すると、画像ファイルdiamond.pngが生成され、
@@ -1079,7 +1078,9 @@ dot-outputによる表示が見づらい場合に使うと便利です。
 <img src="./images/output1.png"  alt="./images/output1.png" />
 </p>
 <p>
-　シェルインターフェイス$は、出力をコントロールするプロパティリストと、グラフオブジェクトを引数に取ります。
+　シェルインターフェイス <code>$</code> は、出力をコントロールするプロパティリストと、グラフオブジェクトを引数に取ります。
+プロパティリストが空リストの場合、マクロ <code>$$</code> を用いると便利です。
+ <code>($$ graph)</code> は <code>($ () graph)</code> に展開されます。
 プロパティリストのプロパティは次の表の通りです。
 </p>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
@@ -1121,7 +1122,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 <p>
-　生成するファイル名を指定しない場合、 一時的にファイルDONUTS-TMP.pngが生成され、ビューア終了時に自動削除されます。
+　生成するファイル名を指定しない場合、 一時ファイルDONUTS-TMP.pngが生成され、ビューア終了時に自動削除されます。
 </p>
 
 <dl>
@@ -1748,9 +1749,6 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 <p>
 <img src="./images/edges.png"  alt="./images/edges.png" />
 </p>
-<p>
- <b>注：</b> 個別にエッジの属性を指定することはできません。
-</p>
 
 </div>
 
@@ -1992,9 +1990,6 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 <p>
 <img src="./images/liner.png"  alt="./images/liner.png" />
 </p>
-<p>
- <b>注：</b> 個別にエッジの属性を指定することはできません。
-</p>
 
 
 </div>
@@ -2184,10 +2179,10 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 
 <p>
-　グラフに規則性が存在するなら、lisp組み込みの機能を使うことで簡単に描ける場合があります。
+　グラフに規則性(パターン)が存在するなら、lisp組み込みの機能を使うことで簡単に描ける場合があります。
 この節では、Donutsによる小さなプログラムを4つ紹介します。
 カレンダーを描く関数generate-monthly-calendar、2分木を描く関数binary-tree-graph、ツリーのコンスセル構造を描くマクロcons-cell-of、有限オートマトンの遷移図を描くマクロtrans-diagramです。
-ざっくり言うと、これらは<a href="#sec-3-2">大きな言語Donutsで書かれた小さなプログラム</a>です。
+ざっくり言うと、これらはいずれも<a href="#sec-3-2">大きな言語Donutsで書かれた小さなプログラム</a>です。
 </p>
 <p>
 　
@@ -2543,14 +2538,14 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <h2 id="sec-5"><span class="section-number-2">5</span> Examples from Graphviz manual</h2>
 <div class="outline-text-2" id="text-5">
 
-<p>この章の例は、いずれも以下のGraphvizマニュアルより抜粋したものです。
+<p>この章の例は、以下のGraphvizマニュアルより抜粋したものがほとんどです。
 </p>
 <ul>
 <li><a href="http://www.graphviz.org/pdf/dotguide.pdf">http://www.graphviz.org/pdf/dotguide.pdf</a>
 <ul>
 <li><a href="http://www.cbrc.jp/~tominaga/translations/index.html#dot">Tominaga氏による和訳</a>
     (翻訳元の原文の版が少し古いので、html-likeラベル等の新しい機能は解説されていません。
-    しかしながら、ほとんどの部分で大変参考になるはずです)
+    しかしながら、大方の部分で大変参考になるはずです)
 </li>
 </ul>
 
@@ -2764,6 +2759,12 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <p>
 <img src="./images/example5.png"  alt="./images/example5.png" />
 </p>
+
+<p>
+(nmakeとkshの間が両方向エッジなのは、元々の例がそのようになっているからです。)
+</p>
+
+
 </div>
 
 </div>
@@ -2796,7 +2797,8 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </p>
 
 <p>
-　以下の様に関数bst-graphを定義することで任意の二分探索木をグラフとして出力することもできます。
+　上のグラフには規則性(パターン)が存在します。
+そこで、以下の様に関数bst-graphを定義することで任意の二分探索木をグラフとして出力することもできます。
 関数bst-graphは、(parent left-child right-child)の形の二分探索木を再帰的に下り、グラフを生成します(cf. <a href="#sec-4-13-2">2分木</a>)。
 </p>
 
@@ -3336,10 +3338,9 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 
 <p>
-　Graphvizで使用できる属性は大方のものをサポートしている(URL属性類は未実装)。
+　Graphvizで使用できる属性は大方のものをサポートしている。
 レイアウトアルゴリズムごとにサポートしている属性が異なるので注意。
 </p>
-
 
 </div>
 
@@ -3931,7 +3932,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-18 02:43:59 JST</p>
+<p class="date">Date: 2012-05-18 18:10:45 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

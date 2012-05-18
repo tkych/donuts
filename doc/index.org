@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/18 02:42:42 tkych
+### Last Updated : 2012/05/18 18:16:42 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -132,28 +132,36 @@ digraph graph_T1555 {
 
 
 - OS :: linux-2.6.32-5-686
-- CL Implementations :: sbcl-1.0.55
+- CL Implementations :: sbcl-1.0.55, ccl-1.7-r14925M(LinuxX8632)
 
 ** Dependency
 *** Outer Systems
-1. [[http://www.graphviz.org/][Graphviz]]
+1. [[http://www.graphviz.org/][Graphviz]] by AT&T Labs
 
 2. Appropriate viewer
 
 *** Common Lisp Library
 
-1. [[http://www.quicklisp.org/][quicklisp]] by Zachary Beane, Pierre R. Mai
+0. asdf
+1. [[http://www.quicklisp.org/][quicklisp]] by Zachary Beane
 2. [[http://weitz.de/cl-ppcre/][cl-ppcre]] by Dr. Edmund Weitz
 3. [[http://www.quicklisp.org/][trivial-shell]] by Gary Warren King
 
 
-** Setting
+** Start Setting
 
 #+BEGIN_SRC lisp
 CL-USER> (push #P"/path-to-your-donuts-directory/" asdf:*central-registry*)
 CL-USER> (ql:quickload :donuts)
 CL-USER> (in-package :donuts)
-DONUTS> ($ () (& () (-> 1 2))) ;ビューアが起動し、下の画像が出力される
+
+DONUTS> (dot-output (&& (-> 1 2)))  ;次のようなdotコードが標準出力に表示されたらOK
+
+; digraph graph_ID_103 {
+;   1 -> 2;
+; }
+
+DONUTS> ($ () (& () (-> 1 2))) ;ビューアが起動し、下の画像が出力されたらOK
 #+END_SRC
 
 #+BEGIN_SRC dot :file ./images/start.png
@@ -192,9 +200,9 @@ digraph cluster_graph_T3 {
   }
   
   // in shell
-  $ javac HelloWorld.java   // HelloWorld.javaをコンパイルする
-  $ java HelloWorld         // HelloWorldを実行する
-  Hello World
+  $ javac HelloWorld.java   // compile HelloWorld.java
+  $ java HelloWorld         // execute HelloWorld
+  Hello World               // output 'Hello World' in standard output
 #+END_SRC
 
 　
@@ -239,7 +247,7 @@ whereas in computer science we are usually concerned with imperative (how to) de
 # |        | コンストラクタ | オペレータ | ユーティティ                                           |
 # |--------+----------------+------------+--------------------------------------------------------|
 # | グラフ | &, [&]         |            | with-graph, &&                                         |
-# | エッジ | ->, ---        |            | with-edge, --->, ->>, ==>, <-, <==, ?, -<, >-, ----, O |
+# | エッジ | ->, ---        |            | with-edge, --->, ->>, ==>, ?, -<, ----, O |
 # | ノード | <>, []         | @, rank    | with-node, ~                                           |
 # | その他 | dot-output     |            | dot-pprint,                                            |
 
@@ -254,7 +262,7 @@ whereas in computer science we are usually concerned with imperative (how to) de
 </thead>
 <tbody>
 <tr><td class="left">Graphes</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">with-graph, &amp;&amp;</td></tr>
-<tr><td class="left">Edges</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, &lt;-, &lt;==, ?, -&lt;, &gt;-, &ndash;&ndash;&ndash;, O</td></tr>
+<tr><td class="left">Edges</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, ?, -&lt;, &ndash;&ndash;&ndash;, O</td></tr>
 
 <tr><td class="left">Nodes</td><td class="left">&lt;&gt;, []</td><td class="left">@, rank</td><td class="left">with-node, ~</td></tr>
 <tr><td class="left">Miscellaneous</td><td class="left">dot-output, $</td><td class="left"></td><td class="left">dot-pprint, $$</td></tr>

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-18 02:42:57 JST"/>
+<meta name="generated" content="2012-05-18 18:17:01 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -120,7 +120,7 @@
 <ul>
 <li><a href="#sec-2-1">2.1 Chacked Operational Environments</a></li>
 <li><a href="#sec-2-2">2.2 Dependency</a></li>
-<li><a href="#sec-2-3">2.3 Setting</a></li>
+<li><a href="#sec-2-3">2.3 Start Setting</a></li>
 </ul>
 </li>
 <li><a href="#sec-3">3 Idea of Donuts &mdash; &lt;&gt;, -&gt;, &amp;</a>
@@ -218,7 +218,7 @@
 <dl>
 <dt>OS</dt><dd>linux-2.6.32-5-686
 </dd>
-<dt>CL Implementations</dt><dd>sbcl-1.0.55
+<dt>CL Implementations</dt><dd>sbcl-1.0.55, ccl-1.7-r14925M(LinuxX8632)
 </dd>
 </dl>
 
@@ -239,7 +239,7 @@
 <div class="outline-text-4" id="text-2-2-1">
 
 <ol>
-<li><a href="http://www.graphviz.org/">Graphviz</a>
+<li><a href="http://www.graphviz.org/">Graphviz</a> by AT&amp;T Labs
 
 </li>
 <li>Appropriate viewer
@@ -257,7 +257,9 @@
 
 
 <ol>
-<li><a href="http://www.quicklisp.org/">quicklisp</a> by Zachary Beane, Pierre R. Mai
+<li>asdf
+</li>
+<li><a href="http://www.quicklisp.org/">quicklisp</a> by Zachary Beane
 </li>
 <li><a href="http://weitz.de/cl-ppcre/">cl-ppcre</a> by Dr. Edmund Weitz
 </li>
@@ -273,7 +275,7 @@
 </div>
 
 <div id="outline-container-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Setting</h3>
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Start Setting</h3>
 <div class="outline-text-3" id="text-2-3">
 
 
@@ -283,7 +285,14 @@
 <pre class="src src-lisp">CL-USER&gt; (push #P<span style="color: #90ee90;">"/path-to-your-donuts-directory/"</span> asdf:*central-registry*)
 CL-USER&gt; (ql:quickload <span style="color: #00ee76;">:donuts</span>)
 CL-USER&gt; (<span style="color: #eeee00;">in-package</span> <span style="color: #00ee76;">:donuts</span>)
-DONUTS&gt; ($ () (&amp; () (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12499;&#12517;&#12540;&#12450;&#12364;&#36215;&#21205;&#12375;&#12289;&#19979;&#12398;&#30011;&#20687;&#12364;&#20986;&#21147;&#12373;&#12428;&#12427;</span>
+
+DONUTS&gt; (dot-output (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2)))  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#27425;&#12398;&#12424;&#12358;&#12394;dot&#12467;&#12540;&#12489;&#12364;&#27161;&#28310;&#20986;&#21147;&#12395;&#34920;&#31034;&#12373;&#12428;&#12383;&#12425;OK</span>
+
+<span style="color: #eeee00;">; </span><span style="color: #eeee00;">digraph graph_ID_103 {</span>
+<span style="color: #eeee00;">;   </span><span style="color: #eeee00;">1 -&gt; 2;</span>
+<span style="color: #eeee00;">; </span><span style="color: #eeee00;">}</span>
+
+DONUTS&gt; ($ () (&amp; () (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12499;&#12517;&#12540;&#12450;&#12364;&#36215;&#21205;&#12375;&#12289;&#19979;&#12398;&#30011;&#20687;&#12364;&#20986;&#21147;&#12373;&#12428;&#12383;&#12425;OK</span>
 </pre>
 
 
@@ -338,9 +347,9 @@ Hello World
 }
 
 <span style="color: #eeee00;">// </span><span style="color: #eeee00;">in shell</span>
-$ javac HelloWorld.java   <span style="color: #eeee00;">// </span><span style="color: #eeee00;">HelloWorld.java&#12434;&#12467;&#12531;&#12497;&#12452;&#12523;&#12377;&#12427;</span>
-$ java HelloWorld         <span style="color: #eeee00;">// </span><span style="color: #eeee00;">HelloWorld&#12434;&#23455;&#34892;&#12377;&#12427;</span>
-Hello World
+$ javac HelloWorld.java   <span style="color: #eeee00;">// </span><span style="color: #eeee00;">compile HelloWorld.java</span>
+$ java HelloWorld         <span style="color: #eeee00;">// </span><span style="color: #eeee00;">execute HelloWorld</span>
+Hello World               <span style="color: #eeee00;">// </span><span style="color: #eeee00;">output 'Hello World' in standard output</span>
 </pre>
 
 
@@ -421,7 +430,7 @@ whereas in computer science we are usually concerned with imperative (how to) de
 </thead>
 <tbody>
 <tr><td class="left">Graphes</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">with-graph, &amp;&amp;</td></tr>
-<tr><td class="left">Edges</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, &lt;-, &lt;==, ?, -&lt;, &gt;-, &ndash;&ndash;&ndash;, O</td></tr>
+<tr><td class="left">Edges</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, ?, -&lt;, &ndash;&ndash;&ndash;, O</td></tr>
 
 <tr><td class="left">Nodes</td><td class="left">&lt;&gt;, []</td><td class="left">@, rank</td><td class="left">with-node, ~</td></tr>
 <tr><td class="left">Miscellaneous</td><td class="left">dot-output, $</td><td class="left"></td><td class="left">dot-pprint, $$</td></tr>
@@ -2943,7 +2952,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-18 02:42:57 JST</p>
+<p class="date">Date: 2012-05-18 18:17:01 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
