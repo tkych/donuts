@@ -1,11 +1,11 @@
-Last Updated : 2012/05/18 02:03:35 tkych
+Last Updated : 2012/05/18 18:11:45 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
 
 ## Introduction
 
-By donuts, the graph represented by s-expression is converted to image file.
+By donuts, the graph represented by s-expression is converted to image.
 How to use donuts is easy.
 <> creates a node.
 -> puts an edge between two nodes.
@@ -43,8 +43,8 @@ The Current version of the donuts is 0.3.0 (beta).
 
 * Node-Constructor, <> makes node from node's identity.   `(<> label) => node`
 * Edge-Constructor, -> makes node with nodes.   `(-> node1 node2) => edge`
-* Graph-Constructor, && makes graph with nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
-* Shell-Interface, $$ outputs graph to viewer.   `($$ graph) => NIL ;output image to viewer`
+* Graph-Constructor, &&, & makes graph with nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
+* Shell-Interface, $$, $ outputs graph to viewer.   `($$ graph) => NIL ;output image to viewer`
 * dot-output outputs dot code in standart-output.   `(dot-output graph) => NIL ;output dot code`
 
 
@@ -75,6 +75,33 @@ The Current version of the donuts is 0.3.0 (beta).
                      (->  "a1" "b3")
                      (->  "a3" "a0")
                      (->  "b2" "a3")))
+       NIL
+
+       DONUTS> 
+       ;; example from http://www.linuxjournal.com/article/7275
+       ;; num-day: total number of days in month
+       ;; starting-day: 0 as Sun, 1 as Mon, ... , 6 as Sat
+       (defun generate-monthly-calendar (month year num-days starting-day)
+         (let ((month (<> (format nil "~@(~A~)\\n~D" month year) :shape :Msquare))
+               (luminary7 (loop :for day :in '("Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat")
+                                :collect (<> day :shape :egg :style :filled :color :lightgray)))
+               (days (loop :for day :in (nconc (loop :repeat starting-day :collect "")
+                                               (loop :for d :from 1 :to num-days :collect d)
+                                               (loop :repeat (- (* 7 (if (and (= 28 num-days) (= 0 starting-day))
+                                                                         4 5)) ;for Feb starting Sun in common year 
+                                                                starting-day num-days)
+                                                     :collect ""))
+                           :collect (<> day :shape :box))))
+           ;; fn group from On Lisp, ex. (group '(1 2 3 4) 2) => ((1 2) (3 4))
+           (apply #'&& (loop :for week :in (cons luminary7 (group days 7)) 
+                             :collect (apply #'--> month week)))))
+
+       GENERATE-MONTHLY-CALENDAR
+
+       DONUTS> ($$ (& (:size "8,6":rankdir :LR)
+                     (generate-monthly-calendar 'may 2012 31 2)))
+
+       ; Output Calendar to Viewer
        NIL
 
 
