@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-19 12:25:43 JST"/>
+<meta name="generated" content="2012-05-19 13:29:02 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -2807,26 +2807,22 @@ nmakeとkshのつながりに関して詳しい方がいらっしゃいました
 <pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">bst-graph</span> (tree)
   (<span style="color: #eeee00;">if</span> (null tree)
       (<span style="color: #eeee00;">&amp;&amp;</span>)
-      (<span style="color: #eeee00;">labels</span> ((rec (root-node tree)
-                 (<span style="color: #eeee00;">let</span> ((lc (second tree)) (rc (third tree)))
-                   (<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">when</span> lc
-                         (<span style="color: #eeee00;">if</span> (atom lc)
-                             (-&gt; (@ root-node <span style="color: #00ee76;">:f0</span>) (@ (bst-node lc) <span style="color: #00ee76;">:f1</span>))
-                             (<span style="color: #eeee00;">let</span> ((lc-node (bst-node (first lc))))
-                               (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; (@ root-node <span style="color: #00ee76;">:f0</span>) (@ lc-node <span style="color: #00ee76;">:f1</span>))
-                                   (rec lc-node lc)))))
-                       (<span style="color: #eeee00;">when</span> rc
-                         (<span style="color: #eeee00;">if</span> (atom rc)
-                             (-&gt; (@ root-node <span style="color: #00ee76;">:f2</span>) (@ (bst-node rc) <span style="color: #00ee76;">:f1</span>))
-                             (<span style="color: #eeee00;">let</span> ((rc-node (bst-node (first rc))))
-                               (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; (@ root-node <span style="color: #00ee76;">:f2</span>) (@ rc-node <span style="color: #00ee76;">:f1</span>))
-                                   (rec rc-node rc)))))))))
+      (<span style="color: #eeee00;">labels</span> ((bst-node (symb)
+                 ([] (format nil <span style="color: #90ee90;">"~@{~A~}"</span> <span style="color: #90ee90;">":left |:center "</span> symb <span style="color: #90ee90;">"|:right"</span>)))
+               (pedigree (port parent child)
+                 (<span style="color: #eeee00;">when</span> child
+                   (<span style="color: #eeee00;">if</span> (atom child)
+                       (-&gt; (@ parent port) (@ (bst-node child) <span style="color: #00ee76;">:center</span>))
+                       (<span style="color: #eeee00;">let</span> ((child-node (bst-node (first child))))
+                         (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; (@ parent port) (@ child-node <span style="color: #00ee76;">:center</span>))
+                             (rec child-node child))))))
+               (rec (parent tree)
+                 (<span style="color: #eeee00;">let</span> ((left-child (second tree)) (right-child (third tree)))
+                   (<span style="color: #eeee00;">&amp;&amp;</span> (pedigree <span style="color: #00ee76;">:left</span>  parent left-child)
+                       (pedigree <span style="color: #00ee76;">:right</span> parent right-child)))))
         (<span style="color: #eeee00;">if</span> (null (cdr tree))
             (bst-node (first tree))
             (rec (bst-node (first tree)) tree)))))
-
-(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">bst-node</span> (symb)
-  ([] (format nil <span style="color: #90ee90;">"~@{~A~}"</span> <span style="color: #90ee90;">":f0 |:f1 "</span> symb <span style="color: #90ee90;">"|:f2"</span>)))
 
 ($$ (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:height</span> .1)             <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#19978;&#12392;&#21516;&#27096;&#12398;&#12464;&#12521;&#12501;&#12364;&#20986;&#21147;&#12373;&#12428;&#12427;&#12290;</span>
       (bst-graph '(g (e (b a c)
@@ -3957,7 +3953,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-19 12:25:43 JST</p>
+<p class="date">Date: 2012-05-19 13:29:02 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/19 12:25:23 tkych
+### Last Updated : 2012/05/19 13:28:13 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -2639,26 +2639,22 @@ digraph graph_T385 {
   (defun bst-graph (tree)
     (if (null tree)
         (&&)
-        (labels ((rec (root-node tree)
-                   (let ((lc (second tree)) (rc (third tree)))
-                     (&& (when lc
-                           (if (atom lc)
-                               (-> (@ root-node :f0) (@ (bst-node lc) :f1))
-                               (let ((lc-node (bst-node (first lc))))
-                                 (&& (-> (@ root-node :f0) (@ lc-node :f1))
-                                     (rec lc-node lc)))))
-                         (when rc
-                           (if (atom rc)
-                               (-> (@ root-node :f2) (@ (bst-node rc) :f1))
-                               (let ((rc-node (bst-node (first rc))))
-                                 (&& (-> (@ root-node :f2) (@ rc-node :f1))
-                                     (rec rc-node rc)))))))))
+        (labels ((bst-node (symb)
+                   ([] (format nil "~@{~A~}" ":left |:center " symb "|:right")))
+                 (pedigree (port parent child)
+                   (when child
+                     (if (atom child)
+                         (-> (@ parent port) (@ (bst-node child) :center))
+                         (let ((child-node (bst-node (first child))))
+                           (&& (-> (@ parent port) (@ child-node :center))
+                               (rec child-node child))))))
+                 (rec (parent tree)
+                   (let ((left-child (second tree)) (right-child (third tree)))
+                     (&& (pedigree :left  parent left-child)
+                         (pedigree :right parent right-child)))))
           (if (null (cdr tree))
               (bst-node (first tree))
               (rec (bst-node (first tree)) tree)))))
-  
-  (defun bst-node (symb)
-    ([] (format nil "~@{~A~}" ":f0 |:f1 " symb "|:f2")))
   
   ($$ (with-node (:height .1)             ;上と同様のグラフが出力される。
         (bst-graph '(g (e (b a c)
