@@ -1,4 +1,4 @@
-Last Updated : 2012/05/18 18:11:45 tkych
+Last Updated : 2012/05/19 12:36:50 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -12,9 +12,9 @@ How to use donuts is easy.
 && makes a graph by bundling some nodes, edges and graphs.
 $$ outputs an image of the graph.
 
-The goal of donuts is to draw graphs in lispic way of thinking. 
+The goal of donuts is to draw graphs in lispic way of thinking (REPL, macro, CLOS ,multi-paradigm style and so on). 
 
-For more details, see index(Under translation) or index-ja(Japanease) in doc directory.
+For more details, see index(Under Translation) or index-ja(Japanease) in doc directory.
 
 
 ## Version

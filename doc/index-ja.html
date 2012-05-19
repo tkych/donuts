@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-18 18:10:45 JST"/>
+<meta name="generated" content="2012-05-19 12:25:43 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -2761,9 +2761,10 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </p>
 
 <p>
-(nmakeとkshの間が両方向エッジなのは、元々の例がそのようになっているからです。)
+(各ノードは時系列に並んでいるので、おそらく'ksh&lt;-&gt;nmake'ではなく'ksh-&gt;nmake'ではないかと思います。
+しかしながら、元々の例中で'ksh&lt;-&gt;nmake'であり、私自身kshやnmakeに関して詳しくないため、そのままにしてあります。
+nmakeとkshのつながりに関して詳しい方がいらっしゃいましたら、どうかご助言を頂けるとありがたいです。)
 </p>
-
 
 </div>
 
@@ -2937,11 +2938,6 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <div class="outline-text-4" id="text-5-1-10">
 
 
-<p>
-　出力される画像がマニュアルのものと違いますが、グラフとしては同等です。
-グラフを構成する要素(ノード、エッジ、グラフ)の順によって、グラフ構造としては同等でも、グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります(これはGraphvizの仕様です)。
-</p>
-
 
 
 
@@ -2978,6 +2974,14 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 <p>
 <img src="./images/example10.png"  alt="./images/example10.png" />
 </p>
+
+<p>
+　出力される画像がマニュアルのものと異なりますが、グラフとしては同等です。
+Grapvizマニュアル中のdotコードを、Grapviz整形ユーティリティnopによって整形したdotコードでは上と同じ画像が出力されます。
+グラフを構成する要素(ノード、エッジ、グラフ)の順によって、グラフ構造としては同等でも、
+グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります<sup><a class="footref" name="fnr.14" href="#fn.14">14</a></sup>。
+</p>
+
 </div>
 
 </div>
@@ -3768,8 +3772,12 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 <ul>
 <li><b>!!バグ!!: with-node, with-edge;</b>
   <b>let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。</b>
-
 </li>
+</ul>
+
+
+
+<ul>
 <li>日本語版ドキュメントの完成。
 <ul>
 <li>リファレンスマニュアル。
@@ -3784,7 +3792,7 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 <ul>
 <li>開発環境以外での動作確認(windows, macなど)。
 <ul>
-<li>windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じる。-&gt; trivial-shellとの相性か？
+<li>windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じる
 </li>
 </ul>
 
@@ -3924,6 +3932,23 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 ただし、ここで紹介したマクロcons-cell-ofは、コードが煩雑になってしまうため、ループ構造のリストには対応していません。
 </p>
 
+<p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> dotコード中のグラフ構成要素の順に依存し、生成される画像が変化するというのはGrapvizの仕様です。
+そして、これはGrapviz作者による賢明な判断だ、と私は考えます。
+なぜなら、整形ユーティリティnopをdotコマンドの動作内に組み入れるだけで、容易に、グラフ構成要素の順に依らず同じ画像が生成されるように(dotコマンドを)動作させることができたはずだからです。
+しかし、あえてそれをしなかったということは、以下の選択肢をユーザに提供することを意図しているはずです。
+</p><ol>
+<li>[dot] 生成される画像はdotコード中のグラフ構成要素の順に依存するが、実行コストが小さい。
+</li>
+<li>[dot + nop] 生成される画像はdotコード中のグラフ構成要素の順に依存しないが、実行コストが大きい。
+</li>
+</ol>
+
+</li>
+</ol>
+
+
+
+
 </div>
 </div>
 
@@ -3932,7 +3957,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-18 18:10:45 JST</p>
+<p class="date">Date: 2012-05-19 12:25:43 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
