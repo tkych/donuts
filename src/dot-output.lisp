@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/20 08:59:20 tkych
+;;;; Last Updated : 2012/05/20 09:06:39 tkych
 
 ;; dot-output.lisp in donuts/src/
 
@@ -47,7 +47,7 @@
                      (output-buff buff)
                      (setf buff nil))))) ;for gc
             (setf cache output)
-            (format t "~A" output)))
+            (princ output)))
      (format t "~&}")))
 
 (defun output-buff (buff)
