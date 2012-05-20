@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/17 11:00:53 tkych
+;;;; Last Updated : 2012/05/20 08:40:17 tkych
 
 ;; Application package for donuts
 
@@ -31,14 +31,23 @@
 
 (defpackage :donuts
   (:use :cl)
-  (:import-from :in-donuts :<> :[] :rank :~ :@ :with-node
-                           :-> :--> :->> :==> :? :with-edge
-                           :-- :--- :-< :O
-                           :& :[&] :&& :with-graph
-                           :dot-output :dot-pprint :$ :$$
-                           :html :br :hr :vr :img
-                           :font :i :b :u :sub :sup :table :tr :td
-                           ))
+  (:import-from :in-donuts
+                :<> :[] :rank :~ :@ :with-node
+                :-> :--> :->> :==> :? :with-edge
+                :-- :--- :-< :O
+                :& :[&] :&& :with-graph
+                :dot-output :dot-pprint :$ :$$
+                :html :br :hr :vr :img
+                :font :i :b :u :sub :sup :table :tr :td
+                )
+  (:export :<> :[] :rank :~ :@ :with-node
+           :-> :--> :->> :==> :? :with-edge
+           :-- :--- :-< :O
+           :& :[&] :&& :with-graph
+           :dot-output :dot-pprint :$ :$$
+           :html :br :hr :vr :img
+           :font :i :b :u :sub :sup :table :tr :td
+           ))
 
 (pushnew :donuts *features*)
 ;;====================================================================
