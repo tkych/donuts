@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-19 13:29:02 JST"/>
+<meta name="generated" content="2012-05-20 23:37:57 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -389,12 +389,12 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 つまりDonutsの達成したい目標は、 <span style="text-decoration:underline;">Lispコード内であたかもC言語でコーディングするかのように思考を切り替えずにLispの考え方の枠組みそのままでグラフ作成を可能にすること</span> です。
 </p>
 <p>
-　そもそも、グラフを作成するだけなら、GraphvizなどのDot言語アプリケーションをそのまま使えば済む話です。
-それにもかかわらず、上のことがらをゴールに設定し、Donutsを造った一番の理由は <span style="text-decoration:underline;">グラフを描くLispプログラマの生産性の向上のため</span> です。
+　そもそも、グラフを作成するだけなら、GraphvizなどのDot言語アプリケーションをそのまま使えば達成できることです。
+それにもかかわらず、「なめらかさ」をゴールに設定し、Donutsを造った一番の理由は <span style="text-decoration:underline;">グラフを描くLispプログラマの生産性の向上のため</span> です。
 以下で詳しく説明します。
 </p>
 <p>
-　おおよそいかなるプログラミング言語を使用したとしても、その言語のシンタックスやセマンティックス、設計思想、伝統文化に根ざした、言語特有の思考習慣の概念的枠組みの中でプログラマはプログラムを書きます。
+　およそいかなるプログラミング言語を使用したとしても、その言語のシンタックスやセマンティックス、設計思想、伝統文化に根ざした、言語特有の思考習慣の概念的枠組みの中でプログラマはプログラムを書きます。
 LispとJavaによる例を挙げましょう。
 </p>
 <p>
@@ -439,7 +439,7 @@ Hello World               <span style="color: #eeee00;">// </span><span style="c
 
 
 <p>
-　この例で挙げたようなことは、単なる思考の習慣に過ぎず、どれが優れており、どれが劣っているという絶対的なものではありません。
+　この例で挙げたようなことは、どちらも単なる思考の習慣に過ぎず、どれが優れており、どれが劣っているという絶対的なものではありません。
 しかし、プログラマの <span style="text-decoration:underline;">生産性に大きく影響します</span> 。
 これはある言語のプログラマが他の言語のプログラマと比べて生産性が高い（または低い）という意味で言っているのでは <span style="text-decoration:underline;">ありません</span> 。
 </p>
@@ -828,7 +828,13 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <p>
 　最後に、S式 <code>(&amp;&amp; ****)</code> の意味は、 <i>グラフ構成要素****を束ねたグラフを生成せよ</i> というものです(****は、任意の数のエッジやノードやグラフ)。
 <code>&amp;&amp;</code> は、任意数のグラフ構成要素を引数に取りグラフオブジェクトを生成するマクロで、 <b>グラフコンストラクタ</b> と呼んでいます。
-グラフ構成要素が何も与えられない場合、すなわち <code>(&amp;&amp;)</code> の場合、 <b>空グラフ</b> が生成されます。
+</p>
+<p>
+　グラフ構成要素が何も与えられない場合、すなわち <code>(&amp;&amp;)</code> の場合、 <b>空グラフ</b> が生成されます。
+また、グラフ構成要素としてnilを与えることもできますが、その場合nilは無視されます。
+したがって、 <code>(&amp;&amp; nil)</code> も空グラフを生成します。
+一見、空グラフの存在は無駄に見えます。
+ところが、グラフを再帰的に生成する時に、その真価が明らかになるでしょう(cf. <a href="#sec-4-13-2">2分木</a>)。
 </p>
 <p>
 　この例では、グラフ構成要素としてエッジHello-&gt;Worldが <code>&amp;&amp;</code> に与えられています。
@@ -1544,7 +1550,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 　
 </p>
 <p>
-<b>!!バグ!!: with-node, with-edge;let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。</b>
+*!!バグ!!: with-node, with-edge;let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響される場合がある(see. <a href="#sec-7">ToDo</a>)。*
 </p>
 <p>
 　
@@ -2291,7 +2297,7 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 <span class="linenr">12:  </span>                             (-&gt; p rc)
 <span class="linenr">13:  </span>                             (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; p (first rc)) (rec rc))))))))
 <span class="linenr">14:  </span>        (<span style="color: #eeee00;">if</span> (null (rest tree))
-<span class="linenr">15:  </span>            (first tree)
+<span class="linenr">15:  </span>            (<span style="color: #eeee00;">&amp;&amp;</span> (first tree))
 <span class="linenr">16:  </span>            (rec tree)))))
 </pre>
 
@@ -2799,8 +2805,8 @@ nmakeとkshのつながりに関して詳しい方がいらっしゃいました
 
 <p>
 　上のグラフには規則性(パターン)が存在します。
-そこで、以下の様に関数bst-graphを定義することで任意の二分探索木をグラフとして出力することもできます。
-関数bst-graphは、(parent left-child right-child)の形の二分探索木を再帰的に下り、グラフを生成します(cf. <a href="#sec-4-13-2">2分木</a>)。
+そこで、以下の様に関数bst-graphを定義すると、任意の二分探索木をグラフとして出力することができます。
+関数bst-graphは、リスト形式(parent left-child right-child)で表現される二分探索木を再帰的に下り、グラフを生成します(cf. <a href="#sec-4-13-2">2分木</a>)。
 </p>
 
 
@@ -2821,7 +2827,7 @@ nmakeとkshのつながりに関して詳しい方がいらっしゃいました
                    (<span style="color: #eeee00;">&amp;&amp;</span> (pedigree <span style="color: #00ee76;">:left</span>  parent left-child)
                        (pedigree <span style="color: #00ee76;">:right</span> parent right-child)))))
         (<span style="color: #eeee00;">if</span> (null (cdr tree))
-            (bst-node (first tree))
+            (<span style="color: #eeee00;">&amp;&amp;</span> (bst-node (first tree)))
             (rec (bst-node (first tree)) tree)))))
 
 ($$ (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:height</span> .1)             <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#19978;&#12392;&#21516;&#27096;&#12398;&#12464;&#12521;&#12501;&#12364;&#20986;&#21147;&#12373;&#12428;&#12427;&#12290;</span>
@@ -3342,6 +3348,22 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 レイアウトアルゴリズムごとにサポートしている属性が異なるので注意。
 </p>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </div>
 
 <div id="outline-container-6-1" class="outline-3">
@@ -3723,6 +3745,23 @@ HTML-LIKEラベルはエッジのラベルとしても用いることができ�
  <code>html</code> はマクロ、 <code>tags-bodies</code> は任意の数のタグ型オブジェクトと文字列、数値を表す。
 tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, sub, sup, table, tr, td)によってのみ生成される。
 </p>
+
+
+
+
+<pre class="src src-lisp">html-like-label <span style="color: #00ee76;">::</span> (html tag-body)
+tag-body <span style="color: #00ee76;">::</span> text|table
+text <span style="color: #00ee76;">::</span> textitem|text textitem
+textitem <span style="color: #00ee76;">::</span> number|string|(br)|(font text)|(i text)|(b text)|(u text)|(sub text)|(sup text)
+table <span style="color: #00ee76;">::</span> (table rows)|(font (table rows))
+rows <span style="color: #00ee76;">::</span> row|rows row|rows (hr) row
+row <span style="color: #00ee76;">::</span> (tr cells)
+cells <span style="color: #00ee76;">::</span> cell|cells cell|cells (vr) cell
+cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
+</pre>
+
+
+
 <p>
 　参考： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
 </p>
@@ -3766,8 +3805,28 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 <b>優先度順</b>
 </p>
 <ul>
-<li><b>!!バグ!!: with-node, with-edge;</b>
-  <b>let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。</b>
+<li><b>!!バグ修正!!: with-node, with-edge;</b>
+  <b>let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響される場合がある。</b>
+</li>
+</ul>
+
+
+
+
+<pre class="src src-lisp">(<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:blue</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:box</span>)
+  (<span style="color: #eeee00;">let</span> ((a (&lt;&gt; <span style="color: #90ee90;">"a"</span>)))
+    (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
+      a)))                         <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;a&#12398;&#33394;&#12364;&#36196;&#12395;&#12394;&#12387;&#12390;&#12375;&#12414;&#12358;!!</span>
+</pre>
+
+
+<ul>
+<li>開発環境以外での動作確認(windows, macなど)。
+<ul>
+<li>windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じてしまう。
+</li>
+</ul>
+
 </li>
 </ul>
 
@@ -3777,18 +3836,6 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 <li>日本語版ドキュメントの完成。
 <ul>
 <li>リファレンスマニュアル。
-</li>
-</ul>
-
-</li>
-</ul>
-
-
-
-<ul>
-<li>開発環境以外での動作確認(windows, macなど)。
-<ul>
-<li>windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じる
 </li>
 </ul>
 
@@ -3827,7 +3874,7 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 
 
 <ul>
-<li>エラー処理。
+<li>エラー処理の実装。
       どこまでlispでエラーチェックするか？
       Graphvizに任せてもいい部分はGraphvizに。
 </li>
@@ -3836,7 +3883,7 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 
 
 <ul>
-<li>セキュリティ。
+<li>セキュリティの考察。
       現在のところ知識不足。要勉強。
       少なくとも任意のコマンドはshellに打ち込めないように。
 </li>
@@ -3929,8 +3976,8 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> dotコード中のグラフ構成要素の順に依存し、生成される画像が変化するというのはGrapvizの仕様です。
-そして、これはGrapviz作者による賢明な判断だ、と私は考えます。
-なぜなら、整形ユーティリティnopをdotコマンドの動作内に組み入れるだけで、容易に、グラフ構成要素の順に依らず同じ画像が生成されるように(dotコマンドを)動作させることができたはずだからです。
+そして、これはGrapviz作者による思慮深い判断の結果である、と私は考えます。
+なぜなら、整形ユーティリティnopをdotコマンドの動作内に組み入れるだけで、グラフ構成要素の順に依らず同じ画像が生成されるように(dotコマンドを)動作させることは容易にできたことだからです。
 しかし、あえてそれをしなかったということは、以下の選択肢をユーザに提供することを意図しているはずです。
 </p><ol>
 <li>[dot] 生成される画像はdotコード中のグラフ構成要素の順に依存するが、実行コストが小さい。
@@ -3953,7 +4000,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-19 13:29:02 JST</p>
+<p class="date">Date: 2012-05-20 23:37:57 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/17 21:51:05 tkych
+;;;; Last Updated : 2012/05/20 17:25:04 tkych
 
 ;; Graph in donuts
 
@@ -50,8 +50,9 @@
     (remf graph-attrs :name) (remf graph-attrs :strict)
     (when (and *directed?*
                (or (find-if #'path? nodes-edges-graphs)
-                   (not (every #':dir (remove-if-not
-                                       #'graph? nodes-edges-graphs)))))
+                   (not (every #':dir (remove-if
+                                       (complement #'graph?)
+                                       nodes-edges-graphs)))))
       (setf *directed?* nil))
     (make-inst 'graph :dir *directed?* :attrs graph-attrs
                :buff nodes-edges-graphs :strict strict
@@ -68,7 +69,8 @@
   (defun && (&rest nodes-edges-graphs)
     (when (and *directed?*
                (or (find-if #'path? nodes-edges-graphs)
-                   (not (every #':dir (remove-if-not
+                   (not (every #':dir (remove-if
+                                       (complement #'graph?)
                                        #'graph? nodes-edges-graphs)))))
       (setf *directed?* nil))
     (prog1
