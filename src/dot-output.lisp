@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/18 00:05:04 tkych
+;;;; Last Updated : 2012/05/20 08:59:20 tkych
 
 ;; dot-output.lisp in donuts/src/
 
@@ -39,15 +39,15 @@
      (format t "~A ~A {~%" (if dir "digraph" "graph") name)
      (awhen attrs
        (format t "~&~{  ~A=~A;~^~&~}~&" (escape-attrs it)))
-     (if cache
-         (format t "~A" cache)
-         (let ((output
-                (with-output-to-string (s)
-                  (let ((*standard-output* s) (*declared* nil))
-                    (output-buff buff)
-                    (setf buff nil))))) ;for gc
-           (setf cache output)
-           (format t "~A" output)))
+     (aif cache
+          (princ it)
+          (let ((output
+                 (with-output-to-string (s)
+                   (let ((*standard-output* s) (*declared* nil))
+                     (output-buff buff)
+                     (setf buff nil))))) ;for gc
+            (setf cache output)
+            (format t "~A" output)))
      (format t "~&}")))
 
 (defun output-buff (buff)
