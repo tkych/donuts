@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/20 23:37:37 tkych
+### Last Updated : 2012/05/21 20:47:08 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -548,7 +548,7 @@ Donutsでは、ユーザにはほとんど見えない実装部分で、アイ�
 
 # |        | コンストラクタ | オペレータ | ユーティティ                                           |
 # |--------+----------------+------------+--------------------------------------------------------|
-# | グラフ | &, [&]         |            | with-graph, &&                                         |
+# | グラフ | &, [&]         |            |  &&                                         |
 # | エッジ | ->, ---        |            | with-edge, --->, ->>, ==>, ?, -<, ----, O |
 # | ノード | <>, []         | @, rank    | with-node, ~                                           |
 # | その他 | dot-output     |            | dot-pprint,                                            |
@@ -563,7 +563,7 @@ Donutsでは、ユーザにはほとんど見えない実装部分で、アイ�
 <tr><th scope="col" class="left"></th><th scope="col" class="left">コンストラクタ</th><th scope="col" class="left">オペレータ</th><th scope="col" class="left">ユーティティ</th></tr>
 </thead>
 <tbody>
-<tr><td class="left">グラフ</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">with-graph, &amp;&amp;</td></tr>
+<tr><td class="left">グラフ</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">&amp;&amp;</td></tr>
 <tr><td class="left">エッジ</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, ?, -&lt;, &ndash;&ndash;&ndash;, O</td></tr>
 
 <tr><td class="left">ノード</td><td class="left">&lt;&gt;, []</td><td class="left">@, rank</td><td class="left">with-node, ~</td></tr>
@@ -665,13 +665,9 @@ digraph T11 {
 コード =(<> "a" :color :red)= により生成されるノードに自己ループを張るには、 =(let ((n (<> "a" :color :red))) (-> n n))= とするか、またはユーティリティ[[自己ループを生成する関数：?][?]]を使って =(? (<> "a" :color :red))= とする必要があります。
 
 　最後に、S式 =(&& ****)= の意味は、 /グラフ構成要素****を束ねたグラフを生成せよ/ というものです(****は、任意の数のエッジやノードやグラフ)。
-=&&= は、任意数のグラフ構成要素を引数に取りグラフオブジェクトを生成するマクロで、 *グラフコンストラクタ* と呼んでいます。
-
-　グラフ構成要素が何も与えられない場合、すなわち =(&&)= の場合、 *空グラフ* が生成されます。
-また、グラフ構成要素としてnilを与えることもできますが、その場合nilは無視されます。
-したがって、 =(&& nil)= も空グラフを生成します。
-一見、空グラフの存在は無駄に見えます。
-ところが、グラフを再帰的に生成する時に、その真価が明らかになるでしょう(cf. [[2分木]])。
+=&&= は、任意数のグラフ構成要素を引数に取り、グラフオブジェクトを生成する関数で、 *グラフコンストラクタ* と呼んでいます。
+グラフコンストラクタ =&&= は、べき等な操作です。
+すなわち、 =(&& (&& ****))= <=> =(&& ****)= が成り立ちます。
 
 　この例では、グラフ構成要素としてエッジHello->Worldが =&&= に与えられています。
 その結果、ノードHelloからノードWorldへのエッジを構成要素とする(有向)グラフが生成されています。
@@ -700,6 +696,13 @@ digraph graph_T251 {
 
 #+RESULTS:
 [[file:./images/simple-graph2.png]]
+
+　ちなみに、 =&&= にグラフ構成要素が何も与えられない場合、すなわち =(&&)= の場合、 *ヌルグラフ* が生成されます。
+また、グラフ構成要素としてnilを与えることもできますが、その場合nilは無視されます。
+したがって、 =(&& nil)= もヌルグラフを生成します。
+一見、ヌルグラフの存在は無駄に見えます。
+しかし、グラフを再帰的に生成する際には、ヌルグラフは無くてはならないものです(cf. [[2分木]])。
+
 
 　
 
@@ -845,7 +848,7 @@ with-open-file内で*standart-output*を束縛し、
 dot-outputによってdotファイルを出力し、そのdotファイルをGraphvizで画像ファイルに変換し、
 それをビューアで見るという方法もあります。
 
-*** dot-output, dot-pprint
+*** *dot-output*, *dot-pprint*
 
 　dot-output, dot-pprintは引数にグラフオブジェクトを取り、標準出力にそのグラフオブジェクトのdotコードを表示します。
 #+BEGIN_SRC lisp
@@ -871,12 +874,7 @@ dot-outputによってdotファイルを出力し、そのdotファイルをGrap
 dot-pprintは、Graphvizライブラリの整形用ユーティリティnopによって処理を行うため、dot-outputに比べ実行コストがかかります。
 dot-outputによる表示が見づらい場合に使うと便利です。
 
-# *** シェルインターフェイス$、$＄
-#+BEGIN_HTML
-<div id="outline-container-4-4-2" class="outline-4">
-<h4 id="sec-4-4-2"><span class="section-number-4">4.4.2</span> シェルインターフェイス$、$$</h4>
-<div class="outline-text-4" id="text-4-4-2">
-#+END_HTML
+*** シェルインターフェイス *$*, *$$*
 
 　次のコードを評価すると、画像ファイルdiamond.pngが生成され、
 ビューアが立ち上がり、diamond.pngが表示されます(下の画像)。
@@ -1276,45 +1274,30 @@ digraph graph_T184 {
 
 　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティ集です。
 
-# ##--------------------------------------
-# *** 2文字省略するためのユーティリティ
-# ##--------------------------------------
-
-# 　&&は今まで何度も出てきたグラフコンストラクタです。
-# しかし、真の姿は、属性を指定する必要のない場合に、2文字省略するためのスーパーユーティリティです(同様のユーティリティとしてもあります)。
-# 2文字省略することにより、指の疲労が軽減され、キーボードの摩耗も減り、電力の消費も抑えられ、カッコの数も減り、コードの可読性も向上し、世の中が少しだけ良くなる究極のワンダフルユーティリティです。
-
-
 ##--------------------------------------
 *** コンテキストを作り出すもの
 ##--------------------------------------
 
-　
-
-*!!バグ!!: with-node, with-edge;let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響される場合がある(see. [[ToDo]])。*
-
-　
-
 　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
-コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
+コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じ値になるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
  with-node,  with-edgeをネストした場合、属性値は上書きされます。
 
- *注: with-node, with-edgeは、&,[&],&&の内部でのみ、期待通りの動作が保証されます。* 
-with-node, with-edgeは、暗黙の部分グラフを生成します。
-そのため、トップレベルでwith-node, with-edgeを使用した場合、コンテキスト内のグラフ属性が無効になってしまいます。
-次の上のコードは期待通りに動作しますが、下のコードは期待通りに動作しません。
+ *注: with-node, with-edgeは、暗黙のグラフを生成します。* 
+部分グラフのグラフ属性は無視されるのでした (cf. [[部分グラフ、クラスタ]])。
+そのため、with-node, with-edgeによるコンテキスト内で生成されるグラフのグラフ属性は無効になります。
+次の上のコードは期待通りに動作しますが、下のコードの動作には注意が必要です。
 #+BEGIN_SRC lisp
   ;; 出力されるグラフにラベルが付く
-  (& (:label "このグラフ属性は有効")  ;トップレベルのグラフなので、属性が有効になる
+  (& (:label "このグラフ属性は有効")  ;部分グラフではないので、属性は有効
     (with-node (:color :red)
       (-> "a" "b")))
   
   ;; 出力されるグラフにはラベルが付かない
   (with-node (:color :red)
-    (& (:label "このグラフ属性は無効") ;with-nodeによって生成される暗黙の部分グラフの部分グラフなので、属性が無効になる
+    (& (:label "このグラフ属性は無効") ;with-nodeによる暗黙のグラフの部分グラフなので、属性は無効
       (-> "a" "b")))
 #+END_SRC
-*with-node, with-edgeは、&,[&],&&の内部でのみ、使用できると考えた方が無難です。*
+細かいことは気にしたくないなら、 *with-node, with-edgeは、&,[&],&&の内部でのみ、使用した方が無難です。*
 
 --------------------------------------
 
@@ -1390,8 +1373,8 @@ digraph graph_T79 {
 **** with-edge
 ##--------------------------------------
 
-　with-edgeの使い方もwith-nodeと同様です。
-解説すると冗長になってしまいますので、ここでは例の提示のみにとどめます。
+　with-edgeの使用法はwith-nodeと同じです。
+解説すると冗長になりますので、例のみを提示します。
 #+SRCNAME: with-edge.lisp
 #+BEGIN_SRC lisp -n
   (& (:rankdir :LR)
@@ -2230,19 +2213,22 @@ digraph graph_T862 {
 ** Tips
 ##--------------------------------------------------------------------
 
-　Donutsによるグラフ作成のこつ。
+Donutsによるグラフ作成のこつ。
 
 *** letの後には&&を。
 
+
+letは、暗黙のprogn内の最後の式の値を返します。
+次のコードでは =(-> a b)= の値が無視され、 =(-> 1 2)= の値が返されます。
 #+BEGIN_SRC lisp
   (let ((a (<> "a"))
         (b (<> "c")))
     (-> a b)
     (-> 1 2))
-  => #<edge_ID_14 :: 1 -> 2> ;(-> 1 2)の返り値であるedgeだけが返されてしまう。普通は望まない結果。
+  => #<edge_ID_14 :: 1 -> 2> ;(-> 1 2)の返り値であるedgeだけが返されてしまう。通常、望まない結果。
 #+END_SRC
 
-
+一方、次のコードでは、'a->b'と'1->2'から構成されるグラフが返されます。
 #+BEGIN_SRC lisp
   (let ((a (<> "a"))
         (b (<> "c")))
@@ -2252,12 +2238,21 @@ digraph graph_T862 {
   => #<GRAPH graph_ID_19::>  ;大概の場合、こちらが望む結果。
 #+END_SRC
 
-*** グラフの規則性に着目すべし。
 
-グラフに規則性(パターン)が存在するなら、lisp組み込みの機能を用いることによって、大きなグラフも少ないコード量で書くことができます。
+*** with-node, with-edgeは、暗黙のグラフを生成します。 
+
+with-node, with-edgeは、暗黙のグラフを生成するので、コンテキスト内のグラフ属性を無効にします。 
+
+cf. [[コンテキストを作り出すもの]]
 
 
-# *** ->と--を1つのグラフ内で同時に使うことはできない。
+*** ->と--を1つのグラフ内で一緒に使うと良くないことが起きます。
+#+BEGIN_HTML
+<p>
+&ndash;&ndash;により生成される無向エッジを1つでも構成要素として含むグラフは、生成されるdotコードのグラフ型宣言が'digraph'ではなく'graph'となります。
+その結果、生成される画像で、-&gt;による有向エッジが無視されるなど、望まないことが生じます。
+</p>
+#+END_HTML
 
 # #+BEGIN_HTML
 # <div id="outline-container-4-13-3" class="outline-4">
@@ -2266,6 +2261,18 @@ digraph graph_T862 {
 # #+END_HTML
 
 　
+*** Lispに任せる。
+
+lisp組み込みの機能を使うことで、より少なく、より簡潔なコードでグラフを書くことができます。
+
+
+*** グラフの規則性に着目すべし。
+
+グラフに規則性(パターン)が存在する場合、グラフを生成する関数やマクロを書くことで、汎用で再利用可能なコードを書くことができます。
+
+cf. [[小さなプログラム --- カレンダー、2分木、コンスセル、有限オートマトン][小さなプログラム]]
+
+
 
 ##--------------------------------------------------------------------
 * Examples from Graphviz manual
@@ -3526,31 +3533,24 @@ graph graph_T527 {
 レイアウトアルゴリズムごとにサポートしている属性が異なるので注意。
 
 
-# graph::[strict](graph|digraph)[ID]'{'stmt-list'}'
-
-# stmt-list::[stmt[';'][stmt-list]]
-
-# stmt::node-stmt|edge-stmt|attr-stmt|ID'='ID|subgraph
-
-# attr-stmt::(graph|node|edge)attr-list
-
-# attr-list::'['[a-list]']'[attr-list]
-
-# a-list::ID['='ID][','][a-list]
-
-# edge-stmt::(node-id|subgraph)edgeRHS[attr-list]
-
-# edgeRHS::edgeop(node-id|subgraph)[edgeRHS]
-
-# node-stmt::node-id[attr-list]
-
-# node-id::ID[port]
-
-# port::':'ID[':'compass-pt]|':'compass-pt
-
-# subgraph::[subgraph[ID]]'{'stmt-list'}'
-
-# compass-pt::(n|ne|e|se|s|sw|w|nw|c|_ )
+#+BEGIN_SRC lisp :exports none
+  graph :: (& (graph-attrs) component)|(&& component)
+  component :: component [pre-node|node|edge|graph|nil|component]
+  pre-node :: string|number
+  node :: (<> 
+  stmt-list :: [stmt[';'][stmt-list]]
+  stmt :: node-stmt|edge-stmt|attr-stmt|ID'='ID|subgraph
+  attr-stmt :: (graph|node|edge)attr-list
+  attr-list :: '['[a-list]']'[attr-list]
+  a-list :: ID['='ID][','][a-list]
+  edge-stmt :: (node-id|subgraph)edgeRHS[attr-list]
+  edgeRHS :: edgeop(node-id|subgraph)[edgeRHS]
+  node-stmt :: node-id[attr-list]
+  node-id :: ID[port]
+  port :: ':'ID[':'compass-pt]|':'compass-pt
+  subgraph :: [subgraph[ID]]'{'stmt-list'}'
+  compass-pt :: (n|ne|e|se|s|sw|w|nw|c|_ )
+#+END_SRC
 
 
 
@@ -3862,48 +3862,39 @@ cell :: (td label)|(td (img))
 
 *優先度順*
 
-- *!!バグ修正!!: with-node, with-edge;*
-  *let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響される場合がある。*
-#+BEGIN_SRC lisp
-  (with-node (:color :blue :shape :box)
-    (let ((a (<> "a")))
-      (with-node (:color :red)
-        a)))                         ;ノードaの色が赤になってしまう!!
-#+END_SRC
-
 - 開発環境以外での動作確認(windows, macなど)。
-  - windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じてしまう。
+  + windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じてしまう。
 
 
 - 日本語版ドキュメントの完成。
-  - リファレンスマニュアル。
+  + リファレンスマニュアル。
 
 
 - Graphviz機能の実装。
-  - カスタムシェイプの実装。
-  - URL属性類の実装。
+  + カスタムシェイプの実装。
 
 
 - コードにコメントを付属させる。
       コードが読みづらくなるので、もう少し実装が固まってから。
 
 
-- ドキュメントの英訳。日本語版ドキュメントの完成後。
+- ドキュメントの英訳。
+    日本語版ドキュメントの完成後。
 
 
 - エラー処理の実装。
-      どこまでlispでエラーチェックするか？
-      Graphvizに任せてもいい部分はGraphvizに。
+  + どこまでlispでエラーチェックするか？
+  + Graphvizに任せてもいい部分はGraphvizに。
 
 
 - セキュリティの考察。
-      現在のところ知識不足。要勉強。
-      少なくとも任意のコマンドはshellに打ち込めないように。
+  + 現在のところ知識不足。要勉強。
+  + 少なくとも任意のコマンドはshellに打ち込めないように。
 
 
 - 最適化。
-  - ホットスポットの発見。
-  - cons使用量の調査。
+  + ボトルネックの発見。
+  + cons使用量の調査。
 
 ##====================================================================
 

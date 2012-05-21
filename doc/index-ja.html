@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-20 23:37:57 JST"/>
+<meta name="generated" content="2012-05-21 20:54:58 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -83,7 +83,47 @@
  }
 /*]]>*///-->
 </script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
 
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
 </head>
 <body>
 
@@ -704,7 +744,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <tr><th scope="col" class="left"></th><th scope="col" class="left">コンストラクタ</th><th scope="col" class="left">オペレータ</th><th scope="col" class="left">ユーティティ</th></tr>
 </thead>
 <tbody>
-<tr><td class="left">グラフ</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">with-graph, &amp;&amp;</td></tr>
+<tr><td class="left">グラフ</td><td class="left">&amp;, [&amp;]</td><td class="left"></td><td class="left">&amp;&amp;</td></tr>
 <tr><td class="left">エッジ</td><td class="left">-&gt;, &ndash;&ndash;</td><td class="left"></td><td class="left">with-edge, &ndash;&ndash;&gt;, -&gt;&gt;, ==&gt;, ?, -&lt;, &ndash;&ndash;&ndash;, O</td></tr>
 
 <tr><td class="left">ノード</td><td class="left">&lt;&gt;, []</td><td class="left">@, rank</td><td class="left">with-node, ~</td></tr>
@@ -827,14 +867,9 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </p>
 <p>
 　最後に、S式 <code>(&amp;&amp; ****)</code> の意味は、 <i>グラフ構成要素****を束ねたグラフを生成せよ</i> というものです(****は、任意の数のエッジやノードやグラフ)。
-<code>&amp;&amp;</code> は、任意数のグラフ構成要素を引数に取りグラフオブジェクトを生成するマクロで、 <b>グラフコンストラクタ</b> と呼んでいます。
-</p>
-<p>
-　グラフ構成要素が何も与えられない場合、すなわち <code>(&amp;&amp;)</code> の場合、 <b>空グラフ</b> が生成されます。
-また、グラフ構成要素としてnilを与えることもできますが、その場合nilは無視されます。
-したがって、 <code>(&amp;&amp; nil)</code> も空グラフを生成します。
-一見、空グラフの存在は無駄に見えます。
-ところが、グラフを再帰的に生成する時に、その真価が明らかになるでしょう(cf. <a href="#sec-4-13-2">2分木</a>)。
+<code>&amp;&amp;</code> は、任意数のグラフ構成要素を引数に取り、グラフオブジェクトを生成する関数で、 <b>グラフコンストラクタ</b> と呼んでいます。
+グラフコンストラクタ <code>&amp;&amp;</code> は、べき等な操作です。
+すなわち、 <code>(&amp;&amp; (&amp;&amp; ****))</code> &lt;=&gt; <code>(&amp;&amp; ****)</code> が成り立ちます。
 </p>
 <p>
 　この例では、グラフ構成要素としてエッジHello-&gt;Worldが <code>&amp;&amp;</code> に与えられています。
@@ -863,6 +898,14 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <p>
 <img src="./images/simple-graph2.png"  alt="./images/simple-graph2.png" />
 </p>
+<p>
+　ちなみに、 <code>&amp;&amp;</code> にグラフ構成要素が何も与えられない場合、すなわち <code>(&amp;&amp;)</code> の場合、 <b>ヌルグラフ</b> が生成されます。
+また、グラフ構成要素としてnilを与えることもできますが、その場合nilは無視されます。
+したがって、 <code>(&amp;&amp; nil)</code> もヌルグラフを生成します。
+一見、ヌルグラフの存在は無駄に見えます。
+しかし、グラフを再帰的に生成する際には、ヌルグラフは無くてはならないものです(cf. <a href="#sec-4-13-2">2分木</a>)。
+</p>
+
 <p>
 　
 </p>
@@ -1023,7 +1066,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </div>
 
 <div id="outline-container-4-4-1" class="outline-4">
-<h4 id="sec-4-4-1"><span class="section-number-4">4.4.1</span> dot-output, dot-pprint</h4>
+<h4 id="sec-4-4-1"><span class="section-number-4">4.4.1</span> <b>dot-output</b>, <b>dot-pprint</b></h4>
 <div class="outline-text-4" id="text-4-4-1">
 
 
@@ -1060,17 +1103,19 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 dot-pprintは、Graphvizライブラリの整形用ユーティリティnopによって処理を行うため、dot-outputに比べ実行コストがかかります。
 dot-outputによる表示が見づらい場合に使うと便利です。
 </p>
+</div>
 
+</div>
 
 <div id="outline-container-4-4-2" class="outline-4">
-<h4 id="sec-4-4-2"><span class="section-number-4">4.4.2</span> シェルインターフェイス$、$$</h4>
+<h4 id="sec-4-4-2"><span class="section-number-4">4.4.2</span> シェルインターフェイス <b>$</b>, <b>$$</b></h4>
 <div class="outline-text-4" id="text-4-4-2">
 
-<p>
+
+
+
 　次のコードを評価すると、画像ファイルdiamond.pngが生成され、
 ビューアが立ち上がり、diamond.pngが表示されます(下の画像)。
-</p>
-
 
 <pre class="src src-lisp">($ (<span style="color: #00ee76;">:outfile</span> <span style="color: #90ee90;">"diamond.png"</span>)
  (&amp; (<span style="color: #00ee76;">:rankdir</span> <span style="color: #00ee76;">:LR</span>)
@@ -1080,12 +1125,12 @@ dot-outputによる表示が見づらい場合に使うと便利です。
 
 
 
+#+RESULTS:
+[[file:./images/output1.png][file:./images/output1.png]]
+
+　シェルインターフェイス =$= は、出力をコントロールするプロパティリストと、グラフオブジェクトを引数に取ります。
+プロパティリストが空リストの場合、マクロ =$$= を用いると便利です。
 <p>
-<img src="./images/output1.png"  alt="./images/output1.png" />
-</p>
-<p>
-　シェルインターフェイス <code>$</code> は、出力をコントロールするプロパティリストと、グラフオブジェクトを引数に取ります。
-プロパティリストが空リストの場合、マクロ <code>$$</code> を用いると便利です。
  <code>($$ graph)</code> は <code>($ () graph)</code> に展開されます。
 プロパティリストのプロパティは次の表の通りです。
 </p>
@@ -1536,9 +1581,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティ集です。
 </p>
 
-
-
-
 </div>
 
 <div id="outline-container-4-9-1" class="outline-4">
@@ -1547,40 +1589,31 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 <p>
-　
-</p>
-<p>
-*!!バグ!!: with-node, with-edge;let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響される場合がある(see. <a href="#sec-7">ToDo</a>)。*
-</p>
-<p>
-　
-</p>
-<p>
 　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
-コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
+コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じ値になるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
  with-node,  with-edgeをネストした場合、属性値は上書きされます。
 </p>
 <p>
- <b>注: with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、期待通りの動作が保証されます。</b> 
-with-node, with-edgeは、暗黙の部分グラフを生成します。
-そのため、トップレベルでwith-node, with-edgeを使用した場合、コンテキスト内のグラフ属性が無効になってしまいます。
-次の上のコードは期待通りに動作しますが、下のコードは期待通りに動作しません。
+ <b>注: with-node, with-edgeは、暗黙のグラフを生成します。</b> 
+部分グラフのグラフ属性は無視されるのでした (cf. <a href="#sec-4-5">部分グラフ、クラスタ</a>)。
+そのため、with-node, with-edgeによるコンテキスト内で生成されるグラフのグラフ属性は無効になります。
+次の上のコードは期待通りに動作しますが、下のコードの動作には注意が必要です。
 </p>
 
 
 <pre class="src src-lisp"><span style="color: #eeee00;">;; </span><span style="color: #eeee00;">&#20986;&#21147;&#12373;&#12428;&#12427;&#12464;&#12521;&#12501;&#12395;&#12521;&#12505;&#12523;&#12364;&#20184;&#12367;</span>
-(&amp; (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"&#12371;&#12398;&#12464;&#12521;&#12501;&#23646;&#24615;&#12399;&#26377;&#21177;"</span>)  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12488;&#12483;&#12503;&#12524;&#12505;&#12523;&#12398;&#12464;&#12521;&#12501;&#12394;&#12398;&#12391;&#12289;&#23646;&#24615;&#12364;&#26377;&#21177;&#12395;&#12394;&#12427;</span>
+(&amp; (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"&#12371;&#12398;&#12464;&#12521;&#12501;&#23646;&#24615;&#12399;&#26377;&#21177;"</span>)  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#37096;&#20998;&#12464;&#12521;&#12501;&#12391;&#12399;&#12394;&#12356;&#12398;&#12391;&#12289;&#23646;&#24615;&#12399;&#26377;&#21177;</span>
   (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
     (-&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>)))
 
 <span style="color: #eeee00;">;; </span><span style="color: #eeee00;">&#20986;&#21147;&#12373;&#12428;&#12427;&#12464;&#12521;&#12501;&#12395;&#12399;&#12521;&#12505;&#12523;&#12364;&#20184;&#12363;&#12394;&#12356;</span>
 (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
-  (&amp; (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"&#12371;&#12398;&#12464;&#12521;&#12501;&#23646;&#24615;&#12399;&#28961;&#21177;"</span>) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">with-node&#12395;&#12424;&#12387;&#12390;&#29983;&#25104;&#12373;&#12428;&#12427;&#26263;&#40665;&#12398;&#37096;&#20998;&#12464;&#12521;&#12501;&#12398;&#37096;&#20998;&#12464;&#12521;&#12501;&#12394;&#12398;&#12391;&#12289;&#23646;&#24615;&#12364;&#28961;&#21177;&#12395;&#12394;&#12427;</span>
+  (&amp; (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"&#12371;&#12398;&#12464;&#12521;&#12501;&#23646;&#24615;&#12399;&#28961;&#21177;"</span>) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">with-node&#12395;&#12424;&#12427;&#26263;&#40665;&#12398;&#12464;&#12521;&#12501;&#12398;&#37096;&#20998;&#12464;&#12521;&#12501;&#12394;&#12398;&#12391;&#12289;&#23646;&#24615;&#12399;&#28961;&#21177;</span>
     (-&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>)))
 </pre>
 
 <p>
-<b>with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、使用できると考えた方が無難です。</b>
+細かいことは気にしたくないなら、 <b>with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、使用した方が無難です。</b>
 </p>
 
 <hr/>
@@ -1661,8 +1694,8 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 <li id="sec-4-9-1-2">with-edge<br/>
 
 <p>
-　with-edgeの使い方もwith-nodeと同様です。
-解説すると冗長になってしまいますので、ここでは例の提示のみにとどめます。
+　with-edgeの使用法はwith-nodeと同じです。
+解説すると冗長になりますので、例のみを提示します。
 </p>
 
 
@@ -2484,7 +2517,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 
 <p>
-　Donutsによるグラフ作成のこつ。
+Donutsによるグラフ作成のこつ。
 </p>
 
 </div>
@@ -2495,16 +2528,23 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 
 
+<p>
+letは、暗黙のprogn内の最後の式の値を返します。
+次のコードでは <code>(-&gt; a b)</code> の値が無視され、 <code>(-&gt; 1 2)</code> の値が返されます。
+</p>
 
 
 <pre class="src src-lisp">(<span style="color: #eeee00;">let</span> ((a (&lt;&gt; <span style="color: #90ee90;">"a"</span>))
       (b (&lt;&gt; <span style="color: #90ee90;">"c"</span>)))
   (-&gt; a b)
   (-&gt; 1 2))
-=&gt; #&lt;edge_ID_14 <span style="color: #00ee76;">::</span> 1 -&gt; 2&gt; <span style="color: #eeee00;">;</span><span style="color: #eeee00;">(-&gt; 1 2)&#12398;&#36820;&#12426;&#20516;&#12391;&#12354;&#12427;edge&#12384;&#12369;&#12364;&#36820;&#12373;&#12428;&#12390;&#12375;&#12414;&#12358;&#12290;&#26222;&#36890;&#12399;&#26395;&#12414;&#12394;&#12356;&#32080;&#26524;&#12290;</span>
+=&gt; #&lt;edge_ID_14 <span style="color: #00ee76;">::</span> 1 -&gt; 2&gt; <span style="color: #eeee00;">;</span><span style="color: #eeee00;">(-&gt; 1 2)&#12398;&#36820;&#12426;&#20516;&#12391;&#12354;&#12427;edge&#12384;&#12369;&#12364;&#36820;&#12373;&#12428;&#12390;&#12375;&#12414;&#12358;&#12290;&#36890;&#24120;&#12289;&#26395;&#12414;&#12394;&#12356;&#32080;&#26524;&#12290;</span>
 </pre>
 
 
+<p>
+一方、次のコードでは、'a-&gt;b'と'1-&gt;2'から構成されるグラフが返されます。
+</p>
 
 
 <pre class="src src-lisp">(<span style="color: #eeee00;">let</span> ((a (&lt;&gt; <span style="color: #90ee90;">"a"</span>))
@@ -2516,24 +2556,70 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 </pre>
 
 
+
 </div>
 
 </div>
 
 <div id="outline-container-4-14-2" class="outline-4">
-<h4 id="sec-4-14-2"><span class="section-number-4">4.14.2</span> グラフの規則性に着目すべし。</h4>
+<h4 id="sec-4-14-2"><span class="section-number-4">4.14.2</span> with-node, with-edgeは、暗黙のグラフを生成します。</h4>
 <div class="outline-text-4" id="text-4-14-2">
 
 
 <p>
-グラフに規則性(パターン)が存在するなら、lisp組み込みの機能を用いることによって、大きなグラフも少ないコード量で書くことができます。
+with-node, with-edgeは、暗黙のグラフを生成するので、コンテキスト内のグラフ属性を無効にします。 
+</p>
+<p>
+cf. <a href="#sec-4-9-1">コンテキストを作り出すもの</a>
 </p>
 
+</div>
+
+</div>
+
+<div id="outline-container-4-14-3" class="outline-4">
+<h4 id="sec-4-14-3"><span class="section-number-4">4.14.3</span> -&gt;と&ndash;を1つのグラフ内で一緒に使うと良くないことが起きます。</h4>
+<div class="outline-text-4" id="text-4-14-3">
+
+
+<p>
+&ndash;&ndash;により生成される無向エッジを1つでも構成要素として含むグラフは、生成されるdotコードのグラフ型宣言が'digraph'ではなく'graph'となります。
+その結果、生成される画像で、-&gt;による有向エッジが無視されるなど、望まないことが生じます。
+</p>
 
 
 <p>
 　
+</p></div>
+
+</div>
+
+<div id="outline-container-4-14-4" class="outline-4">
+<h4 id="sec-4-14-4"><span class="section-number-4">4.14.4</span> Lispに任せる。</h4>
+<div class="outline-text-4" id="text-4-14-4">
+
+
+<p>
+lisp組み込みの機能を使うことで、より少なく、より簡潔なコードでグラフを書くことができます。
 </p>
+
+</div>
+
+</div>
+
+<div id="outline-container-4-14-5" class="outline-4">
+<h4 id="sec-4-14-5"><span class="section-number-4">4.14.5</span> グラフの規則性に着目すべし。</h4>
+<div class="outline-text-4" id="text-4-14-5">
+
+
+<p>
+グラフに規則性(パターン)が存在する場合、グラフを生成する関数やマクロを書くことで、汎用で再利用可能なコードを書くことができます。
+</p>
+<p>
+cf. <a href="#sec-4-13">小さなプログラム</a>
+</p>
+
+
 </div>
 </div>
 </div>
@@ -3353,17 +3439,6 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 </div>
 
 <div id="outline-container-6-1" class="outline-3">
@@ -3805,22 +3880,6 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 <b>優先度順</b>
 </p>
 <ul>
-<li><b>!!バグ修正!!: with-node, with-edge;</b>
-  <b>let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響される場合がある。</b>
-</li>
-</ul>
-
-
-
-
-<pre class="src src-lisp">(<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:blue</span> <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:box</span>)
-  (<span style="color: #eeee00;">let</span> ((a (&lt;&gt; <span style="color: #90ee90;">"a"</span>)))
-    (<span style="color: #eeee00;">with-node</span> (<span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>)
-      a)))                         <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;a&#12398;&#33394;&#12364;&#36196;&#12395;&#12394;&#12387;&#12390;&#12375;&#12414;&#12358;!!</span>
-</pre>
-
-
-<ul>
 <li>開発環境以外での動作確認(windows, macなど)。
 <ul>
 <li>windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じてしまう。
@@ -3849,8 +3908,6 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 <ul>
 <li>カスタムシェイプの実装。
 </li>
-<li>URL属性類の実装。
-</li>
 </ul>
 
 </li>
@@ -3867,7 +3924,8 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 
 
 <ul>
-<li>ドキュメントの英訳。日本語版ドキュメントの完成後。
+<li>ドキュメントの英訳。
+    日本語版ドキュメントの完成後。
 </li>
 </ul>
 
@@ -3875,8 +3933,13 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 
 <ul>
 <li>エラー処理の実装。
-      どこまでlispでエラーチェックするか？
-      Graphvizに任せてもいい部分はGraphvizに。
+<ul>
+<li>どこまでlispでエラーチェックするか？
+</li>
+<li>Graphvizに任せてもいい部分はGraphvizに。
+</li>
+</ul>
+
 </li>
 </ul>
 
@@ -3884,8 +3947,13 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 
 <ul>
 <li>セキュリティの考察。
-      現在のところ知識不足。要勉強。
-      少なくとも任意のコマンドはshellに打ち込めないように。
+<ul>
+<li>現在のところ知識不足。要勉強。
+</li>
+<li>少なくとも任意のコマンドはshellに打ち込めないように。
+</li>
+</ul>
+
 </li>
 </ul>
 
@@ -3894,7 +3962,7 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 <ul>
 <li>最適化。
 <ul>
-<li>ホットスポットの発見。
+<li>ボトルネックの発見。
 </li>
 <li>cons使用量の調査。
 </li>
@@ -4000,7 +4068,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-20 23:37:57 JST</p>
+<p class="date">Date: 2012-05-21 20:54:58 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
