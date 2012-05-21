@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/20 17:25:04 tkych
+;;;; Last Updated : 2012/05/21 09:11:15 tkych
 
 ;; Graph in donuts
 
@@ -71,7 +71,7 @@
                (or (find-if #'path? nodes-edges-graphs)
                    (not (every #':dir (remove-if
                                        (complement #'graph?)
-                                       #'graph? nodes-edges-graphs)))))
+                                       nodes-edges-graphs)))))
       (setf *directed?* nil))
     (prog1
       (make-inst 'graph :dir *directed?*
