@@ -1,6 +1,6 @@
-;;;; Last Updated : 2012/05/17 20:38:45 tkych
+;;;; Last Updated : 2012/05/21 18:04:55 tkych
 
-;; utilities in donuts/src/
+;; utilities for donuts, in donuts/src/
 
 ;; Copyright (c) 2012 Takaya OCHIAI
 
@@ -28,22 +28,6 @@
 ;; Utilities for Donuts
 ;;====================================================================
 (in-package :in-donuts)
-
-(defmacro make-with (with-type attrs &body body)
-  (let ((start (make-sesame :with-start
-                            (format nil "~&  { ~(~A~) [~{~A=~A~^,~}];"
-                                    with-type (escape-attrs attrs))))
-        (end (make-sesame :with-end (format nil "~&  };"))))
-    `(& () ',start ,@body ',end)))
-
-(defmacro with-node ((&rest node-attrs) &body body)
-  `(make-with :node ,node-attrs ,@body))
-
-(defmacro with-edge ((&rest edge-attrs) &body body)
-  `(make-with :edge ,edge-attrs ,@body))
-
-(defmacro with-graph ((&rest graph-attrs) &body body)
-  `(make-with :graph ,graph-attrs ,@body))
 
 (defmacro $$ (graph)
   `($ () ,graph))

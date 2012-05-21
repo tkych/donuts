@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/20 09:06:39 tkych
+;;;; Last Updated : 2012/05/21 17:45:08 tkych
 
 ;; dot-output.lisp in donuts/src/
 
@@ -75,6 +75,17 @@
 
 ;;--------------------------------------
 (defgeneric output-edge (edge))
+
+(defmethod output-edge :around ((edge edge))
+  (with-slots (context) edge
+     (if (or (null context)
+             (equal context *with-edge-context*)) ;!!!!
+         (call-next-method edge)
+         (progn
+           (format t "~&  { edge [~{~A=~A~^,~}];"
+                   (escape-attrs context))
+           (call-next-method edge)
+           (format t "~&  };")))))
 
 (defmethod output-edge ((edge normal-edge))
   (with-slots (node1 node2 attrs) edge

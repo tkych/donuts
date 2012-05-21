@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/17 21:35:46 tkych
+;;;; Last Updated : 2012/05/21 20:54:21 tkych
 
 ;; edge.lisp in donuts/src/
 
@@ -29,8 +29,16 @@
 ;;====================================================================
 (in-package :in-donuts)
 
+(defparameter *with-edge-context* nil)
+
+(defmacro with-edge ((&rest edge-attrs) &body body)
+  `(let ((*with-edge-context*
+          (append *with-edge-context* ',edge-attrs)))
+     (&& ,@body)))
+
 (defclass edge ()
-  ((name :accessor :name :initarg :name :initform nil)))
+  ((name    :accessor :name :initarg :name :initform nil)
+   (context :accessor :context :initarg :context)))
 
 (defun edge? (x) (typep x 'edge))
 
@@ -48,7 +56,9 @@
 
 (defun -> (node1 node2 &rest edge-attrs)
   (make-inst 'normal-edge :name (format nil "edge_~A" (gentemp "ID_"))
-             :node1 node1 :node2 node2 :attrs edge-attrs))
+             :node1 node1 :node2 node2
+             :context *with-edge-context*
+             :attrs edge-attrs))
 
 ;;--------------------------------------
 (defclass penetrate-edge (edge)
@@ -63,7 +73,8 @@
 (defun penetrate-edge? (x) (typep x 'penetrate-edge))
 
 (defun --> (&rest nodes)
-  (make-inst 'penetrate-edge :nodes nodes
+  (make-inst 'penetrate-edge
+             :nodes nodes :context *with-edge-context*
              :name (format nil "edge_~A" (gentemp "ID_"))))
 
 ;;--------------------------------------
@@ -82,13 +93,13 @@
 
 (defun ->> (origin-node &rest nodes)
   (make-inst 'radiate-edge :origin-node origin-node :nodes nodes
+             :context *with-edge-context*
              :name (format nil "edge_~A" (gentemp "ID_"))))
 
 ;;--------------------------------------
 (defclass converge-edge (edge)
-     ((nodes :accessor :nodes :initarg :nodes :initform nil)
-      (converge-node :accessor :converge-node
-                     :initarg :converge-node :initform nil)))
+     ((nodes :accessor :nodes :initarg :nodes)
+      (converge-node :accessor :converge-node :initarg :converge-node)))
 
 (defmethod print-object ((obj converge-edge) stream)
   (print-unreadable-object (obj stream)
@@ -103,6 +114,7 @@
   (make-inst 'converge-edge
              :nodes (butlast nodes)
              :converge-node (last1 nodes)
+             :context *with-edge-context*
              :name (format nil "edge_~A" (gentemp "ID_"))))
 
 ;;--------------------------------------------------------------------
@@ -123,8 +135,10 @@
 
 (defun -- (node1 node2 &rest path-attrs)
   (setf *directed?* nil)
-  (make-inst 'normal-path :name (format nil "path_~A" (gentemp "ID_"))
-             :node1 node1 :node2 node2 :attrs path-attrs))
+  (make-inst 'normal-path :context *with-edge-context*
+             :name (format nil "path_~A" (gentemp "ID_"))
+             :node1 node1 :node2 node2
+             :attrs path-attrs))
 
 ;;--------------------------------------
 (defclass penetrate-path (penetrate-edge path) ())
@@ -139,9 +153,8 @@
 
 (defun --- (&rest nodes)
   (setf *directed?* nil)
-  (make-inst 'penetrate-path :nodes nodes
+  (make-inst 'penetrate-path :nodes nodes :context *with-edge-context*
              :name (format nil "path_~A" (gentemp "ID_"))))
-
 
 ;;--------------------------------------
 (defclass radiate-path (radiate-edge path) ())
@@ -158,6 +171,7 @@
 (defun -< (origin-node &rest nodes)
   (setf *directed?* nil)
   (make-inst 'radiate-path :origin-node origin-node :nodes nodes
+             :context *with-edge-context*
              :name (format nil "path_~A" (gentemp "ID_"))))
 
 ;;====================================================================

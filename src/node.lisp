@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/17 23:01:37 tkych
+;;;; Last Updated : 2012/05/21 18:36:24 tkych
 
 ;; node in donuts/src/
 
@@ -29,6 +29,17 @@
 ;;====================================================================
 (in-package :in-donuts)
 
+(defparameter *with-node-context* nil)
+
+(defmacro with-node ((&rest node-attrs) &body body)
+  (let ((start (make-sesame :with-start
+                            (format nil "~&  { node [~{~A=~A~^,~}];"
+                                    (escape-attrs node-attrs))))
+        (end (make-sesame :with-end (format nil "~&  };"))))
+    `(let ((*with-node-context*
+            (append *with-node-context* ',node-attrs)))
+       (&& ',start ,@body ',end))))
+
 (defun pre-node? (x) (or (stringp x) (numberp x)))
 
 (defclass node ()
@@ -51,7 +62,8 @@
 
 (defun <> (label &rest node-attrs)
   (make-inst 'node :name (format nil "node_~A" (gentemp "ID_"))
-                   :attrs (nconc `(:label ,label) node-attrs)))
+             :attrs (append `(:label ,label)
+                            *with-node-context* node-attrs)))
 
 ;;--------------------------------------
 (defclass record (node)
@@ -82,7 +94,7 @@
                      :ports (find-port label)
                      :attrs (append `(:shape :record
                                       :label ,(escape-port label))
-                                    record-attrs)))
+                                    *with-node-context* record-attrs)))
 
 ;;--------------------------------------
 (defparameter *compass* '(:n :ne :e :se :s :sw :w :nw :c :_))
