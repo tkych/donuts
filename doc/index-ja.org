@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/23 00:04:51 tkych
+### Last Updated : 2012/05/23 00:35:23 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -254,12 +254,9 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 2012年5月21以降、[[http://www.quicklisp.org/][quicklisp]]ライブラリに登録されています。
 REPLに =(ql:quickload :donuts)= と打ち込むことで、自動的にダウンロード＆インストールされます。
 
-*** 手動ダウンロード & インストール
-シェルに次のコードを打ち込むことで、ダウンロードされます。
-#+BEGIN_SRC sh
-$ git clone https://github.com/tkych/donuts.git
-#+END_SRC
-REPLに =(asdf:operate 'asdf:load-op :donuts)= と打ち込むことで、インストールされます。
+*** asdfによる手動ダウンロード & インストール
+現在の開発版は、https://github.com/tkych/donuts からダウンロードできます。
+ダウンロードしたdonutsディレクトリを、asdf:*central-registry*に登録されたパスに置き、REPLに =(asdf:operate 'asdf:load-op :donuts)= と打ち込むことで、インストールされます。
 
 ** 動作確認
 #+BEGIN_SRC lisp

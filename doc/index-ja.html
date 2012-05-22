@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-23 00:05:13 JST"/>
+<meta name="generated" content="2012-05-23 00:35:43 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -408,18 +408,11 @@ REPLに <code>(ql:quickload :donuts)</code> と打ち込むことで、自動的
 </div>
 
 <div id="outline-container-2-3-2" class="outline-4">
-<h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> 手動ダウンロード &amp; インストール</h4>
+<h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> asdfによる手動ダウンロード &amp; インストール</h4>
 <div class="outline-text-4" id="text-2-3-2">
 
-<p>シェルに次のコードを打ち込むことで、ダウンロードされます。
-</p>
-
-
-<pre class="src src-sh">$ git clone https://github.com/tkych/donuts.git
-</pre>
-
-<p>
-REPLに <code>(asdf:operate 'asdf:load-op :donuts)</code> と打ち込むことで、インストールされます。
+<p>現在の開発版は、<a href="https://github.com/tkych/donuts">https://github.com/tkych/donuts</a> からダウンロードできます。
+ダウンロードしたdonutsディレクトリを、asdf:*central-registry*に登録されたパスに置き、REPLに <code>(asdf:operate 'asdf:load-op :donuts)</code> と打ち込むことで、インストールされます。
 </p>
 </div>
 </div>
@@ -4121,7 +4114,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-23 00:05:13 JST</p>
+<p class="date">Date: 2012-05-23 00:35:43 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
