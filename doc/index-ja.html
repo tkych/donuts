@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-21 20:54:58 JST"/>
+<meta name="generated" content="2012-05-23 00:05:13 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -159,7 +159,8 @@
 <ul>
 <li><a href="#sec-2-1">2.1 動作チェック済み環境</a></li>
 <li><a href="#sec-2-2">2.2 システム依存</a></li>
-<li><a href="#sec-2-3">2.3 開始設定、動作確認</a></li>
+<li><a href="#sec-2-3">2.3 ダウンロード &amp; インストール</a></li>
+<li><a href="#sec-2-4">2.4 動作確認</a></li>
 </ul>
 </li>
 <li><a href="#sec-3">3 Donutsの考え方 &mdash; &lt;&gt;, -&gt;, &amp;</a>
@@ -268,7 +269,7 @@ Donutsですぐにグラフを描くことができるように、<a href="#sec-
 ライセンスの正確な文言についてはソースコードのヘッダー部分をご確認ください。
 </p>
 <p>
-　 <b>Donutsの最新バージョンは0.3.0です。</b>
+　 <b>Donutsの最新バージョンは0.3.1です。</b>
 現在のところDonutsはベータ版です。
 今後の更新予定は<a href="#sec-7">ToDo</a>をご確認ください。
 </p>
@@ -294,7 +295,9 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 基本的操作だけを使ってグラフを描くこともできます。
 しかし、実用的な操作も使用することで、より多彩なグラフを、より手軽に描くことができます(cf.<a href="#sec-4-9">ユーティリティ集</a>)。
 </p>
-
+<p>
+　
+</p>
 </div>
 
 </div>
@@ -304,6 +307,8 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 <div class="outline-text-2" id="text-2">
 
 
+
+
 </div>
 
 <div id="outline-container-2-1" class="outline-3">
@@ -311,14 +316,35 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 <div class="outline-text-3" id="text-2-1">
 
 
-<dl>
-<dt>OS</dt><dd>linux-2.6.32-5-686
-</dd>
-<dt>CL処理系</dt><dd>sbcl-1.0.55, ccl-1.7-r14925M(LinuxX8632)
-</dd>
-</dl>
+</div>
+
+<div id="outline-container-2-1-1" class="outline-4">
+<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> OS</h4>
+<div class="outline-text-4" id="text-2-1-1">
+
+<ul>
+<li>linux-2.6.32-5-686
+</li>
+</ul>
 
 
+</div>
+
+</div>
+
+<div id="outline-container-2-1-2" class="outline-4">
+<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> CL処理系</h4>
+<div class="outline-text-4" id="text-2-1-2">
+
+<ul>
+<li>sbcl-1.0.55
+</li>
+<li>ccl-1.7-r14925M(LinuxX8632)
+</li>
+</ul>
+
+
+</div>
 </div>
 
 </div>
@@ -336,7 +362,6 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 
 <ol>
 <li><a href="http://www.graphviz.org/">Graphviz</a> by AT&amp;T Labs
-
 </li>
 <li>画像を見るための適当なビューア
 </li>
@@ -351,18 +376,12 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 <h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> Common Lisp ライブラリ</h4>
 <div class="outline-text-4" id="text-2-2-2">
 
-
 <ol>
-<li>asdf
-</li>
-<li><a href="http://www.quicklisp.org/">quicklisp</a> by Zachary Beane
-</li>
 <li><a href="http://weitz.de/cl-ppcre/">cl-ppcre</a> by Dr. Edmund Weitz
 </li>
 <li><a href="http://www.quicklisp.org/">trivial-shell</a> by Gary Warren King
 </li>
 </ol>
-
 
 
 </div>
@@ -371,16 +390,50 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 </div>
 
 <div id="outline-container-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> 開始設定、動作確認</h3>
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> ダウンロード &amp; インストール</h3>
 <div class="outline-text-3" id="text-2-3">
 
 
+</div>
+
+<div id="outline-container-2-3-1" class="outline-4">
+<h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> quicklispによる自動ダウンロード &amp; インストール</h4>
+<div class="outline-text-4" id="text-2-3-1">
+
+<p>2012年5月21以降、<a href="http://www.quicklisp.org/">quicklisp</a>ライブラリに登録されています。
+REPLに <code>(ql:quickload :donuts)</code> と打ち込むことで、自動的にダウンロード＆インストールされます。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-3-2" class="outline-4">
+<h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> 手動ダウンロード &amp; インストール</h4>
+<div class="outline-text-4" id="text-2-3-2">
+
+<p>シェルに次のコードを打ち込むことで、ダウンロードされます。
+</p>
+
+
+<pre class="src src-sh">$ git clone https://github.com/tkych/donuts.git
+</pre>
+
+<p>
+REPLに <code>(asdf:operate 'asdf:load-op :donuts)</code> と打ち込むことで、インストールされます。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> 動作確認</h3>
+<div class="outline-text-3" id="text-2-4">
 
 
 
-<pre class="src src-lisp">CL-USER&gt; (push #P<span style="color: #90ee90;">"/path-to-your-donuts-directory/"</span> asdf:*central-registry*)
-CL-USER&gt; (ql:quickload <span style="color: #00ee76;">:donuts</span>)
-CL-USER&gt; (<span style="color: #eeee00;">in-package</span> <span style="color: #00ee76;">:donuts</span>)
+
+<pre class="src src-lisp">CL-USER&gt; (<span style="color: #eeee00;">in-package</span> <span style="color: #00ee76;">:donuts</span>)
 
 DONUTS&gt; (dot-output (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2)))  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#27425;&#12398;&#12424;&#12358;&#12394;dot&#12467;&#12540;&#12489;&#12364;&#27161;&#28310;&#20986;&#21147;&#12395;&#34920;&#31034;&#12373;&#12428;&#12383;&#12425;OK</span>
 
@@ -4068,7 +4121,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-21 20:54:58 JST</p>
+<p class="date">Date: 2012-05-23 00:05:13 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

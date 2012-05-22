@@ -1,3 +1,7 @@
+Version 0.3.1
+2012-05-21
+Fix Bug: macro WITH-NODE, WITH-EDGE.
+
 Version 0.3.0
 2012-05-18
 Modify /SRC: rm nuts.lisp, fresh.lisp.
@@ -8,7 +12,7 @@ Add   Fn   : ->>, ==>, -<.
 
 Version 0.2.8
 2012-05-13
-Fix bug: macro HTML in src/html-like-labels.lisp.
+Fix Bug: macro HTML in src/html-like-labels.lisp.
 
 Version 0.2.7
 2012-05-10

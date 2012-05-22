@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/21 20:47:08 tkych
+### Last Updated : 2012/05/23 00:04:51 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -194,7 +194,7 @@ Donutsですぐにグラフを描くことができるように、[[%E3%83%81%E3
 また、Donutsの使用の結果として生じた、いかなる不利益に関しても作者は責任を持ちません。
 ライセンスの正確な文言についてはソースコードのヘッダー部分をご確認ください。
 
-　 *Donutsの最新バージョンは0.3.0です。*
+　 *Donutsの最新バージョンは0.3.1です。*
 現在のところDonutsはベータ版です。
 今後の更新予定は[[ToDo]]をご確認ください。
 
@@ -225,34 +225,44 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 基本的操作だけを使ってグラフを描くこともできます。
 しかし、実用的な操作も使用することで、より多彩なグラフを、より手軽に描くことができます(cf.[[ユーティリティ集]])。
 
+　
 
 ##--------------------------------------------------------------------
 * インストール
 ##--------------------------------------------------------------------
-** 動作チェック済み環境
 
-- OS :: linux-2.6.32-5-686
-- CL処理系 :: sbcl-1.0.55, ccl-1.7-r14925M(LinuxX8632)
+
+** 動作チェック済み環境
+*** OS
+- linux-2.6.32-5-686
+
+*** CL処理系
+- sbcl-1.0.55
+- ccl-1.7-r14925M(LinuxX8632)
 
 ** システム依存
 *** 外部システム
 1. [[http://www.graphviz.org/][Graphviz]] by AT&T Labs
-
 2. 画像を見るための適当なビューア
 
 *** Common Lisp ライブラリ
+1. [[http://weitz.de/cl-ppcre/][cl-ppcre]] by Dr. Edmund Weitz
+2. [[http://www.quicklisp.org/][trivial-shell]] by Gary Warren King
 
-0. asdf
-1. [[http://www.quicklisp.org/][quicklisp]] by Zachary Beane
-2. [[http://weitz.de/cl-ppcre/][cl-ppcre]] by Dr. Edmund Weitz
-3. [[http://www.quicklisp.org/][trivial-shell]] by Gary Warren King
+** ダウンロード & インストール
+*** quicklispによる自動ダウンロード & インストール
+2012年5月21以降、[[http://www.quicklisp.org/][quicklisp]]ライブラリに登録されています。
+REPLに =(ql:quickload :donuts)= と打ち込むことで、自動的にダウンロード＆インストールされます。
 
+*** 手動ダウンロード & インストール
+シェルに次のコードを打ち込むことで、ダウンロードされます。
+#+BEGIN_SRC sh
+$ git clone https://github.com/tkych/donuts.git
+#+END_SRC
+REPLに =(asdf:operate 'asdf:load-op :donuts)= と打ち込むことで、インストールされます。
 
-** 開始設定、動作確認
-
+** 動作確認
 #+BEGIN_SRC lisp
-CL-USER> (push #P"/path-to-your-donuts-directory/" asdf:*central-registry*)
-CL-USER> (ql:quickload :donuts)
 CL-USER> (in-package :donuts)
 
 DONUTS> (dot-output (&& (-> 1 2)))  ;次のようなdotコードが標準出力に表示されたらOK

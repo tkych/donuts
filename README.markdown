@@ -1,4 +1,4 @@
-Last Updated : 2012/05/19 12:36:50 tkych
+Last Updated : 2012/05/22 22:42:47 tkych
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -19,7 +19,7 @@ For more details, see index(Under Translation) or index-ja(Japanease) in doc dir
 
 ## Version
 
-The Current version of the donuts is 0.3.0 (beta).
+The Current version of the donuts is 0.3.1 (beta).
 
 ## Dependencies
 
@@ -32,11 +32,10 @@ The Current version of the donuts is 0.3.0 (beta).
 
 ## Installation & Start
 
-1.  CL-REPL> `(push #P"/path-to-your-donuts-directory/" asdf:*central-registry*)`
-2.  CL-REPL> `(ql:quickload :donuts)`
-3.  CL-USER> `(in-package :donuts)`
-4.  DONUTS> `(dot-output (&& (-> 1 2)))`  ;output dot code in standard-output
-5.  DONUTS> `($$ (&& (-> 1 2)))`  ;output graph image to viewer
+1.  CL-REPL> `(ql:quickload :donuts)`
+2.  CL-USER> `(in-package :donuts)`
+3.  DONUTS> `(dot-output (&& (-> 1 2)))`  ;output dot code in standard-output
+4.  DONUTS> `($$ (&& (-> 1 2)))`  ;output graph image to viewer
 
 
 ## Usage

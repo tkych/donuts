@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-18 18:17:01 JST"/>
+<meta name="generated" content="2012-05-23 00:00:50 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -119,8 +119,9 @@
 <li><a href="#sec-2">2 Installation</a>
 <ul>
 <li><a href="#sec-2-1">2.1 Chacked Operational Environments</a></li>
-<li><a href="#sec-2-2">2.2 Dependency</a></li>
-<li><a href="#sec-2-3">2.3 Start Setting</a></li>
+<li><a href="#sec-2-2">2.2 Dependencies</a></li>
+<li><a href="#sec-2-3">2.3 Download &amp; Install</a></li>
+<li><a href="#sec-2-4">2.4 Chack</a></li>
 </ul>
 </li>
 <li><a href="#sec-3">3 Idea of Donuts &mdash; &lt;&gt;, -&gt;, &amp;</a>
@@ -207,6 +208,8 @@
 <div class="outline-text-2" id="text-2">
 
 
+
+
 </div>
 
 <div id="outline-container-2-1" class="outline-3">
@@ -214,21 +217,41 @@
 <div class="outline-text-3" id="text-2-1">
 
 
+</div>
 
-<dl>
-<dt>OS</dt><dd>linux-2.6.32-5-686
-</dd>
-<dt>CL Implementations</dt><dd>sbcl-1.0.55, ccl-1.7-r14925M(LinuxX8632)
-</dd>
-</dl>
+<div id="outline-container-2-1-1" class="outline-4">
+<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> OS</h4>
+<div class="outline-text-4" id="text-2-1-1">
+
+<ul>
+<li>linux-2.6.32-5-686
+</li>
+</ul>
 
 
+</div>
+
+</div>
+
+<div id="outline-container-2-1-2" class="outline-4">
+<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> Common Lisp Implementation</h4>
+<div class="outline-text-4" id="text-2-1-2">
+
+<ul>
+<li>sbcl-1.0.55
+</li>
+<li>ccl-1.7-r14925M(LinuxX8632)
+</li>
+</ul>
+
+
+</div>
 </div>
 
 </div>
 
 <div id="outline-container-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Dependency</h3>
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Dependencies</h3>
 <div class="outline-text-3" id="text-2-2">
 
 
@@ -240,7 +263,6 @@
 
 <ol>
 <li><a href="http://www.graphviz.org/">Graphviz</a> by AT&amp;T Labs
-
 </li>
 <li>Appropriate viewer
 </li>
@@ -255,18 +277,12 @@
 <h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> Common Lisp Library</h4>
 <div class="outline-text-4" id="text-2-2-2">
 
-
 <ol>
-<li>asdf
-</li>
-<li><a href="http://www.quicklisp.org/">quicklisp</a> by Zachary Beane
-</li>
 <li><a href="http://weitz.de/cl-ppcre/">cl-ppcre</a> by Dr. Edmund Weitz
 </li>
 <li><a href="http://www.quicklisp.org/">trivial-shell</a> by Gary Warren King
 </li>
 </ol>
-
 
 
 </div>
@@ -275,16 +291,53 @@
 </div>
 
 <div id="outline-container-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Start Setting</h3>
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Download &amp; Install</h3>
 <div class="outline-text-3" id="text-2-3">
 
 
+</div>
+
+<div id="outline-container-2-3-1" class="outline-4">
+<h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> Automatic download &amp; install by quicklisp</h4>
+<div class="outline-text-4" id="text-2-3-1">
+
+<p>2012年5月21以降、<a href="http://www.quicklisp.org/">quicklisp</a>ライブラリに登録されています。
+REPLに <code>(ql:quickload :donuts)</code> と打ち込むことで、自動的にダウンロード＆インストールされます。
+</p>
+<p>
+(quicklisp by Zachary Beane)
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-3-2" class="outline-4">
+<h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> Manual download &amp; install</h4>
+<div class="outline-text-4" id="text-2-3-2">
+
+<p>シェルに次のコードを打ち込むことで、ダウンロードされます。
+</p>
+
+
+<pre class="src src-sh">$ git clone https://github.com/tkych/donuts.git
+</pre>
+
+<p>
+REPLに <code>(asdf:operate 'asdf:load-op :donuts)</code> と打ち込むことで、インストールされます。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Chack</h3>
+<div class="outline-text-3" id="text-2-4">
 
 
 
-<pre class="src src-lisp">CL-USER&gt; (push #P<span style="color: #90ee90;">"/path-to-your-donuts-directory/"</span> asdf:*central-registry*)
-CL-USER&gt; (ql:quickload <span style="color: #00ee76;">:donuts</span>)
-CL-USER&gt; (<span style="color: #eeee00;">in-package</span> <span style="color: #00ee76;">:donuts</span>)
+
+<pre class="src src-lisp">CL-USER&gt; (<span style="color: #eeee00;">in-package</span> <span style="color: #00ee76;">:donuts</span>)
 
 DONUTS&gt; (dot-output (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2)))  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#27425;&#12398;&#12424;&#12358;&#12394;dot&#12467;&#12540;&#12489;&#12364;&#27161;&#28310;&#20986;&#21147;&#12395;&#34920;&#31034;&#12373;&#12428;&#12383;&#12425;OK</span>
 
@@ -292,7 +345,7 @@ DONUTS&gt; (dot-output (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1
 <span style="color: #eeee00;">;   </span><span style="color: #eeee00;">1 -&gt; 2;</span>
 <span style="color: #eeee00;">; </span><span style="color: #eeee00;">}</span>
 
-DONUTS&gt; ($ () (&amp; () (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12499;&#12517;&#12540;&#12450;&#12364;&#36215;&#21205;&#12375;&#12289;&#19979;&#12398;&#30011;&#20687;&#12364;&#20986;&#21147;&#12373;&#12428;&#12383;&#12425;OK</span>
+DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12499;&#12517;&#12540;&#12450;&#12364;&#36215;&#21205;&#12375;&#12289;&#19979;&#12398;&#30011;&#20687;&#12364;&#20986;&#21147;&#12373;&#12428;&#12383;&#12425;OK</span>
 </pre>
 
 
@@ -876,9 +929,6 @@ whereas in computer science we are usually concerned with imperative (how to) de
 　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティ集です。
 </p>
 
-
-
-
 </div>
 
 <div id="outline-container-4-9-1" class="outline-4">
@@ -886,20 +936,6 @@ whereas in computer science we are usually concerned with imperative (how to) de
 <div class="outline-text-4" id="text-4-9-1">
 
 
-<p>
-　
-</p>
-<p>
-<b>!!バグ!!: with-node, with-edge;let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。</b>
-</p>
-<p>
-　
-</p>
-<p>
-　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
-コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
- with-node,  with-edgeをネストした場合、属性値は上書きされます。
-</p>
 <p>
  <b>注: with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、期待通りの動作が保証されます。</b> 
 with-node, with-edgeは、暗黙の部分グラフを生成します。
@@ -2952,7 +2988,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-18 18:17:01 JST</p>
+<p class="date">Date: 2012-05-23 00:00:50 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

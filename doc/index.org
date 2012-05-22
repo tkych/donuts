@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/18 18:16:42 tkych
+### Last Updated : 2012/05/23 00:00:35 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -128,31 +128,41 @@ digraph graph_T1555 {
 ##--------------------------------------------------------------------
 * Installation
 ##--------------------------------------------------------------------
+
+
 ** Chacked Operational Environments
+*** OS
+- linux-2.6.32-5-686
 
+*** Common Lisp Implementation
+- sbcl-1.0.55
+- ccl-1.7-r14925M(LinuxX8632)
 
-- OS :: linux-2.6.32-5-686
-- CL Implementations :: sbcl-1.0.55, ccl-1.7-r14925M(LinuxX8632)
-
-** Dependency
+** Dependencies
 *** Outer Systems
 1. [[http://www.graphviz.org/][Graphviz]] by AT&T Labs
-
 2. Appropriate viewer
 
 *** Common Lisp Library
+1. [[http://weitz.de/cl-ppcre/][cl-ppcre]] by Dr. Edmund Weitz
+2. [[http://www.quicklisp.org/][trivial-shell]] by Gary Warren King
 
-0. asdf
-1. [[http://www.quicklisp.org/][quicklisp]] by Zachary Beane
-2. [[http://weitz.de/cl-ppcre/][cl-ppcre]] by Dr. Edmund Weitz
-3. [[http://www.quicklisp.org/][trivial-shell]] by Gary Warren King
+** Download & Install
+*** Automatic download & install by quicklisp 
+2012年5月21以降、[[http://www.quicklisp.org/][quicklisp]]ライブラリに登録されています。
+REPLに =(ql:quickload :donuts)= と打ち込むことで、自動的にダウンロード＆インストールされます。
 
+(quicklisp by Zachary Beane)
 
-** Start Setting
+*** Manual download & install
+シェルに次のコードを打ち込むことで、ダウンロードされます。
+#+BEGIN_SRC sh
+$ git clone https://github.com/tkych/donuts.git
+#+END_SRC
+REPLに =(asdf:operate 'asdf:load-op :donuts)= と打ち込むことで、インストールされます。
 
+** Chack
 #+BEGIN_SRC lisp
-CL-USER> (push #P"/path-to-your-donuts-directory/" asdf:*central-registry*)
-CL-USER> (ql:quickload :donuts)
 CL-USER> (in-package :donuts)
 
 DONUTS> (dot-output (&& (-> 1 2)))  ;次のようなdotコードが標準出力に表示されたらOK
@@ -161,7 +171,7 @@ DONUTS> (dot-output (&& (-> 1 2)))  ;次のようなdotコードが標準出力�
 ;   1 -> 2;
 ; }
 
-DONUTS> ($ () (& () (-> 1 2))) ;ビューアが起動し、下の画像が出力されたらOK
+DONUTS> ($$ (&& (-> 1 2))) ;ビューアが起動し、下の画像が出力されたらOK
 #+END_SRC
 
 #+BEGIN_SRC dot :file ./images/start.png
@@ -659,28 +669,9 @@ digraph graph_T184 {
 
 　使用しなくともグラフ作成は可能ですが、使用するとグラフ作成が少しだけ楽になるユーティリティ集です。
 
-# ##--------------------------------------
-# *** 2文字省略するためのユーティリティ
-# ##--------------------------------------
-
-# 　&&は今まで何度も出てきたグラフコンストラクタです。
-# しかし、真の姿は、属性を指定する必要のない場合に、2文字省略するためのスーパーユーティリティです(同様のユーティリティとしてもあります)。
-# 2文字省略することにより、指の疲労が軽減され、キーボードの摩耗も減り、電力の消費も抑えられ、カッコの数も減り、コードの可読性も向上し、世の中が少しだけ良くなる究極のワンダフルユーティリティです。
-
-
 ##--------------------------------------
 *** コンテキストを作り出すもの
 ##--------------------------------------
-
-　
-
-*!!バグ!!: with-node, with-edge;let内で生成束縛されるノード、エッジ、グラフが、let内の属性コンテキストではなく、束縛変数の初期出現時の属性コンテキストに影響されてしまう。*
-
-　
-
-　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
-コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じものになるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
- with-node,  with-edgeをネストした場合、属性値は上書きされます。
 
  *注: with-node, with-edgeは、&,[&],&&の内部でのみ、期待通りの動作が保証されます。* 
 with-node, with-edgeは、暗黙の部分グラフを生成します。
