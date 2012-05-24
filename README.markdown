@@ -1,4 +1,5 @@
-Last Updated : 2012/05/22 22:42:47 tkych
+Last Updated : 2012/05/24 20:02:21 tkych
+
 
 # Donuts: Graph DSL for Common Lisp
 
@@ -12,18 +13,39 @@ How to use donuts is easy.
 && makes a graph by bundling some nodes, edges and graphs.
 $$ outputs an image of the graph.
 
-The goal of donuts is to draw graphs in lispic way of thinking (REPL, macro, CLOS ,multi-paradigm style and so on). 
-
-For more details, see index(Under Translation) or index-ja(Japanease) in doc directory.
+For more details, please see index(Under Translation) or index-ja(Japanease) in doc directory.
 
 
-## Version
+## The Goal of Donuts
 
-The Current version of the donuts is 0.3.1 (beta).
+[Graphviz][] is a collection of libraries and utilities for drawing a graph.
+[Dot language][] is description language, used in Graphviz.
+Graphviz is very useful.
+However, I (as a lisp programmer) think there are some points to do kaizen.
+
+1.  Since dot language is not turing-complete,
+    when we draw a graph, we don't take full advantage of the pattern in the graph.
+
+2.  Because dot language is so-called compiled language,
+    development cycle is inconvenience.
+
+3.  Plain common lisp does not have ability to draw graph.
+
+The goal of donuts is to draw graph in lispic way of thinking 
+(REPL, macro, CLOS, multi-paradigm style, and so on). 
+
+  [Graphviz]: http://www.graphviz.org/
+  [Dot language]: http://www.graphviz.org/dot-language.html
+
+
+## Current Version of Donuts
+
+0.3.1 (beta)
+
 
 ## Dependencies
 
-* [Graphviz](http://www.graphviz.org/) by AT&T Labs
+* [Graphviz][] by AT&T Labs
 
 * [cl-ppcre](http://weitz.de/cl-ppcre/) by Dr. Edmund Weitz
 
@@ -42,9 +64,9 @@ The Current version of the donuts is 0.3.1 (beta).
 
 * Node-Constructor, <> makes node from node's identity.   `(<> label) => node`
 * Edge-Constructor, -> makes node with nodes.   `(-> node1 node2) => edge`
-* Graph-Constructor, &&, & makes graph with nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
+* Graph-Constructor, &&, &, [&] makes graph with nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
 * Shell-Interface, $$, $ outputs graph to viewer.   `($$ graph) => NIL ;output image to viewer`
-* dot-output outputs dot code in standart-output.   `(dot-output graph) => NIL ;output dot code`
+* DOT-OUTPUT outputs dot code in standart-output.   `(DOT-OUTPUT graph) => NIL ;output dot code`
 
 
 ## Examples
@@ -60,8 +82,7 @@ The Current version of the donuts is 0.3.1 (beta).
       }
       NIL
 
-      DONUTS> ;; example from http://graphviz.org/content/cluster
-              ;; create cluster.pdf and show it in viewer
+      DONUTS> ;; Example from http://graphviz.org/content/cluster
               ($ (:outfile "cluster.pdf")
                  (&& ([&] (:label "process #1" :style :filled :color :lightgrey)
                        (with-node (:style :filled :color :white)
@@ -74,10 +95,12 @@ The Current version of the donuts is 0.3.1 (beta).
                      (->  "a1" "b3")
                      (->  "a3" "a0")
                      (->  "b2" "a3")))
+
+       ; Create cluster.pdf & Output image to Viewer
        NIL
 
        DONUTS> 
-       ;; example from http://www.linuxjournal.com/article/7275
+       ;; Example from http://www.linuxjournal.com/article/7275
        ;; num-day: total number of days in month
        ;; starting-day: 0 as Sun, 1 as Mon, ... , 6 as Sat
        (defun generate-monthly-calendar (month year num-days starting-day)

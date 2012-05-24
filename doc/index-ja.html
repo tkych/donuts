@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-23 00:35:43 JST"/>
+<meta name="generated" content="2012-05-24 19:40:57 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -457,10 +457,12 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 
 
 <p>
-（ <b>注：</b> この章は、なぜDonutsのユーザインターフェイスがこうなっているか、についての章です。
-この章はやや抽象的な部分が多いので、退屈だと感じた場合や、とにかく手っ取り早くグラフを作成したい方は、次章の<a href="#sec-4">チュートリアル</a>を読むことをおすすめします。）
+<b>注：</b> この章は、Donutsのユーザインターフェイスがなぜこのようになっているのか、についての章です。
+この章はやや抽象的な部分が多いので、退屈だと感じた場合、とにかく手っ取り早くグラフを作成したい場合には、次章の<a href="#sec-4">チュートリアル</a>を読むことをおすすめします。
 </p>
-
+<p>
+　
+</p>
 
 </div>
 
@@ -469,6 +471,16 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 <div class="outline-text-3" id="text-3-1">
 
 
+
+<p class="verse">
+人の思考はその言語によって形作られる。<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &mdash; J.L.Bentley, More Programming Pearls<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup>, p.15.<br/>
+</p>
+
+
+
+<hr/>
+
 <p>
 　Donutsのゴールは、Common Lispでグラフ作成を <b>なめらかに</b> 行えるようにすることです。
 「なめらかに」とは <b>Lisp的な思考の枠組を切り替えずに</b> ということを意味します。
@@ -476,7 +488,7 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 </p>
 <p>
 　そもそも、グラフを作成するだけなら、GraphvizなどのDot言語アプリケーションをそのまま使えば達成できることです。
-それにもかかわらず、「なめらかさ」をゴールに設定し、Donutsを造った一番の理由は <span style="text-decoration:underline;">グラフを描くLispプログラマの生産性の向上のため</span> です。
+それにもかかわらず、「なめらかさ」を重視し、Donutsをあえて造った一番の理由は <span style="text-decoration:underline;">グラフを描くLispプログラマの生産性の向上のため</span> です。
 以下で詳しく説明します。
 </p>
 <p>
@@ -569,7 +581,7 @@ Lispは拡張可能なプログラムを書くために、とりわけみごと�
 なぜなら、Lispそれ自体が拡張可能なプログラムだからだ。<br/>
 もし、この拡張可能性をユーザに譲り渡すようなLispプログラムを書くなら、<br/>
 労力なしに拡張[可能]言語を実質的に手に入れる[ことができる]。<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &mdash; Paul Graham, On Lisp<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup> ,pp.4&ndash;5.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &mdash; Paul Graham, On Lisp<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup> ,pp.4&ndash;5.<br/>
 </p>
 
 
@@ -660,7 +672,7 @@ Lispの上に実現されたその機能は、基盤であるLispの拡張可能
 あるいは、実際のところ、時折言及されるように、宣言的知識と命令的知識との間の相違である。<br/>
 通常、数学では宣言的な(何であるかの)叙述に関心を持つのに対し、<br/>
 計算機科学では命令的な(どう行うかの)叙述に関心を持つ。<br/>
-&nbsp;&nbsp;&nbsp;&nbsp; &mdash; Harold Abelson and Gerald J. Sussman, with Julie Sussman, SICP<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup> ,<a href="http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-10.html#%_sec_1.1.7">section 1.1.7.</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp; &mdash; Harold Abelson and Gerald J. Sussman, with Julie Sussman, SICP<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup> ,<a href="http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-10.html#%_sec_1.1.7">section 1.1.7.</a><br/>
 </p>
 
 
@@ -729,12 +741,12 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 ノードのアイデンティティとして、 <b>属性</b> が用いられており、エッジやグラフにも属性が設定されていました。
 </p>
 <p>
-　エッジにアイデンティティがあれば、2つのノードの間に2本以上のエッジを張ることもできるようになります<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup>。
+　エッジにアイデンティティがあれば、2つのノードの間に2本以上のエッジを張ることもできるようになります<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>。
 つまり、エッジやグラフに属性があれば、グラフの見えを多様なものにすることができるのです。
 そこで、Graphvizとの兼ね合いも考えて、以下のものをDonutsの基本対象と基本操作にすることにしました。
 </p>
 <dl>
-<dt><b>ノードの属性</b></dt><dd>ノードの名前や<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>、ラベル、色、形など。
+<dt><b>ノードの属性</b></dt><dd>ノードの名前や<sup><a class="footref" name="fnr.6" href="#fn.6">6</a></sup>、ラベル、色、形など。
 </dd>
 <dt><b>エッジの属性</b></dt><dd>エッジの名前や、ラベル、色、形など。
 </dd>
@@ -849,12 +861,12 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <hr/>
 
 <p>
-（ <b>注：</b>
-この章内のコードの大部分は、説明のため、グラフ型のオブジェクトを生成する部分のみ載せてあります。
+<b>注：</b>
+この章内にある大部分のコードは、説明のため、グラフ型のオブジェクトを生成する部分のみであるのがほとんどです。
 グラフオブジェクトのdotコードを標準出力で見るには、 <code>(dot-output グラフオブジェクト)</code> のように <code>dot-output</code> を使う必要があります。
 また、 <code>dot-output</code> の代わりに <code>dot-pprint</code> を用いると整形されたdotコードを見ることができます。
 グラフオブジェクトの画像を直接ビューアで見るには、 <code>($$ グラフオブジェクト)</code> のようにシェルインターフェイス <code>$$</code> を使うと便利です。
-詳しくは<a href="#sec-4-4">出力</a>の節を参照してください。 ）
+詳しくは<a href="#sec-4-4">出力</a>の節を参照してください。
 </p>
 <p>
 　
@@ -900,7 +912,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </p>
 <p>
 　また、 <code>-&gt;</code> は、略記として、ノードの代わりに文字列や数値も引数に取ることができます。
-その場合、文字列や数値をラベルとするノードが自動生成されます<sup><a class="footref" name="fnr.6" href="#fn.6">6</a></sup>。
+その場合、文字列や数値をラベルとするノードが自動生成されます<sup><a class="footref" name="fnr.7" href="#fn.7">7</a></sup>。
 つまり上のコードは、
 </p>
 
@@ -999,7 +1011,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <p>
 　他のグラフ属性値も指定したい場合、例えば、グラフのサイズを小さくしたい場合には、 <code>(:label "Proparty Example" :size "1,1")</code> の様に書きます。
 サイズ属性値は縦横インチ単位、文字列で指定します。
-属性を指定する順番は、出力結果に影響しません<sup><a class="footref" name="fnr.7" href="#fn.7">7</a></sup>。
+属性を指定する順番は、出力結果に影響しません<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>。
  <code>(:label "Proparty Example" :size "1,1")</code> でも、 <code>(:size "1,1" :label "Proparty Example")</code> でも、結果として出力されるグラフは次のものです。
 </p>
 
@@ -1062,10 +1074,10 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <h3 id="sec-4-3"><span class="section-number-3">4.3</span> ラベル</h3>
 <div class="outline-text-3" id="text-4-3">
 
-<p>　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>。
+<p>　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.9" href="#fn.9">9</a></sup>。
 </p>
 <ul>
-<li><code>\\無</code>  空白が印字される<sup><a class="footref" name="fnr.9" href="#fn.9">9</a></sup>('無'はスペースを表す)。
+<li><code>\\無</code>  空白が印字される<sup><a class="footref" name="fnr.10" href="#fn.10">10</a></sup>('無'はスペースを表す)。
 </li>
 <li><code>\\n</code>  行末に置くと、その行をセンタリングし、改行する。
 </li>
@@ -1106,7 +1118,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 
 <p>
 　dot-output, dot-pprintによって、生成したグラフオブジェクトのdotコードを標準出力に表示することができます。
-また、生成したグラフオブジェクトをビューアで見るには、シェルインターフェイス $ が便利です<sup><a class="footref" name="fnr.10" href="#fn.10">10</a></sup>。
+また、生成したグラフオブジェクトをビューアで見るには、シェルインターフェイス $ が便利です<sup><a class="footref" name="fnr.11" href="#fn.11">11</a></sup>。
 </p>
 
 </div>
@@ -1543,7 +1555,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 </p>
 <p>
 　フィールドポートを設定するには、ラベルの中でフィールドを設定する際のラベル中の区切り <code>|</code> を、 <code>|:port-name</code> に置き換えます。
- <i>port-name</i> は（空白を含まない）文字列であり<sup><a class="footref" name="fnr.11" href="#fn.11">11</a></sup>、ラベル内で一意にフィールドポートを指定することができるものです。
+ <i>port-name</i> は（空白を含まない）文字列であり<sup><a class="footref" name="fnr.12" href="#fn.12">12</a></sup>、ラベル内で一意にフィールドポートを指定することができるものです。
 つまり、1つのレコード内の異なる2つのフィールドで、同じポート名を使うことはできません。
 </p>
 <p>
@@ -1817,11 +1829,15 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 実際にDonutsを使ってみて、ノードの高さを揃える頻度がわりと多いこと、記号 <code>~</code> は視覚的にわかりやすいことを鑑み、ユーティリティとして新たに定義することにしました。
 </p>
 
+</div>
 
+</div>
 
 <div id="outline-container-4-9-4" class="outline-4">
-<h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> 複数のノードを数珠つなぎに結ぶ関数：&ndash;&ndash;&gt;</h4>
+<h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> 複数のノードを数珠つなぎに結ぶ関数：&ndash;&gt;</h4>
 <div class="outline-text-4" id="text-4-9-4">
+
+
 
 
 <pre class="src src-lisp">(--&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) <span style="color: #90ee90;">"e"</span>)
@@ -1839,9 +1855,9 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 </div>
 
-<div id="outline-container-4-9-4" class="outline-4">
-<h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> 1つのノードから他のノードへ、エッジを放射状に張る関数：-&gt;&gt;</h4>
-<div class="outline-text-4" id="text-4-9-4">
+<div id="outline-container-4-9-5" class="outline-4">
+<h4 id="sec-4-9-5"><span class="section-number-4">4.9.5</span> 1つのノードから他のノードへ、エッジを放射状に張る関数：-&gt;&gt;</h4>
+<div class="outline-text-4" id="text-4-9-5">
 
 
 <p>
@@ -1865,9 +1881,9 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 </div>
 
-<div id="outline-container-4-9-5" class="outline-4">
-<h4 id="sec-4-9-5"><span class="section-number-4">4.9.5</span> 他のノードから1つのノードへ、エッジを収束状に張る関数：==&gt;</h4>
-<div class="outline-text-4" id="text-4-9-5">
+<div id="outline-container-4-9-6" class="outline-4">
+<h4 id="sec-4-9-6"><span class="section-number-4">4.9.6</span> 他のノードから1つのノードへ、エッジを収束状に張る関数：==&gt;</h4>
+<div class="outline-text-4" id="text-4-9-6">
 
 
 <p>
@@ -1907,7 +1923,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 手っ取り早い方法は、 <b>エッジの属性:shapeを:noneに指定すること</b> です。
 もう一つの方法は、
 <b>-&gt;をすべて&ndash;&ndash;に置き換えること</b>です
-（ <b>注：</b> 1つのグラフ中で <code>-&gt;</code> と <code>--</code> を併用することはできません<sup><a class="footref" name="fnr.12" href="#fn.12">12</a></sup>）。
+（ <b>注：</b> 1つのグラフ中で <code>-&gt;</code> と <code>--</code> を併用することはできません<sup><a class="footref" name="fnr.13" href="#fn.13">13</a></sup>）。
 </p>
 
 <p>
@@ -2059,10 +2075,14 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 
 
 
+</div>
 
 <div id="outline-container-4-11-1" class="outline-4">
-<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> 複数のノードを直線状につなぐ関数：&ndash;&ndash;&ndash;</h4>
+<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> 複数のノードを直線状につなぐ関数：&mdash;</h4>
 <div class="outline-text-4" id="text-4-11-1">
+
+
+
 
 
 <pre class="src src-lisp">(--- <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span> (&lt;&gt; <span style="color: #90ee90;">"d"</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:red</span>) <span style="color: #90ee90;">"e"</span>)
@@ -2076,12 +2096,13 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 <img src="./images/liner.png"  alt="./images/liner.png" />
 </p>
 
+</div>
 
 </div>
 
-<div id="outline-container-4-11-1" class="outline-4">
-<h4 id="sec-4-11-1"><span class="section-number-4">4.11.1</span> 複数のノードを環状につなぐ関数：O</h4>
-<div class="outline-text-4" id="text-4-11-1">
+<div id="outline-container-4-11-2" class="outline-4">
+<h4 id="sec-4-11-2"><span class="section-number-4">4.11.2</span> 複数のノードを環状につなぐ関数：O</h4>
+<div class="outline-text-4" id="text-4-11-2">
 
 
 
@@ -2098,9 +2119,9 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 
 </div>
 
-<div id="outline-container-4-11-2" class="outline-4">
-<h4 id="sec-4-11-2"><span class="section-number-4">4.11.2</span> 1つのノードを多数のノードとつなぐ関数：-&lt;</h4>
-<div class="outline-text-4" id="text-4-11-2">
+<div id="outline-container-4-11-3" class="outline-4">
+<h4 id="sec-4-11-3"><span class="section-number-4">4.11.3</span> 1つのノードを多数のノードとつなぐ関数：-&lt;</h4>
+<div class="outline-text-4" id="text-4-11-3">
 
 
 <p>
@@ -2445,7 +2466,7 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 
 <p>
-　マクロcons-cell-of<sup><a class="footref" name="fnr.13" href="#fn.13">13</a></sup>は、ツリーを引数に取り、ツリーのコンスセル構造を描くグラフを生成します。
+　マクロcons-cell-of<sup><a class="footref" name="fnr.14" href="#fn.14">14</a></sup>は、ツリーを引数に取り、ツリーのコンスセル構造を描くグラフを生成します。
 展開の過程で、いったんツリーをツリー構造を表すコードに変換し、その後、グラフを生成するコードに変換します。
 </p>
 
@@ -3113,7 +3134,7 @@ nmakeとkshのつながりに関して詳しい方がいらっしゃいました
 　出力される画像がマニュアルのものと異なりますが、グラフとしては同等です。
 Grapvizマニュアル中のdotコードを、Grapviz整形ユーティリティnopによって整形したdotコードでは上と同じ画像が出力されます。
 グラフを構成する要素(ノード、エッジ、グラフ)の順によって、グラフ構造としては同等でも、
-グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります<sup><a class="footref" name="fnr.14" href="#fn.14">14</a></sup>。
+グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります<sup><a class="footref" name="fnr.15" href="#fn.15">15</a></sup>。
 </p>
 
 </div>
@@ -4025,29 +4046,37 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 <p class="footnote"><sup><a class="footnum" name="fn.1" href="#fnr.1">1</a></sup> ガーベジコレクタの発動回数を少なくする機構も今のところ備えていません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> On Lispの原著はポールグレアム氏の<a href="http://www.paulgraham.com/onlisp.html">HP</a>にて公開されています。
+<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> 引用文は、サピア＝ウォーフ仮説のエッセンスを著者のBentley氏が要約したものです(翻訳は筆者によるもの)。
+氏が"More Programming Pearls"の中でサピア＝ウォーフ仮説を持ち出した意図は、
+「使用する言語に依存し、世界が(別な実体から構成される)異なるものになるのだ」という大胆な主張を支持するため <span style="text-decoration:underline;">ではなく</span> 、
+「使用するプログラミング言語によって、問題解決のための思考法が異なるものになるのだ」という程度のものです。
+筆者もそのような意図で引用しています。
+"More Programming Pearls"は、「プログラマのうちあけ話」として野下浩平・古郡廷治、両氏によって翻訳され、近代科学社より出版されています。
+</p>
+
+<p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> On Lispの原著はポールグレアム氏の<a href="http://www.paulgraham.com/onlisp.html">HP</a>にて公開されています。
 また、野田開氏による邦訳がオーム社より出版されています。
 ただし、引用文の訳は筆者によるものです。
 したがって、誤訳や誤読がありましたら、すべて筆者個人の責任です。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> Structure and Interpretarion of Computer Programs &ndash; 2nd ed. (SICP)の原著は<a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">MITPressのSICP HP</a>にて公開されています。
+<p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> Structure and Interpretarion of Computer Programs &ndash; 2nd ed. (SICP)の原著は<a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">MITPressのSICP HP</a>にて公開されています。
 また、和田英一氏による邦訳がピアソン社より出版されています(邦題は、計算機プログラムの構造と解釈 第二版)。
 ただし、引用文の訳は筆者によるものです。
 したがって、誤訳や誤読がありましたら、すべて筆者個人の責任です。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> グラフの:strict属性をtに指定すると、2つのノードの間に2本以上のエッジを張ることはできません。
+<p class="footnote"><sup><a class="footnum" name="fn.5" href="#fnr.5">5</a></sup> グラフの:strict属性をtに指定すると、2つのノードの間に2本以上のエッジを張ることはできません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.5" href="#fnr.5">5</a></sup> Donutsでは、ユーザにはほとんど見えない実装部分で、アイデンティティとしてname属性値を用いています。
+<p class="footnote"><sup><a class="footnum" name="fn.6" href="#fnr.6">6</a></sup> Donutsでは、ユーザにはほとんど見えない実装部分で、アイデンティティとしてname属性値を用いています。
 例えば、 <code>(&lt;&gt; "a")</code> によるノードaの生成時、裏では名前が自動生成され、属性:nameの値に指定されます。
 ほとんどの場合、ユーザが自分で名前を指定することはできません。
 唯一の例外がトップレベルのグラフの名前です。
 これは、生成された画像をビューアで見る場合、名前が画像のタイトルとして表示されることがあるためです。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.6" href="#fnr.6">6</a></sup> 自動生成についての詳しい解説です。
+<p class="footnote"><sup><a class="footnum" name="fn.7" href="#fnr.7">7</a></sup> 自動生成についての詳しい解説です。
 文字列や数値から既にノードが自動生成されている場合、それらの文字列や数値による新たなノードの自動生成は起きません。
 文字列や数値が同じもの（lispの <code>equal</code> ）であれば、それらは同一のノードです。
 つまり、 <code>(-&gt; "a" "a")</code> によって自動生成されるのは1つのノードaのみです。
@@ -4057,39 +4086,39 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 コード <code>(&lt;&gt; "a" :color :red)</code> により生成されるノードに自己ループを張るには、 <code>(let ((n (&lt;&gt; "a" :color :red))) (-&gt; n n))</code> とするか、またはユーティリティ<a href="#sec-4-9-2">?</a>を使って <code>(? (&lt;&gt; "a" :color :red))</code> とする必要があります。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.7" href="#fnr.7">7</a></sup> より正確には、属性を指定する順を変えた場合、出力されるdotコードは別のものです。
+<p class="footnote"><sup><a class="footnum" name="fn.8" href="#fnr.8">8</a></sup> より正確には、属性を指定する順を変えた場合、出力されるdotコードは別のものです。
 しかし、そのdotコードから生成されるグラフ画像の見た目は同じものです。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.8" href="#fnr.8">8</a></sup> Dot言語に詳しい方のための補足です。
+<p class="footnote"><sup><a class="footnum" name="fn.9" href="#fnr.9">9</a></sup> Dot言語に詳しい方のための補足です。
 Donutsでは、縦棒 <code>|</code> 、角カッコ <code>[</code>, <code>]</code> 、三角カッコ <code>&lt;</code>, <code>&gt;</code> をエスケープする必要はありません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.9" href="#fnr.9">9</a></sup> 本当は何も印字されないのが空白さ。
+<p class="footnote"><sup><a class="footnum" name="fn.10" href="#fnr.10">10</a></sup> 本当は何も印字されないのが空白さ。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.10" href="#fnr.10">10</a></sup> もちろん、やや手間はかかりますが、画像ファイルをビューアで見るために、
+<p class="footnote"><sup><a class="footnum" name="fn.11" href="#fnr.11">11</a></sup> もちろん、やや手間はかかりますが、画像ファイルをビューアで見るために、
 with-open-file内で*standart-output*を束縛し、
 dot-outputによってdotファイルを出力し、そのdotファイルをGraphvizで画像ファイルに変換し、
 それをビューアで見るという方法もあります。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.11" href="#fnr.11">11</a></sup> ただし、方位ポートで既に使用されているn,ne,se,s,sw,w,nw,c,_ をフィールドポート名に付けることは、
+<p class="footnote"><sup><a class="footnum" name="fn.12" href="#fnr.12">12</a></sup> ただし、方位ポートで既に使用されているn,ne,se,s,sw,w,nw,c,_ をフィールドポート名に付けることは、
 コードの読みやすさの観点から、あまりおすすめできません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.12" href="#fnr.12">12</a></sup> Dot言語に詳しい方のための補足です。
+<p class="footnote"><sup><a class="footnum" name="fn.13" href="#fnr.13">13</a></sup> Dot言語に詳しい方のための補足です。
 グラフ中で1つでも <code>--</code> または <code>---</code> を使用した場合、Donutsで出力されるdotコードの宣言が自動的に <code>digraph</code> ではなく <code>graph</code> になります。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.13" href="#fnr.13">13</a></sup> マクロcons-cell-ofを書く際に、
+<p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> マクロcons-cell-ofを書く際に、
 David S. Touretzkyによる素晴らしいLisp入門書、
 <a href="http://www.cs.cmu.edu/~dst/LispBook/">Common Lisp: A Gentle Introduction to Symbolic Computation</a>のAppendix AのSDRAWのコードが大変参考になりました。
 SDRAWは、ループ構造も含む任意のリストを引数に取り、そのコンスセル構造を標準出力にディスプレイするライブラリです。
 ただし、ここで紹介したマクロcons-cell-ofは、コードが煩雑になってしまうため、ループ構造のリストには対応していません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> dotコード中のグラフ構成要素の順に依存し、生成される画像が変化するというのはGrapvizの仕様です。
+<p class="footnote"><sup><a class="footnum" name="fn.15" href="#fnr.15">15</a></sup> dotコード中のグラフ構成要素の順に依存し、生成される画像が変化するというのはGrapvizの仕様です。
 そして、これはGrapviz作者による思慮深い判断の結果である、と私は考えます。
 なぜなら、整形ユーティリティnopをdotコマンドの動作内に組み入れるだけで、グラフ構成要素の順に依らず同じ画像が生成されるように(dotコマンドを)動作させることは容易にできたことだからです。
 しかし、あえてそれをしなかったということは、以下の選択肢をユーザに提供することを意図しているはずです。
@@ -4114,7 +4143,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-23 00:35:43 JST</p>
+<p class="date">Date: 2012-05-24 19:40:57 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
