@@ -1,4 +1,4 @@
-Last Updated : 2012/05/24 20:02:21 tkych
+Last Updated : 2012/05/24 21:53:47 tkych
 
 
 # Donuts: Graph DSL for Common Lisp
@@ -27,7 +27,7 @@ However, I (as a lisp programmer) think there are some points to do kaizen.
     when we draw a graph, we don't take full advantage of the pattern in the graph.
 
 2.  Because dot language is so-called compiled language,
-    development cycle is inconvenience.
+    development cycle is inconvenient.
 
 3.  Plain common lisp does not have ability to draw graph.
 
