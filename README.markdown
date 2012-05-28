@@ -1,4 +1,4 @@
-Last Updated : 2012/05/24 21:53:47 tkych
+Last Updated : 2012/05/28 20:52:39 tkych
 
 
 # Donuts: Graph DSL for Common Lisp
@@ -82,6 +82,8 @@ The goal of donuts is to draw graph in lispic way of thinking
       }
       NIL
 
+<img src="https://github.com/downloads/tkych/donuts/doc/images/example9.png" align="right"/>
+
       DONUTS> ;; Example from http://graphviz.org/content/cluster
               ($ (:outfile "cluster.pdf")
                  (&& ([&] (:label "process #1" :style :filled :color :lightgrey)
@@ -96,7 +98,7 @@ The goal of donuts is to draw graph in lispic way of thinking
                      (->  "a3" "a0")
                      (->  "b2" "a3")))
 
-       ; Create cluster.pdf & Output image to Viewer
+       ; Create cluster.pdf & Output image to viewer as shown on the right
        NIL
 
        DONUTS> 
@@ -125,6 +127,8 @@ The goal of donuts is to draw graph in lispic way of thinking
 
        ; Output Calendar to Viewer
        NIL
+
+<img src="https://github.com/downloads/tkych/donuts/doc/images/calendar.png" align="center"/>
 
 
 ## Author, License, Copyright
