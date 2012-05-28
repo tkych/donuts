@@ -82,8 +82,6 @@ The goal of donuts is to draw graph in lispic way of thinking
       }
       NIL
 
-<img src="https://github.com/downloads/tkych/donuts/doc/images/example9.png" align="right"/>
-
       DONUTS> ;; Example from http://graphviz.org/content/cluster
               ($ (:outfile "cluster.pdf")
                  (&& ([&] (:label "process #1" :style :filled :color :lightgrey)
@@ -127,8 +125,6 @@ The goal of donuts is to draw graph in lispic way of thinking
 
        ; Output Calendar to Viewer
        NIL
-
-<img src="https://github.com/downloads/tkych/donuts/doc/images/calendar.png" align="center"/>
 
 
 ## Author, License, Copyright
