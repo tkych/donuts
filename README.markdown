@@ -1,4 +1,4 @@
-Last Updated : 2012/05/28 20:52:39 tkych
+Last Updated : 2012/05/29 12:23:51 tkych
 
 
 # Donuts: Graph DSL for Common Lisp
@@ -49,7 +49,7 @@ The goal of donuts is to draw graph in lispic way of thinking
 
 * [cl-ppcre](http://weitz.de/cl-ppcre/) by Dr. Edmund Weitz
 
-* [trivial-shell](http://www.quicklisp.org/) by Gary Warren King
+* [trivial-shell](http://common-lisp.net/project/trivial-shell/) by Gary Warren King
 
 
 ## Installation & Start
@@ -81,8 +81,6 @@ The goal of donuts is to draw graph in lispic way of thinking
         node_ID_39 -> "b" [color=red];
       }
       NIL
-
-<img src="https://github.com/downloads/tkych/donuts/doc/images/example9.png" align="right"/>
 
       DONUTS> ;; Example from http://graphviz.org/content/cluster
               ($ (:outfile "cluster.pdf")
@@ -128,7 +126,37 @@ The goal of donuts is to draw graph in lispic way of thinking
        ; Output Calendar to Viewer
        NIL
 
-<img src="https://github.com/downloads/tkych/donuts/doc/images/calendar.png" align="center"/>
+       DONUTS> 
+       ;; Example from http://www.graphviz.org/doc/info/html2.gv
+       ($$ (& (:rankdir :LR)
+         (with-node (:shape :plaintext)
+           (let ((a (<> (html (table :border 0 :cellborder 1 :cellspacing 0
+                                     (tr (td :rowspan 3 :bgcolor :yellow "class"))
+                                     (tr (td :port "here" :bgcolor :lightblue "qualfier"))))))
+                 (b (<> (html (table :bgcolor :bisque
+                                     (tr (td :colspan 3 "elephant")
+                                         (td :rowspan 2 :bgcolor :chartreuse
+                                             :valign :bottom :align :right "two"))
+                                     (tr (td :colspan 2 :rowspan 2
+                                             (table :bgcolor :grey
+                                                    (tr (td "corn"))
+                                                    (tr (td :bgcolor :yellow "c"))
+                                                    (tr (td "f"))))
+                                         (td :bgcolor :white "penguin"))
+                                     (tr (td :colspan 2 :border 4 :align :right :port "there" "4"))))
+                         :shape :ellipse :style :filled))
+                 (c (<> (html "long line 1" (br) "line 2" (br :align :left) "line 3" (br :align :right))))
+                 (d (<> "d" :shape :triangle)))
+             (&&
+               (~ b c)
+               (-> (@ a :here) (@ b :there) :dir :both :arrowtail :diamond)
+               (-> c b)
+               (-> d c :label (html (table (tr (td :bgcolor :red :width 10)
+                                               (td "Edge labels" (br) "also")
+                                               (td :bgcolor :blue :width 10))))))))))
+
+       ; Output example to Viewer
+       NIL
 
 
 ## Author, License, Copyright
