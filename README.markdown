@@ -1,4 +1,4 @@
-Last Updated : 2012/05/29 12:23:51 tkych
+Last Updated : 2012/05/29 17:52:13 tkych
 
 
 # Donuts: Graph DSL for Common Lisp
@@ -47,9 +47,9 @@ The goal of donuts is to draw graph in lispic way of thinking
 
 * [Graphviz][] by AT&T Labs
 
-* [cl-ppcre](http://weitz.de/cl-ppcre/) by Dr. Edmund Weitz
+* [CL-PPCRE](http://weitz.de/cl-ppcre/) by Dr. Edmund Weitz
 
-* [trivial-shell](http://common-lisp.net/project/trivial-shell/) by Gary Warren King
+* [Trivial-Shell](http://common-lisp.net/project/trivial-shell/) by Gary Warren King
 
 
 ## Installation & Start
@@ -63,7 +63,7 @@ The goal of donuts is to draw graph in lispic way of thinking
 ## Usage
 
 * Node-Constructor, <> makes node from node's identity.   `(<> label) => node`
-* Edge-Constructor, -> makes node with nodes.   `(-> node1 node2) => edge`
+* Edge-Constructor, -> makes edge between nodes.   `(-> node1 node2) => edge`
 * Graph-Constructor, &&, &, [&] makes graph with nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
 * Shell-Interface, $$, $ outputs graph to viewer.   `($$ graph) => NIL ;output image to viewer`
 * DOT-OUTPUT outputs dot code in standart-output.   `(DOT-OUTPUT graph) => NIL ;output dot code`
