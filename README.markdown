@@ -47,9 +47,9 @@ The goal of donuts is to draw graph in lispic way of thinking
 
 * [Graphviz][] by AT&T Labs
 
-* [cl-ppcre](http://weitz.de/cl-ppcre/) by Dr. Edmund Weitz
+* [CL-PPCRE](http://weitz.de/cl-ppcre/) by Dr. Edmund Weitz
 
-* [trivial-shell](http://www.quicklisp.org/) by Gary Warren King
+* [Trivial-Shell](http://common-lisp.net/project/trivial-shell/) by Gary Warren King
 
 
 ## Installation & Start
