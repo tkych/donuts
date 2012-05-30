@@ -1,4 +1,4 @@
-Last Updated : 2012/05/30 20:20:28 tkych
+Last Updated : 2012/05/30 21:21:37 tkych
 
 
 # Donuts: Graph DSL for Common Lisp
@@ -126,7 +126,6 @@ The goal of donuts is to draw graph in lispic way of thought
        ; Output Calendar to Viewer
        NIL
 
-<<<<<<< HEAD
        DONUTS> 
        ;; Example from http://www.graphviz.org/doc/info/html2.gv
        ($$ (& (:rankdir :LR)
@@ -159,8 +158,6 @@ The goal of donuts is to draw graph in lispic way of thought
        ; Output example to Viewer
        NIL
 
-=======
->>>>>>> 0505447c7c63152d13005b0134ecd05c8e8ace6a
 
 ## Author, License, Copyright
 
