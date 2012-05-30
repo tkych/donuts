@@ -1,4 +1,4 @@
-Last Updated : 2012/05/29 17:52:13 tkych
+Last Updated : 2012/05/30 20:20:28 tkych
 
 
 # Donuts: Graph DSL for Common Lisp
@@ -13,7 +13,7 @@ How to use donuts is easy.
 && makes a graph by bundling some nodes, edges and graphs.
 $$ outputs an image of the graph.
 
-For more details, please see index(Under Translation) or index-ja(Japanease) in doc directory.
+For further details, please see index (Under Translation) or index-ja (Japanease) in doc directory.
 
 
 ## The Goal of Donuts
@@ -29,9 +29,9 @@ However, I (as a lisp programmer) think there are some points to do kaizen.
 2.  Because dot language is so-called compiled language,
     development cycle is inconvenient.
 
-3.  Plain common lisp does not have ability to draw graph.
+3.  Plain Common Lisp does not have ability to draw graph.
 
-The goal of donuts is to draw graph in lispic way of thinking 
+The goal of donuts is to draw graph in lispic way of thought 
 (REPL, macro, CLOS, multi-paradigm style, and so on). 
 
   [Graphviz]: http://www.graphviz.org/
@@ -55,7 +55,7 @@ The goal of donuts is to draw graph in lispic way of thinking
 ## Installation & Start
 
 1.  CL-REPL> `(ql:quickload :donuts)`
-2.  CL-USER> `(in-package :donuts)`
+2.  CL-REPL> `(in-package :donuts)`
 3.  DONUTS> `(dot-output (&& (-> 1 2)))`  ;output dot code in standard-output
 4.  DONUTS> `($$ (&& (-> 1 2)))`  ;output graph image to viewer
 
