@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-24 19:40:57 JST"/>
+<meta name="generated" content="2012-05-24 23:29:26 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -400,7 +400,7 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 <h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> quicklispによる自動ダウンロード &amp; インストール</h4>
 <div class="outline-text-4" id="text-2-3-1">
 
-<p>2012年5月21以降、<a href="http://www.quicklisp.org/">quicklisp</a>ライブラリに登録されています。
+<p>2012年5月21日以降、<a href="http://www.quicklisp.org/">quicklisp</a>ライブラリに登録されています。
 REPLに <code>(ql:quickload :donuts)</code> と打ち込むことで、自動的にダウンロード＆インストールされます。
 </p>
 </div>
@@ -412,7 +412,7 @@ REPLに <code>(ql:quickload :donuts)</code> と打ち込むことで、自動的
 <div class="outline-text-4" id="text-2-3-2">
 
 <p>現在の開発版は、<a href="https://github.com/tkych/donuts">https://github.com/tkych/donuts</a> からダウンロードできます。
-ダウンロードしたdonutsディレクトリを、asdf:*central-registry*に登録されたパスに置き、REPLに <code>(asdf:operate 'asdf:load-op :donuts)</code> と打ち込むことで、インストールされます。
+ダウンロードしたdonutsディレクトリを、asdf:*central-registry*に設定されたパスに置き、REPLに <code>(asdf:operate 'asdf:load-op :donuts)</code> と打ち込むことで、インストールされます。
 </p>
 </div>
 </div>
@@ -4048,10 +4048,10 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 
 <p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> 引用文は、サピア＝ウォーフ仮説のエッセンスを著者のBentley氏が要約したものです(翻訳は筆者によるもの)。
 氏が"More Programming Pearls"の中でサピア＝ウォーフ仮説を持ち出した意図は、
-「使用する言語に依存し、世界が(別な実体から構成される)異なるものになるのだ」という大胆な主張を支持するため <span style="text-decoration:underline;">ではなく</span> 、
+「使用する言語を変えることで、世界が(別な実体から構成される)異なるものになるのだ」という極端な相対主義的主張をするため <span style="text-decoration:underline;">ではなく</span> 、
 「使用するプログラミング言語によって、問題解決のための思考法が異なるものになるのだ」という程度のものです。
-筆者もそのような意図で引用しています。
-"More Programming Pearls"は、「プログラマのうちあけ話」として野下浩平・古郡廷治、両氏によって翻訳され、近代科学社より出版されています。
+筆者も氏と同様のマイルドな意図で引用しました。
+"More Programming Pearls"は、野下浩平・古郡廷治、両氏によって翻訳され、「プログラマのうちあけ話」という邦題で近代科学社より出版されています。
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> On Lispの原著はポールグレアム氏の<a href="http://www.paulgraham.com/onlisp.html">HP</a>にて公開されています。
@@ -4108,7 +4108,7 @@ dot-outputによってdotファイルを出力し、そのdotファイルをGrap
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.13" href="#fnr.13">13</a></sup> Dot言語に詳しい方のための補足です。
-グラフ中で1つでも <code>--</code> または <code>---</code> を使用した場合、Donutsで出力されるdotコードの宣言が自動的に <code>digraph</code> ではなく <code>graph</code> になります。
+グラフ中で1つでも <code>--</code> または <code>---</code> を使用した場合、Donutsで出力されるdotコードの型宣言が自動的に <code>digraph</code> ではなく <code>graph</code> になります。
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> マクロcons-cell-ofを書く際に、
@@ -4119,7 +4119,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.15" href="#fnr.15">15</a></sup> dotコード中のグラフ構成要素の順に依存し、生成される画像が変化するというのはGrapvizの仕様です。
-そして、これはGrapviz作者による思慮深い判断の結果である、と私は考えます。
+そして、これはGrapviz作者による思慮深い判断の結果である、と筆者は考えます。
 なぜなら、整形ユーティリティnopをdotコマンドの動作内に組み入れるだけで、グラフ構成要素の順に依らず同じ画像が生成されるように(dotコマンドを)動作させることは容易にできたことだからです。
 しかし、あえてそれをしなかったということは、以下の選択肢をユーザに提供することを意図しているはずです。
 </p><ol>
@@ -4143,7 +4143,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-24 19:40:57 JST</p>
+<p class="date">Date: 2012-05-24 23:29:26 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

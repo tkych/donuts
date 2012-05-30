@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/23 00:37:38 tkych
+### Last Updated : 2012/05/23 08:32:59 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -10,28 +10,13 @@
 ##====================================================================
 
 #+SRCNAME: donuts.lisp
-#+BEGIN_SRC lisp :exports none  
-  ($ ()
-     (let ((o (<> "o" :style :filled :fillcolor :chocolate4)))
-       (& ()
-         (--> "d" o "n")
-         (~ "d" o "t")
-         (~ "n" "u")
-         (->  "n" "u" :style :dotted)
-         (--> "u" "t" "s"))))
+#+BEGIN_SRC lisp :exports none
+  ($$ (let ((o (<> "o" :style :filled :fillcolor :chocolate4)))
+        (&& (--> "d" o "n")
+            (->  "n" "u" :style :dotted)
+            (--> "u" "t" "s")
+            (~ "d" o "t") (~ "n" "s" "u"))))
 #+END_SRC
-
-#+BEGIN_SRC dot :file ./images/donuts.png
-digraph graph_T377 {
-  node_T378 [label="o",style=filled,fillcolor=chocolate4];
-  {rank=same; "d"; node_T378; "t"};
-  {rank=same; "n"; "u"};
-  "d" -> node_T378 -> "n";
-  "n" -> "u" [style=dotted];
-  "u" -> "t" -> "s";
-}
-#+END_SRC
-
 
 #+BEGIN_HTML
 <div align = "right">
@@ -110,6 +95,24 @@ digraph graph_T1555 {
 ##--------------------------------------------------------------------
 * Introduction
 ##--------------------------------------------------------------------
+
+ *DonutsはCommon Lispのためのグラフ作成ドメイン固有言語（DSL）です。*
+Donutsのゴールは、Lisp環境内でちょっとしたグラフを描くことです。
+Donutsは、S式で記述されたグラフ構造を、画像としてビューアに出力します
+(実際の内部動作は、S式を[[http://www.graphviz.org/dot-language.html][Dot言語]]のコードに変換し、[[http://graphviz.org/][Graphviz]]により画像を生成し、ビューアに出力するというものです)。
+ざっくり言うとDonutsはLispがDot言語を吸収した言語です。
+Donutsでグラフを作成する際には、すべてのLisp機能(REPL、マクロ、関数など)を利用できるので、Dot言語では手間がかかることでも容易に成し遂げることができます(cf.[[小さなプログラム --- カレンダー、2分木、コンスセル、有限オートマトン][小さなプログラム]])。
+
+Donuts is graph DSL for common lisp.
+Donuts converts graph represented by s-expressions to image.
+The goal of donuts is to draw graph in lispic way of thinking (REPL, macro, CLOS, multi-paradigm style and so on).
+()
+
+
+
+　 *Donutsの使い方は簡単です。*
+ =<>= でノードを作り、 =->= で2つのノード間にエッジを張り、 =&= でノードやエッジ（やグラフ）を束ねグラフを作り、 =$$= で画像を出力します。
+例えば、左下のコードをLispのREPLに入力すると、ビューアが起動し右下の画像が出力されます。
 
 
 #+ATTR_HTML: alt="donuts image" title="donuts!" align="right"
