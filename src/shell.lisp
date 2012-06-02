@@ -1,4 +1,4 @@
-;;;; Last Updated : 2012/05/10 20:58:10 tkych
+;;;; Last Updated : 2012/06/02 12:27:12 tkych
 
 ;; Shell interface for donuts
 
@@ -29,10 +29,9 @@
 ;;====================================================================
 (in-package :in-donuts)
 
-(defparameter *viewer*
-              #+windows           "start"
-              #+(or macos macosx) "open"
-              #+linux             "xdg-open")
+(defparameter *viewer* #+windows                  "start"
+                       #+(or darwin macos macosx) "open"
+                       #+linux                    "xdg-open")
 
 (defun make-dot-file (graph &optional
                       (file-name "DONUTS-DOT-TMP.dot")
