@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-24 23:29:26 JST"/>
+<meta name="generated" content="2012-06-01 20:56:57 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -204,7 +204,7 @@
 <li><a href="#sec-6-5">6.5 HTML-LIKEラベル</a></li>
 </ul>
 </li>
-<li><a href="#sec-7">7 ToDo</a></li>
+<li><a href="#sec-7">7 Todo</a></li>
 </ul>
 </div>
 </div>
@@ -226,12 +226,9 @@
 
 
 <p>
-　 <b>DonutsはCommon Lispのためのグラフ作成ドメイン固有言語（DSL）です。</b>
-Donutsのゴールは、Lisp環境内でちょっとしたグラフを描くことです。
-Donutsは、S式で記述されたグラフ構造を、画像としてビューアに出力します
-(実際の内部動作は、S式を<a href="http://www.graphviz.org/dot-language.html">Dot言語</a>のコードに変換し、<a href="http://graphviz.org/">Graphviz</a>により画像を生成し、ビューアに出力するというものです)。
-ざっくり言うとDonutsはLispがDot言語を吸収した言語です。
-Donutsでグラフを作成する際には、すべてのLisp機能(REPL、マクロ、関数など)を利用できるので、Dot言語では手間がかかることでも容易に成し遂げることができます(cf.<a href="#sec-4-13">小さなプログラム</a>)。
+　 <b>DonutsはCommon LispのためのグラフDSL(または、Graphvizインターフェイス)です。</b>
+Donutsは、S式で記述されたグラフ構造を<a href="http://www.graphviz.org/dot-language.html">Dot言語</a>のコードに変換し、画像としてビューアに出力します。
+すべてのLisp機能(REPL、マクロ、関数、CLOSなど)を利用できるので、複雑なグラフでも簡単に描くことができます(cf.<a href="#sec-4-13">小さなプログラム</a>)。
 </p>
 
 <p>
@@ -264,22 +261,16 @@ Donutsですぐにグラフを描くことができるように、<a href="#sec-
 
 <p>
 　 <b>DonutsはMITライセンスの元で配布されています。</b>
-したがって、あなたの望みが健全な常識の範囲内であれば、自由にDonutsを活用することができるはずです。
+したがって、あなたの望みが健全な常識の範囲内であれば、自由にDonutsを使うことができるはずです。
 また、Donutsの使用の結果として生じた、いかなる不利益に関しても作者は責任を持ちません。
 ライセンスの正確な文言についてはソースコードのヘッダー部分をご確認ください。
 </p>
+
 <p>
 　 <b>Donutsの最新バージョンは0.3.1です。</b>
 現在のところDonutsはベータ版です。
-今後の更新予定は<a href="#sec-7">ToDo</a>をご確認ください。
 </p>
 
-<p>
-　 <b>DonutsにはGraphvizに比べ実行時のオーバーヘッドが存在します。</b>
-S式で記述されたグラフをDot言語のグラフに変換するためです。
-したがって、 Donutsによって得られる抽象や手軽さは、実効速度とトレードオフの関係にあります。
-Donutsは <b>まだ最適化していません</b> が、たとえ最適化しても刻一刻と変化する大量のデータからグラフを逐次作成するといった、リアルタイムのグラフ生成などには向かないだろう、と考えています<sup><a class="footref" name="fnr.1" href="#fn.1">1</a></sup>。
-</p>
 <p>
 　 <b>Donutsは拡張性を重視して設計されています。</b>
 Donutsのコアはグラフ作成に関する基本的操作から構成されています。
@@ -289,6 +280,7 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 したがって、複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、
 ユーザが自分で好きなように追加できるはずです(cf.<a href="#sec-4-13">小さなプログラム</a>)。
 </p>
+
 <p>
 　 <b>Donutsには実用的操作も加えられています。</b>
 実用的操作とは、主として基本操作を組み合わせた <span style="text-decoration:underline;">実用目的の便利機能</span> のことです。
@@ -474,7 +466,7 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 
 <p class="verse">
 人の思考はその言語によって形作られる。<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &mdash; J.L.Bentley, More Programming Pearls<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup>, p.15.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &mdash; J.L.Bentley, More Programming Pearls<sup><a class="footref" name="fnr.1" href="#fn.1">1</a></sup>, p.15.<br/>
 </p>
 
 
@@ -507,8 +499,8 @@ Hello World
 
 <p>
 演算がS式の先頭であり、思考の中で述語がまず浮かぶ。
-無意識のうちに開き括弧 ( と演算princをキーボードに打ち込む。
-主語が浮かび、被演算対象"Hello World"と閉じ括弧 ) を打ち込む。
+無意識のうちに開き括弧 '(' と演算princをキーボードに打ち込む。
+主語が浮かび、被演算対象"Hello World"と閉じ括弧 ')' を打ち込む。
 もちろんプログラマ一人一人では細かい順番は異なる。
 しかし頭の中の思考の流れ、述語&mdash;&gt;主語は同じはず。
 </p>
@@ -534,8 +526,6 @@ Hello World               <span style="color: #eeee00;">// </span><span style="c
 いろいろたくさん考える。
 頭の中の思考の流れは、主語&mdash;&gt;述語。
 </p>
-
-
 <p>
 　この例で挙げたようなことは、どちらも単なる思考の習慣に過ぎず、どれが優れており、どれが劣っているという絶対的なものではありません。
 しかし、プログラマの <span style="text-decoration:underline;">生産性に大きく影響します</span> 。
@@ -552,7 +542,7 @@ Hello World               <span style="color: #eeee00;">// </span><span style="c
 </p>
 <p>
 　ある言語Aのコードを書きながら途中で別な言語Bのコードを書くことの一番大きな理由は、言語Aの備えていない利点や機能を言語Bが備えているからです。
-例えば、cffiを使うのはLispよりCの方が実効速度が早いという利点があるからです。
+例えば、Lispでコードを書きながらC言語を使うとしたら、LispよりCの方が実効速度が早いという利点があるからです。
 同じように、Lispでコードを書きながらPostScriptを使うとしたら、Lispには画像を作成し出力する機能がないからです。
 </p>
 <p>
@@ -581,7 +571,7 @@ Lispは拡張可能なプログラムを書くために、とりわけみごと�
 なぜなら、Lispそれ自体が拡張可能なプログラムだからだ。<br/>
 もし、この拡張可能性をユーザに譲り渡すようなLispプログラムを書くなら、<br/>
 労力なしに拡張[可能]言語を実質的に手に入れる[ことができる]。<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &mdash; Paul Graham, On Lisp<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup> ,pp.4&ndash;5.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &mdash; Paul Graham, On Lisp<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup> ,pp.4&ndash;5.<br/>
 </p>
 
 
@@ -672,7 +662,7 @@ Lispの上に実現されたその機能は、基盤であるLispの拡張可能
 あるいは、実際のところ、時折言及されるように、宣言的知識と命令的知識との間の相違である。<br/>
 通常、数学では宣言的な(何であるかの)叙述に関心を持つのに対し、<br/>
 計算機科学では命令的な(どう行うかの)叙述に関心を持つ。<br/>
-&nbsp;&nbsp;&nbsp;&nbsp; &mdash; Harold Abelson and Gerald J. Sussman, with Julie Sussman, SICP<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup> ,<a href="http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-10.html#%_sec_1.1.7">section 1.1.7.</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp; &mdash; Harold Abelson and Gerald J. Sussman, with Julie Sussman, SICP<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup> ,<a href="http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-10.html#%_sec_1.1.7">section 1.1.7.</a><br/>
 </p>
 
 
@@ -741,12 +731,12 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 ノードのアイデンティティとして、 <b>属性</b> が用いられており、エッジやグラフにも属性が設定されていました。
 </p>
 <p>
-　エッジにアイデンティティがあれば、2つのノードの間に2本以上のエッジを張ることもできるようになります<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>。
+　エッジにアイデンティティがあれば、2つのノードの間に2本以上のエッジを張ることもできるようになります<sup><a class="footref" name="fnr.4" href="#fn.4">4</a></sup>。
 つまり、エッジやグラフに属性があれば、グラフの見えを多様なものにすることができるのです。
 そこで、Graphvizとの兼ね合いも考えて、以下のものをDonutsの基本対象と基本操作にすることにしました。
 </p>
 <dl>
-<dt><b>ノードの属性</b></dt><dd>ノードの名前や<sup><a class="footref" name="fnr.6" href="#fn.6">6</a></sup>、ラベル、色、形など。
+<dt><b>ノードの属性</b></dt><dd>ノードの名前や<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>、ラベル、色、形など。
 </dd>
 <dt><b>エッジの属性</b></dt><dd>エッジの名前や、ラベル、色、形など。
 </dd>
@@ -912,7 +902,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </p>
 <p>
 　また、 <code>-&gt;</code> は、略記として、ノードの代わりに文字列や数値も引数に取ることができます。
-その場合、文字列や数値をラベルとするノードが自動生成されます<sup><a class="footref" name="fnr.7" href="#fn.7">7</a></sup>。
+その場合、文字列や数値をラベルとするノードが自動生成されます<sup><a class="footref" name="fnr.6" href="#fn.6">6</a></sup>。
 つまり上のコードは、
 </p>
 
@@ -1011,7 +1001,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <p>
 　他のグラフ属性値も指定したい場合、例えば、グラフのサイズを小さくしたい場合には、 <code>(:label "Proparty Example" :size "1,1")</code> の様に書きます。
 サイズ属性値は縦横インチ単位、文字列で指定します。
-属性を指定する順番は、出力結果に影響しません<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>。
+属性を指定する順番は、出力結果に影響しません<sup><a class="footref" name="fnr.7" href="#fn.7">7</a></sup>。
  <code>(:label "Proparty Example" :size "1,1")</code> でも、 <code>(:size "1,1" :label "Proparty Example")</code> でも、結果として出力されるグラフは次のものです。
 </p>
 
@@ -1074,10 +1064,10 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <h3 id="sec-4-3"><span class="section-number-3">4.3</span> ラベル</h3>
 <div class="outline-text-3" id="text-4-3">
 
-<p>　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.9" href="#fn.9">9</a></sup>。
+<p>　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>。
 </p>
 <ul>
-<li><code>\\無</code>  空白が印字される<sup><a class="footref" name="fnr.10" href="#fn.10">10</a></sup>('無'はスペースを表す)。
+<li><code>\\無</code>  空白が印字される<sup><a class="footref" name="fnr.9" href="#fn.9">9</a></sup>('無'はスペースを表す)。
 </li>
 <li><code>\\n</code>  行末に置くと、その行をセンタリングし、改行する。
 </li>
@@ -1118,7 +1108,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 
 <p>
 　dot-output, dot-pprintによって、生成したグラフオブジェクトのdotコードを標準出力に表示することができます。
-また、生成したグラフオブジェクトをビューアで見るには、シェルインターフェイス $ が便利です<sup><a class="footref" name="fnr.11" href="#fn.11">11</a></sup>。
+また、生成したグラフオブジェクトをビューアで見るには、シェルインターフェイス $ が便利です<sup><a class="footref" name="fnr.10" href="#fn.10">10</a></sup>。
 </p>
 
 </div>
@@ -1555,7 +1545,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 </p>
 <p>
 　フィールドポートを設定するには、ラベルの中でフィールドを設定する際のラベル中の区切り <code>|</code> を、 <code>|:port-name</code> に置き換えます。
- <i>port-name</i> は（空白を含まない）文字列であり<sup><a class="footref" name="fnr.12" href="#fn.12">12</a></sup>、ラベル内で一意にフィールドポートを指定することができるものです。
+ <i>port-name</i> は（空白を含まない）文字列であり<sup><a class="footref" name="fnr.11" href="#fn.11">11</a></sup>、ラベル内で一意にフィールドポートを指定することができるものです。
 つまり、1つのレコード内の異なる2つのフィールドで、同じポート名を使うことはできません。
 </p>
 <p>
@@ -1671,7 +1661,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 </pre>
 
 <p>
-細かいことは気にしたくないなら、 <b>with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、使用した方が無難です。</b>
+細かいことを気するのはいやだ、というのであれば、 <b>with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、使用した方が無難です。</b>
 </p>
 
 <hr/>
@@ -1923,7 +1913,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 手っ取り早い方法は、 <b>エッジの属性:shapeを:noneに指定すること</b> です。
 もう一つの方法は、
 <b>-&gt;をすべて&ndash;&ndash;に置き換えること</b>です
-（ <b>注：</b> 1つのグラフ中で <code>-&gt;</code> と <code>--</code> を併用することはできません<sup><a class="footref" name="fnr.13" href="#fn.13">13</a></sup>）。
+（ <b>注：</b> 1つのグラフ中で <code>-&gt;</code> と <code>--</code> を併用することはできません<sup><a class="footref" name="fnr.12" href="#fn.12">12</a></sup>）。
 </p>
 
 <p>
@@ -2466,7 +2456,7 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 
 <p>
-　マクロcons-cell-of<sup><a class="footref" name="fnr.14" href="#fn.14">14</a></sup>は、ツリーを引数に取り、ツリーのコンスセル構造を描くグラフを生成します。
+　マクロcons-cell-of<sup><a class="footref" name="fnr.13" href="#fn.13">13</a></sup>は、ツリーを引数に取り、ツリーのコンスセル構造を描くグラフを生成します。
 展開の過程で、いったんツリーをツリー構造を表すコードに変換し、その後、グラフを生成するコードに変換します。
 </p>
 
@@ -2654,15 +2644,12 @@ cf. <a href="#sec-4-9-1">コンテキストを作り出すもの</a>
 その結果、生成される画像で、-&gt;による有向エッジが無視されるなど、望まないことが生じます。
 </p>
 
-
-<p>
-　
-</p></div>
+</div>
 
 </div>
 
 <div id="outline-container-4-14-4" class="outline-4">
-<h4 id="sec-4-14-4"><span class="section-number-4">4.14.4</span> Lispに任せる。</h4>
+<h4 id="sec-4-14-4"><span class="section-number-4">4.14.4</span> なるべくLispに任せる。</h4>
 <div class="outline-text-4" id="text-4-14-4">
 
 
@@ -3134,7 +3121,7 @@ nmakeとkshのつながりに関して詳しい方がいらっしゃいました
 　出力される画像がマニュアルのものと異なりますが、グラフとしては同等です。
 Grapvizマニュアル中のdotコードを、Grapviz整形ユーティリティnopによって整形したdotコードでは上と同じ画像が出力されます。
 グラフを構成する要素(ノード、エッジ、グラフ)の順によって、グラフ構造としては同等でも、
-グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります<sup><a class="footref" name="fnr.15" href="#fn.15">15</a></sup>。
+グラフ画像中のノード、エッジ、グラフの配置が異なる場合があります<sup><a class="footref" name="fnr.14" href="#fn.14">14</a></sup>。
 </p>
 
 </div>
@@ -3939,7 +3926,7 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 </div>
 
 <div id="outline-container-7" class="outline-2">
-<h2 id="sec-7"><span class="section-number-2">7</span> ToDo</h2>
+<h2 id="sec-7"><span class="section-number-2">7</span> Todo</h2>
 <div class="outline-text-2" id="text-7">
 
 
@@ -4043,10 +4030,7 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn.1" href="#fnr.1">1</a></sup> ガーベジコレクタの発動回数を少なくする機構も今のところ備えていません。
-</p>
-
-<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> 引用文は、サピア＝ウォーフ仮説のエッセンスを著者のBentley氏が要約したものです(翻訳は筆者によるもの)。
+<p class="footnote"><sup><a class="footnum" name="fn.1" href="#fnr.1">1</a></sup> 引用文は、サピア＝ウォーフ仮説のエッセンスを著者のBentley氏が要約したものです(翻訳は筆者によるもの)。
 氏が"More Programming Pearls"の中でサピア＝ウォーフ仮説を持ち出した意図は、
 「使用する言語を変えることで、世界が(別な実体から構成される)異なるものになるのだ」という極端な相対主義的主張をするため <span style="text-decoration:underline;">ではなく</span> 、
 「使用するプログラミング言語によって、問題解決のための思考法が異なるものになるのだ」という程度のものです。
@@ -4054,29 +4038,29 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 "More Programming Pearls"は、野下浩平・古郡廷治、両氏によって翻訳され、「プログラマのうちあけ話」という邦題で近代科学社より出版されています。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> On Lispの原著はポールグレアム氏の<a href="http://www.paulgraham.com/onlisp.html">HP</a>にて公開されています。
+<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> On Lispの原著はポールグレアム氏の<a href="http://www.paulgraham.com/onlisp.html">HP</a>にて公開されています。
 また、野田開氏による邦訳がオーム社より出版されています。
 ただし、引用文の訳は筆者によるものです。
 したがって、誤訳や誤読がありましたら、すべて筆者個人の責任です。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> Structure and Interpretarion of Computer Programs &ndash; 2nd ed. (SICP)の原著は<a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">MITPressのSICP HP</a>にて公開されています。
+<p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> Structure and Interpretarion of Computer Programs &ndash; 2nd ed. (SICP)の原著は<a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">MITPressのSICP HP</a>にて公開されています。
 また、和田英一氏による邦訳がピアソン社より出版されています(邦題は、計算機プログラムの構造と解釈 第二版)。
 ただし、引用文の訳は筆者によるものです。
 したがって、誤訳や誤読がありましたら、すべて筆者個人の責任です。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.5" href="#fnr.5">5</a></sup> グラフの:strict属性をtに指定すると、2つのノードの間に2本以上のエッジを張ることはできません。
+<p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> グラフの:strict属性をtに指定すると、2つのノードの間に2本以上のエッジを張ることはできません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.6" href="#fnr.6">6</a></sup> Donutsでは、ユーザにはほとんど見えない実装部分で、アイデンティティとしてname属性値を用いています。
+<p class="footnote"><sup><a class="footnum" name="fn.5" href="#fnr.5">5</a></sup> Donutsでは、ユーザにはほとんど見えない実装部分で、アイデンティティとしてname属性値を用いています。
 例えば、 <code>(&lt;&gt; "a")</code> によるノードaの生成時、裏では名前が自動生成され、属性:nameの値に指定されます。
 ほとんどの場合、ユーザが自分で名前を指定することはできません。
 唯一の例外がトップレベルのグラフの名前です。
 これは、生成された画像をビューアで見る場合、名前が画像のタイトルとして表示されることがあるためです。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.7" href="#fnr.7">7</a></sup> 自動生成についての詳しい解説です。
+<p class="footnote"><sup><a class="footnum" name="fn.6" href="#fnr.6">6</a></sup> 自動生成についての詳しい解説です。
 文字列や数値から既にノードが自動生成されている場合、それらの文字列や数値による新たなノードの自動生成は起きません。
 文字列や数値が同じもの（lispの <code>equal</code> ）であれば、それらは同一のノードです。
 つまり、 <code>(-&gt; "a" "a")</code> によって自動生成されるのは1つのノードaのみです。
@@ -4086,39 +4070,39 @@ cell <span style="color: #00ee76;">::</span> (td label)|(td (img))
 コード <code>(&lt;&gt; "a" :color :red)</code> により生成されるノードに自己ループを張るには、 <code>(let ((n (&lt;&gt; "a" :color :red))) (-&gt; n n))</code> とするか、またはユーティリティ<a href="#sec-4-9-2">?</a>を使って <code>(? (&lt;&gt; "a" :color :red))</code> とする必要があります。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.8" href="#fnr.8">8</a></sup> より正確には、属性を指定する順を変えた場合、出力されるdotコードは別のものです。
+<p class="footnote"><sup><a class="footnum" name="fn.7" href="#fnr.7">7</a></sup> より正確には、属性を指定する順を変えた場合、出力されるdotコードは別のものです。
 しかし、そのdotコードから生成されるグラフ画像の見た目は同じものです。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.9" href="#fnr.9">9</a></sup> Dot言語に詳しい方のための補足です。
+<p class="footnote"><sup><a class="footnum" name="fn.8" href="#fnr.8">8</a></sup> Dot言語に詳しい方のための補足です。
 Donutsでは、縦棒 <code>|</code> 、角カッコ <code>[</code>, <code>]</code> 、三角カッコ <code>&lt;</code>, <code>&gt;</code> をエスケープする必要はありません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.10" href="#fnr.10">10</a></sup> 本当は何も印字されないのが空白さ。
+<p class="footnote"><sup><a class="footnum" name="fn.9" href="#fnr.9">9</a></sup> 本当は何も印字されないのが空白さ。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.11" href="#fnr.11">11</a></sup> もちろん、やや手間はかかりますが、画像ファイルをビューアで見るために、
+<p class="footnote"><sup><a class="footnum" name="fn.10" href="#fnr.10">10</a></sup> もちろん、やや手間はかかりますが、画像ファイルをビューアで見るために、
 with-open-file内で*standart-output*を束縛し、
 dot-outputによってdotファイルを出力し、そのdotファイルをGraphvizで画像ファイルに変換し、
 それをビューアで見るという方法もあります。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.12" href="#fnr.12">12</a></sup> ただし、方位ポートで既に使用されているn,ne,se,s,sw,w,nw,c,_ をフィールドポート名に付けることは、
+<p class="footnote"><sup><a class="footnum" name="fn.11" href="#fnr.11">11</a></sup> ただし、方位ポートで既に使用されているn,ne,se,s,sw,w,nw,c,_ をフィールドポート名に付けることは、
 コードの読みやすさの観点から、あまりおすすめできません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.13" href="#fnr.13">13</a></sup> Dot言語に詳しい方のための補足です。
+<p class="footnote"><sup><a class="footnum" name="fn.12" href="#fnr.12">12</a></sup> Dot言語に詳しい方のための補足です。
 グラフ中で1つでも <code>--</code> または <code>---</code> を使用した場合、Donutsで出力されるdotコードの型宣言が自動的に <code>digraph</code> ではなく <code>graph</code> になります。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> マクロcons-cell-ofを書く際に、
+<p class="footnote"><sup><a class="footnum" name="fn.13" href="#fnr.13">13</a></sup> マクロcons-cell-ofを書く際に、
 David S. Touretzkyによる素晴らしいLisp入門書、
 <a href="http://www.cs.cmu.edu/~dst/LispBook/">Common Lisp: A Gentle Introduction to Symbolic Computation</a>のAppendix AのSDRAWのコードが大変参考になりました。
 SDRAWは、ループ構造も含む任意のリストを引数に取り、そのコンスセル構造を標準出力にディスプレイするライブラリです。
 ただし、ここで紹介したマクロcons-cell-ofは、コードが煩雑になってしまうため、ループ構造のリストには対応していません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.15" href="#fnr.15">15</a></sup> dotコード中のグラフ構成要素の順に依存し、生成される画像が変化するというのはGrapvizの仕様です。
+<p class="footnote"><sup><a class="footnum" name="fn.14" href="#fnr.14">14</a></sup> dotコード中のグラフ構成要素の順に依存し、生成される画像が変化するというのはGrapvizの仕様です。
 そして、これはGrapviz作者による思慮深い判断の結果である、と筆者は考えます。
 なぜなら、整形ユーティリティnopをdotコマンドの動作内に組み入れるだけで、グラフ構成要素の順に依らず同じ画像が生成されるように(dotコマンドを)動作させることは容易にできたことだからです。
 しかし、あえてそれをしなかったということは、以下の選択肢をユーザに提供することを意図しているはずです。
@@ -4143,7 +4127,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-24 23:29:26 JST</p>
+<p class="date">Date: 2012-06-01 20:56:57 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

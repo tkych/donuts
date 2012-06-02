@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-23 00:37:54 JST"/>
+<meta name="generated" content="2012-06-02 11:54:58 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -99,9 +99,6 @@
 
 
 
-
-
-
 <div align = "right">
 <p>
 <a href="./index-j.html">日本語</a>/English(under translation)
@@ -182,21 +179,60 @@
 <div class="outline-text-2" id="text-1">
 
 
-
+<p>
+*Donuts is graph DSL (or <a href="http://graphviz.org/">Graphviz</a> interface) for Common Lisp.*
+Donuts convertes a graph that represented by S-expressions to a code of <a href="http://www.graphviz.org/dot-language.html">dot language</a>, and output an image to the viewer.
+Because you can use all power of Lisp (REPL, macros, functions, CLOS, multi-paradigm style, etc.), 
+you can easily draw a complex graph (cf. <a href="#sec-4-13">Small Programs</a>).
+</p>
+<p>
+<b>How to use donuts is easy.</b>
+<code>&lt;&gt;</code> creates a node.
+<code>-&gt;</code> puts an edge between two nodes.
+<code>&amp;&amp;</code> makes a graph by bundling together some nodes, edges and graphs.
+<code>$$</code> outputs an image of the graph.
+</p>
+<p>
+If you enter code at the bottom left into a Lisp REPL, 
+bottom right image is output to viewer. 
+</p>
 <p>
 <img src="./images/small-donuts.png" alt="donuts image" title="donuts!" align="right" />
 </p>
 
 
 
-<pre class="src src-lisp">($ () (<span style="color: #eeee00;">let</span> ((o (&lt;&gt; <span style="color: #90ee90;">"o"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:fillcolor</span> <span style="color: #00ee76;">:chocolate4</span>)))   <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Make chocolate donut</span>
-        (&amp; (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Hello, Donuts!"</span> <span style="color: #00ee76;">:labelloc</span> t <span style="color: #00ee76;">:size</span> <span style="color: #90ee90;">"3,3"</span>)      <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Make graph</span>
-          (--&gt; <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"n"</span>)                                         <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Put edges through nodes</span>
-          (-&gt;  <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:dotted</span>)                            <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Put doted edge between "n" "u"</span>
-          (--&gt; <span style="color: #90ee90;">"u"</span> <span style="color: #90ee90;">"t"</span> <span style="color: #90ee90;">"s"</span>)                                       <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Put edges through nodes</span>
-          (~ <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"t"</span>) (~ <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span>))))                            <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Arrange nodes</span>
+<pre class="src src-lisp">($$ (<span style="color: #eeee00;">let</span> ((o (&lt;&gt; <span style="color: #90ee90;">"o"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:fillcolor</span> <span style="color: #00ee76;">:chocolate4</span>)))   <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Make chocolate donut</span>
+      (&amp; (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Hello, Donuts!"</span> <span style="color: #00ee76;">:labelloc</span> t <span style="color: #00ee76;">:size</span> <span style="color: #90ee90;">"3,3"</span>)      <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Make graph</span>
+         (--&gt; <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"n"</span>)                                        <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Put edges through nodes</span>
+         (-&gt;  <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:dotted</span>)                           <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Put doted edge between 2 nodes</span>
+         (--&gt; <span style="color: #90ee90;">"u"</span> <span style="color: #90ee90;">"t"</span> <span style="color: #90ee90;">"s"</span>)                                      <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Put edges through nodes</span>
+         (~ <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"t"</span>) (~ <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span>))))                           <span style="color: #eeee00;">;</span><span style="color: #eeee00;">Arrange nodes</span>
 </pre>
 
+
+<p>
+<b>In order to draw a graph by Donuts, immediately.</b>
+</p>
+
+
+
+
+
+<p>
+<b>Donuts is distributed under the MIT license.</b>
+So, you can basically do with it whatever you want. 
+For the exact wording of the license, please check the header of the source code.
+</p>
+<p>
+<b>Current version is 0.3.1.</b>
+Donuts is a beta version at present.
+</p>
+
+
+<p>
+<b>Donuts has practical operators.</b>
+</p>
 
 
 </div>
@@ -301,11 +337,10 @@
 <h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> Automatic download &amp; install by quicklisp</h4>
 <div class="outline-text-4" id="text-2-3-1">
 
-<p>2012年5月21以降、<a href="http://www.quicklisp.org/">quicklisp</a>ライブラリに登録されています。
-REPLに <code>(ql:quickload :donuts)</code> と打ち込むことで、自動的にダウンロード＆インストールされます。
-</p>
+
 <p>
-(quicklisp by Zachary Beane)
+Since May 21, 2012, you are registered for the quicklisp library.
+ Type and that (:: quickload donuts ql), will be downloaded and installed automatically on the REPL.
 </p>
 </div>
 
@@ -315,8 +350,11 @@ REPLに <code>(ql:quickload :donuts)</code> と打ち込むことで、自動的
 <h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> Manual download &amp; install</h4>
 <div class="outline-text-4" id="text-2-3-2">
 
-<p>現在の開発版は、<a href="https://github.com/tkych/donuts">https://github.com/tkych/donuts</a> からダウンロードできます。
-ダウンロードしたdonutsディレクトリを、asdf:*central-registry*に登録されたパスに置き、REPLに <code>(asdf:operate 'asdf:load-op :donuts)</code> と打ち込むことで、インストールされます。
+
+<p>
+The current development version can be downloaded from <a href="https://github.com/tkych/donuts">https://github.com/tkych/donuts</a>.
+ Place the path that is registered in the * central-registry *, in REPL: asdf,
+ the donuts and type the directory where you downloaded that (asdf: operate 'asdf:: load-op donuts), will be installed.
 </p>
 </div>
 </div>
@@ -332,13 +370,13 @@ REPLに <code>(ql:quickload :donuts)</code> と打ち込むことで、自動的
 
 <pre class="src src-lisp">CL-USER&gt; (<span style="color: #eeee00;">in-package</span> <span style="color: #00ee76;">:donuts</span>)
 
-DONUTS&gt; (dot-output (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2)))  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#27425;&#12398;&#12424;&#12358;&#12394;dot&#12467;&#12540;&#12489;&#12364;&#27161;&#28310;&#20986;&#21147;&#12395;&#34920;&#31034;&#12373;&#12428;&#12383;&#12425;OK</span>
+DONUTS&gt; (dot-output (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2)))  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">OK dot code like the following appears on the standard output&#27425;&#12398;&#12424;&#12358;&#12394;dot&#12467;&#12540;&#12489;&#12364;&#27161;&#28310;&#20986;&#21147;&#12395;&#34920;&#31034;&#12373;&#12428;&#12383;&#12425;OK</span>
 
 <span style="color: #eeee00;">; </span><span style="color: #eeee00;">digraph graph_ID_103 {</span>
 <span style="color: #eeee00;">;   </span><span style="color: #eeee00;">1 -&gt; 2;</span>
 <span style="color: #eeee00;">; </span><span style="color: #eeee00;">}</span>
 
-DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12499;&#12517;&#12540;&#12450;&#12364;&#36215;&#21205;&#12375;&#12289;&#19979;&#12398;&#30011;&#20687;&#12364;&#20986;&#21147;&#12373;&#12428;&#12383;&#12425;OK</span>
+DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">OK to start the viewer, the image below output when you are&#12499;&#12517;&#12540;&#12450;&#12364;&#36215;&#21205;&#12375;&#12289;&#19979;&#12398;&#30011;&#20687;&#12364;&#20986;&#21147;&#12373;&#12428;&#12383;&#12425;OK</span>
 </pre>
 
 
@@ -369,6 +407,19 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 <div class="outline-text-3" id="text-3-1">
 
 
+
+<p class="verse">
+Man's thought is shaped by his tongue<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &mdash; J.L.Bentley, More Programming Pearls<sup><a class="footref" name="fnr.1" href="#fn.1">1</a></sup>, p.15.<br/>
+</p>
+
+
+
+<hr/>
+
+<p>
+The goal of donuts is to draw graph in Lisp problem-solving methods.
+</p>
 <p>
 <b>Lisp</b> ：
 </p>
@@ -415,7 +466,7 @@ Hello World               <span style="color: #eeee00;">// </span><span style="c
 <p class="verse">
 When you work bottom-up, you usually end up with a different program.<br/>
 Instead of a single, monolithic program, you will get a larger language with more abstract operators,<br/>
-and a smaller program written in it.<br/>
+and a <a href="#sec-4-13">smaller program</a> written in it.<br/>
 &hellip;<br/>
 Lisp is an especially good language for writing extensible programs because it is itself an extensible program. <br/>
 If you write your Lisp programs so as to pass this extensibility on to the user,<br/>
@@ -495,13 +546,26 @@ whereas in computer science we are usually concerned with imperative (how to) de
 <h2 id="sec-4"><span class="section-number-2">4</span> Tutorial</h2>
 <div class="outline-text-2" id="text-4">
 
+<p>Using Donuts:
+</p>
+<ul>
+<li>Generate a node node constructor in <code>&lt;&gt;</code>. <code>(&lt;&gt; Label)</code> ==&gt; node
+</li>
+<li>Edge constructor - connecting the two nodes in the&gt;. <code>(-&gt; Node1 node2)</code> ==&gt; edge
+</li>
+<li>To generate graphs and charts bundle is a graph node and edge &amp;&amp; constructor. <code>(&amp;&amp; . Nodes-edges-graphs)</code> ==&gt; graph
+</li>
+<li>Output to the viewer a graph with a shell interface <code>$</code> <code>$$</code>. Output the image to the viewer; <code>($$ graph)</code> ==&gt; NIL
+</li>
+<li>Dot code to display the standard output of the graph in dot-output. dot code to display the standard output; (dot-output graph) =&gt; NIL
+</li>
+</ul>
+
 
 
 <hr/>
 
-<p>
-　
-</p>
+
 
 </div>
 
@@ -526,8 +590,16 @@ whereas in computer science we are usually concerned with imperative (how to) de
 
 
 
+
+
+
+
+
 <pre class="src src-lisp">(&amp; () (-&gt; <span style="color: #90ee90;">"Hello"</span> <span style="color: #90ee90;">"World"</span>))
 </pre>
+
+
+
 
 
 
@@ -544,6 +616,7 @@ whereas in computer science we are usually concerned with imperative (how to) de
 <p>
 <img src="./images/simple-graph2.png"  alt="./images/simple-graph2.png" />
 </p>
+
 <p>
 　
 </p>
@@ -1641,7 +1714,7 @@ with-node, with-edgeは、暗黙の部分グラフを生成します。
 
 
 <p>
-　マクロcons-cell-of<sup><a class="footref" name="fnr.1" href="#fn.1">1</a></sup>は、ツリーを引数に取り、ツリーのコンスセル構造を描くグラフを生成します。
+　マクロcons-cell-of<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup>は、ツリーを引数に取り、ツリーのコンスセル構造を描くグラフを生成します。
 展開の過程で、いったんツリーをツリー構造を表すコードに変換し、その後、グラフを生成するコードに変換します。
 </p>
 
@@ -2967,7 +3040,10 @@ HTML-LIKEラベルはエッジやグラフのラベル属性値としても用�
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
-<p class="footnote"><sup><a class="footnum" name="fn.1" href="#fnr.1">1</a></sup> マクロcons-cell-ofを書く際に、
+<p class="footnote"><sup><a class="footnum" name="fn.1" href="#fnr.1">1</a></sup> DEFINITION NOT FOUND: fn:more-pparls
+</p>
+
+<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> マクロcons-cell-ofを書く際に、
 David S. Touretzkyによる素晴らしいLisp入門書、
 <a href="http://www.cs.cmu.edu/~dst/LispBook/">Common Lisp: A Gentle Introduction to Symbolic Computation</a>のAppendix AのSDRAWのコードが大変参考になりました。
 SDRAWは、ループ構造も含む任意のリストを引数に取り、そのコンスセル構造を標準出力にディスプレイするライブラリです。
@@ -2981,7 +3057,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-23 00:37:54 JST</p>
+<p class="date">Date: 2012-06-02 11:54:58 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

@@ -1,4 +1,4 @@
-### Last Updated : 2012/05/23 08:32:59 tkych
+### Last Updated : 2012/06/02 11:55:47 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -96,36 +96,75 @@ digraph graph_T1555 {
 * Introduction
 ##--------------------------------------------------------------------
 
- *DonutsはCommon Lispのためのグラフ作成ドメイン固有言語（DSL）です。*
-Donutsのゴールは、Lisp環境内でちょっとしたグラフを描くことです。
-Donutsは、S式で記述されたグラフ構造を、画像としてビューアに出力します
-(実際の内部動作は、S式を[[http://www.graphviz.org/dot-language.html][Dot言語]]のコードに変換し、[[http://graphviz.org/][Graphviz]]により画像を生成し、ビューアに出力するというものです)。
-ざっくり言うとDonutsはLispがDot言語を吸収した言語です。
-Donutsでグラフを作成する際には、すべてのLisp機能(REPL、マクロ、関数など)を利用できるので、Dot言語では手間がかかることでも容易に成し遂げることができます(cf.[[小さなプログラム --- カレンダー、2分木、コンスセル、有限オートマトン][小さなプログラム]])。
+*Donuts is graph DSL (or [[http://graphviz.org/][Graphviz]] interface) for Common Lisp.*
+Donuts convertes a graph that represented by S-expressions to a code of [[http://www.graphviz.org/dot-language.html][dot language]], and output an image to the viewer.
+Because you can use all power of Lisp (REPL, macros, functions, CLOS, multi-paradigm style, etc.), 
+you can easily draw a complex graph (cf. [[Small Programs --- Calendar, Binary-Tree, Cons-Cell, Finite-Automaton][Small Programs]]).
 
-Donuts is graph DSL for common lisp.
-Donuts converts graph represented by s-expressions to image.
-The goal of donuts is to draw graph in lispic way of thinking (REPL, macro, CLOS, multi-paradigm style and so on).
-()
+*How to use donuts is easy.*
+=<>= creates a node.
+=->= puts an edge between two nodes.
+=&&= makes a graph by bundling together some nodes, edges and graphs.
+=$$= outputs an image of the graph.
 
-
-
-　 *Donutsの使い方は簡単です。*
- =<>= でノードを作り、 =->= で2つのノード間にエッジを張り、 =&= でノードやエッジ（やグラフ）を束ねグラフを作り、 =$$= で画像を出力します。
-例えば、左下のコードをLispのREPLに入力すると、ビューアが起動し右下の画像が出力されます。
-
+If you enter code at the bottom left into a Lisp REPL, 
+bottom right image is output to viewer. 
 
 #+ATTR_HTML: alt="donuts image" title="donuts!" align="right"
 [[./images/small-donuts.png]]
 
 #+BEGIN_SRC lisp :exports code
-  ($ () (let ((o (<> "o" :style :filled :fillcolor :chocolate4)))   ;Make chocolate donut
-          (& (:label "Hello, Donuts!" :labelloc t :size "3,3")      ;Make graph
-            (--> "d" o "n")                                         ;Put edges through nodes
-            (->  "n" "u" :style :dotted)                            ;Put doted edge between "n" "u"
-            (--> "u" "t" "s")                                       ;Put edges through nodes
-            (~ "d" o "t") (~ "n" "u"))))                            ;Arrange nodes
+  ($$ (let ((o (<> "o" :style :filled :fillcolor :chocolate4)))   ;Make chocolate donut
+        (& (:label "Hello, Donuts!" :labelloc t :size "3,3")      ;Make graph
+           (--> "d" o "n")                                        ;Put edges through nodes
+           (->  "n" "u" :style :dotted)                           ;Put doted edge between 2 nodes
+           (--> "u" "t" "s")                                      ;Put edges through nodes
+           (~ "d" o "t") (~ "n" "u"))))                           ;Arrange nodes
 #+END_SRC
+
+*In order to draw a graph by Donuts, immediately.*
+
+# In order to draw a graph by analogy with the dot code, we provide various examples.
+
+# Since the grammar of donuts is similar to that of dot language, 
+# you can immediately draw a graph by analogy with the dot code, we provide various examples.
+
+# Since the grammar of donuts is similar to that of dot language, 
+# in order that you can immediately draw a graph by analogy with the dot code, we provide various examples.
+
+# Since the grammar of Donuts is similar to that of Dot language,
+# by analogy with the dot code, so that you can immediately draw a graph, we provide an example.
+
+# Are similar to those of language and grammar of Donuts Dot.
+# Therefore, as can be by analogy with language Dot, you want the graph to start immediately,
+#  we have prepared the chapter on Examples from Graphviz manual if people familiar language Dot.
+# Even if you do not familiar with the language Dot, all right of course.
+# So that you can draw a graph immediately Donuts, there is a chapter of the tutorial.
+
+*Donuts is distributed under the MIT license.*
+So, you can basically do with it whatever you want. 
+For the exact wording of the license, please check the header of the source code.
+
+*Current version is 0.3.1.*
+Donuts is a beta version at present.
+
+
+# Donuts are designed to emphasize the scalability.
+#  Donuts core is composed of basic operations for creating graphs.
+#  And basic operations for creating graphs, the operation to construct the edge>,
+#  the operation to build the node <- is that>, of the three operations of the AND operation to construct the graph.
+#  (If you do not mind the hassle of coding and the appearance of the graph image),
+#  you can only build from these three basic operations also about any graph structure.
+#  Also, have been made to emphasize that there is no clash with the lisp Donuts as much as possible.
+#  Therefore, the ability to create complex graphs, by combining the functionality of the basic operations and lisp,
+#  (the small program cf.) you should be able to add your own as you like by the user.
+
+*Donuts has practical operators.*
+
+# Practical operator is a convenient feature of a combination of basic operations primarily for practical purposes. 
+# You can also draw a graph using only basic operations.
+#  However, you can more easily be drawn, the graph more versatile, can also be used for practical operation
+#  (cf. collection of utility).
 
 
 ##--------------------------------------------------------------------
@@ -152,26 +191,27 @@ The goal of donuts is to draw graph in lispic way of thinking (REPL, macro, CLOS
 
 ** Download & Install
 *** Automatic download & install by quicklisp 
-2012年5月21以降、[[http://www.quicklisp.org/][quicklisp]]ライブラリに登録されています。
-REPLに =(ql:quickload :donuts)= と打ち込むことで、自動的にダウンロード＆インストールされます。
 
-(quicklisp by Zachary Beane)
+Since May 21, 2012, you are registered for the quicklisp library.
+ Type and that (:: quickload donuts ql), will be downloaded and installed automatically on the REPL.
 
 *** Manual download & install
-現在の開発版は、https://github.com/tkych/donuts からダウンロードできます。
-ダウンロードしたdonutsディレクトリを、asdf:*central-registry*に登録されたパスに置き、REPLに =(asdf:operate 'asdf:load-op :donuts)= と打ち込むことで、インストールされます。
+
+The current development version can be downloaded from https://github.com/tkych/donuts.
+ Place the path that is registered in the * central-registry *, in REPL: asdf,
+ the donuts and type the directory where you downloaded that (asdf: operate 'asdf:: load-op donuts), will be installed.
 
 ** Chack
 #+BEGIN_SRC lisp
 CL-USER> (in-package :donuts)
 
-DONUTS> (dot-output (&& (-> 1 2)))  ;次のようなdotコードが標準出力に表示されたらOK
+DONUTS> (dot-output (&& (-> 1 2)))  ;OK dot code like the following appears on the standard output次のようなdotコードが標準出力に表示されたらOK
 
 ; digraph graph_ID_103 {
 ;   1 -> 2;
 ; }
 
-DONUTS> ($$ (&& (-> 1 2))) ;ビューアが起動し、下の画像が出力されたらOK
+DONUTS> ($$ (&& (-> 1 2))) ;OK to start the viewer, the image below output when you areビューアが起動し、下の画像が出力されたらOK
 #+END_SRC
 
 #+BEGIN_SRC dot :file ./images/start.png
@@ -192,6 +232,15 @@ digraph cluster_graph_T3 {
 
 ##--------------------------------------------------------------------
 ** The Goal of Donuts
+
+#+BEGIN_VERSE
+Man's thought is shaped by his tongue
+                 --- J.L.Bentley, More Programming Pearls[fn:more-pparls], p.15.
+#+END_VERSE
+
+--------------------------------------------------------------------
+
+The goal of donuts is to draw graph in Lisp problem-solving methods.
 
 *Lisp* ：
 #+BEGIN_SRC lisp :exports code
@@ -223,7 +272,7 @@ digraph cluster_graph_T3 {
 #+BEGIN_VERSE
 When you work bottom-up, you usually end up with a different program.
 Instead of a single, monolithic program, you will get a larger language with more abstract operators,
-and a smaller program written in it.
+and a [[Small Programs --- Calendar, Binary-Tree, Cons-Cell, Finite-Automaton][smaller program]] written in it.
 ...
 Lisp is an especially good language for writing extensible programs because it is itself an extensible program. 
 If you write your Lisp programs so as to pass this extensibility on to the user,
@@ -285,10 +334,24 @@ whereas in computer science we are usually concerned with imperative (how to) de
 ##--------------------------------------------------------------------
 * Tutorial
 ##--------------------------------------------------------------------
+Using Donuts:
+
++ Generate a node node constructor in =<>=. =(<> Label)= ==> node
++ Edge constructor - connecting the two nodes in the>. =(-> Node1 node2)= ==> edge
++ To generate graphs and charts bundle is a graph node and edge && constructor. =(&& . Nodes-edges-graphs)= ==> graph
++ Output to the viewer a graph with a shell interface =$= =$$=. Output the image to the viewer; =($$ graph)= ==> NIL
++ Dot code to display the standard output of the graph in dot-output. dot code to display the standard output; (dot-output graph) => NIL
 
 --------------------------------------------------------------------
 
-　
+# Note: Most of the code is in this chapter are for illustrative purposes,
+#  it is the only part that generates the graph is almost an object of type.
+#  To see the dot on the standard output of the graph object code,
+#  you must use the dot-output as (dot-output graph object).
+#  In addition, you can see the dot code that has been formatted and used the dot-pprint instead of the dot-output.
+#  Direct the viewer to see an image of a graph object is convenient to use a shell like interface =$$= =($$ graph object)=.
+#  Please refer to the section of the output.
+# 　
 
 ##--------------------------------------
 ** Simple Graphes
@@ -311,10 +374,49 @@ digraph T11 {
 #+RESULTS:
 [[file:./images/simple-graph.png]]
 
+# Represents the entire code on the meaning is that the case generated a directed graph with edges to the node from the node labeled Hello, labeled and World.
+#  Provides detailed information on the contents of the code.
+
+# First, the meaning of the (<> "Hello") is the case and generate a node labeled Hello formula S.
+#  <> This is called the constructor node.
+#  Constructor node <> is to generate the node takes a string as an argument or a number, labeled on them.
+#  By specifying an attribute value by keyword attribute is an optional argument,
+#  you can also generate a variety of node (for attributes are described in the next section).
+#  (As well as node World) The node marked as Hello, the nodes that are generated by the (<> "Hello") for an explanation.
+
+# Next, the formula S (- (<> "Hello") (<> "World")>)
+#  The meaning of is to simply create an edge case are connected by the arrow node and node World Hello.
+#  The edge marked as Hello-> World, - ((<> "Hello") (<> "World")>) the edges that are generated by for illustrative purposes.
+#  -> The constructor is called edge.
+#  Edge constructor -> is to generate the edge takes a two-node. <> In the same manner as, by an optional attribute keywords,
+#  you can also specify the attributes of the edges that are generated.
+
+# Also, ->, you can as an abbreviation, also takes a string or a number instead of the node.
+#  In that case, the node 7 and a string or numeric label will be generated automatically.
+#  Code on the other words,
+
+
 #+BEGIN_SRC lisp
 (& () (-> "Hello" "World"))
 #+END_SRC
 
+# Like, can also be simplified.
+
+# Finally, the meaning of (&& ****) is a bundle generate a graph that tells the component graph ****
+#  (****, the graph nodes and edges and any number of) S-expression .
+#  && Is a function takes a graph of any number of components to generate a graph object,
+#  we call graph constructor. Graph && constructor is idempotent operation.
+#  That is, (&& ****) is true: <=> ((&& ****) &&).
+
+# In this example, the edges Hello-> World has been given to the && as a component graph.
+#  As a result,
+#  the graph (directed) has been generated in which the elements constituting the edge from node to node World Hello.
+
+# By the way, that it contains the graph in the graph component that is an argument of &&,
+#  you might get the impression a little bizarre. This is because based on the idea that one is a graph of 1,
+#  Donuts has been designed also two graphs do not consolidate.
+#  Therefore, the graph constructor && is it so that the graph is also an argument that you can take.
+#  So, if you want to add a component in the graph, you can use the following method.
 
 #+BEGIN_SRC lisp
   (setf h (& () (-> "Hello" "World")))
@@ -322,6 +424,9 @@ digraph T11 {
   (& () h (-> "こんにちは" "World"))
 #+END_SRC
 
+# In the row above, we have a graph that consists of edge binding 'Hello-> World' to the variable h.
+#  In the row below, and graphs that are bound to h, - have produced a new graph that consists of 'Hello> World'.
+#  A result, the new chart as shown below, - will become the 'Hello> World' has been added to the graph h.
 
 #+BEGIN_SRC dot :file ./images/simple-graph2.png
 digraph graph_T251 {
@@ -334,6 +439,12 @@ digraph graph_T251 {
 
 #+RESULTS:
 [[file:./images/simple-graph2.png]]
+
+# Incidentally, if the chart component is not given anything to the &&, in the case of (&&),
+#  ie Nurugurafu will be generated.
+#  Also, you can give the graph as a component nil, nil if it is ignored.
+#  Therefore, it also generates a Nurugurafu (&& nil). At first glance, the presence of Nurugurafu looks in vain.
+#  However, when generating a recursive graph is a Nurugurafu should not be without (trees cf. 2).
 
 　
 

@@ -1,10 +1,12 @@
-Last Updated : 2012/05/30 21:21:37 tkych
+Last Updated : 2012/06/02 11:47:36 tkych
 
 
-# Donuts: Graph DSL for Common Lisp
+Donuts: Graph DSL (or Graphviz interface) for Common Lisp
+=========================================================
 
 
-## Introduction
+Introduction
+------------
 
 By donuts, the graph represented by s-expression is converted to image.
 How to use donuts is easy.
@@ -16,7 +18,8 @@ $$ outputs an image of the graph.
 For further details, please see index (Under Translation) or index-ja (Japanease) in doc directory.
 
 
-## The Goal of Donuts
+The Goal of Donuts
+------------------
 
 [Graphviz][] is a collection of libraries and utilities for drawing a graph.
 [Dot language][] is description language, used in Graphviz.
@@ -38,12 +41,14 @@ The goal of donuts is to draw graph in lispic way of thought
   [Dot language]: http://www.graphviz.org/dot-language.html
 
 
-## Current Version of Donuts
+Current Version
+---------------
 
 0.3.1 (beta)
 
 
-## Dependencies
+Dependencies
+------------
 
 * [Graphviz][] by AT&T Labs
 
@@ -52,7 +57,8 @@ The goal of donuts is to draw graph in lispic way of thought
 * [Trivial-Shell](http://common-lisp.net/project/trivial-shell/) by Gary Warren King
 
 
-## Installation & Start
+Installation & Start
+--------------------
 
 1.  CL-REPL> `(ql:quickload :donuts)`
 2.  CL-REPL> `(in-package :donuts)`
@@ -60,7 +66,8 @@ The goal of donuts is to draw graph in lispic way of thought
 4.  DONUTS> `($$ (&& (-> 1 2)))`  ;output graph image to viewer
 
 
-## Usage
+Usage
+-----
 
 * Node-Constructor, <> makes node from node's identity.   `(<> label) => node`
 * Edge-Constructor, -> makes edge between nodes.   `(-> node1 node2) => edge`
@@ -69,7 +76,8 @@ The goal of donuts is to draw graph in lispic way of thought
 * DOT-OUTPUT outputs dot code in standart-output.   `(DOT-OUTPUT graph) => NIL ;output dot code`
 
 
-## Examples
+Examples
+--------
 
       DONUTS> (dot-output
                 (& (:label "example")
@@ -159,7 +167,8 @@ The goal of donuts is to draw graph in lispic way of thought
        NIL
 
 
-## Author, License, Copyright
+Author, License, Copyright
+--------------------------
 
 * Takaya OCHIAI <tkych.repl@gmail.com>
 
