@@ -1,4 +1,4 @@
-### Last Updated : 2012/06/03 23:39:55 tkych
+### Last Updated : 2012/06/09 13:32:26 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -3519,32 +3519,96 @@ graph graph_T527 {
 * リファレンスマニュアル
 ##--------------------------------------------------------------------
 
+** Donuts文法
 
+(拡張BNF記法による)
+#+BEGIN_SRC lisp :exports code
+  donuts-code ::= '('<output-op> <graph>')'
+  <output-op> ::= 'dot-output'|'dot-pprint'|'$$'|'$' <attr-list>
 
-　Graphvizで使用できる属性は大方のものをサポートしている。
-レイアウトアルゴリズムごとにサポートしている属性が異なるので注意。
+  <attr-list> ::= '('{<attr>}')'
+  <attr> ::= <attr-keyword> <attr-value>
 
+  <graph> ::= '(&&' <graph-elts>')'|'(&' <attr-list> <graph-elts>')'
+  <graph-elts> ::= nil|<node>|<pre-node>|<edge>|<graph>|<cluster>|<rank>|<with>|<graph-elts>{ <graph-elts>}
+  <cluster> ::= '([&]' <attr-list> <graph-elts>')'
 
-# #+BEGIN_SRC lisp :exports none
-#   graph ::= (& (graph-attrs) component)|(&& component)
-#   component ::= component [pre-node|node|edge|graph|nil|component]
-#   pre-node ::= string|number
-#   node ::= (<> 
-#   stmt-list ::= [stmt[';'][stmt-list]]
-#   stmt ::= node-stmt|edge-stmt|attr-stmt|ID'='ID|subgraph
-#   attr-stmt ::= (graph|node|edge)attr-list
-#   attr-list ::= '['[a-list]']'[attr-list]
-#   a-list ::= ID['='ID][','][a-list]
-#   edge-stmt ::= (node-id|subgraph)edgeRHS[attr-list]
-#   edgeRHS ::= edgeop(node-id|subgraph)[edgeRHS]
-#   node-stmt ::= node-id[attr-list]
-#   node-id ::= ID[port]
-#   port ::= ':'ID[':'compass-pt]|':'compass-pt
-#   subgraph ::= [subgraph[ID]]'{'stmt-list'}'
-#   compass-pt ::= (n|ne|e|se|s|sw|w|nw|c|_ )
+  <pre-node> ::= number|string
+  <node> ::= <pre-node>|'(<>' (<pre-node>|<html-like-label>){ <attr>}')'|<record>|'(@'<node> <port>[ <port>]')'
+
+  <record> ::= '([] "'<record-label>'"'{ <attr>}')'
+  <record-label> ::= <field>{'|'<field>}
+  <field> ::= [<filed-port> ]{char}|'{'<record-label>'}'
+  <filed-port> ::= keyword
+
+  <port> ::= <compass-port>|<filed-port>
+  <compass-port> ::= :n|:ne|:e|:se|:s|:sw|:w|:nw|:c|:_
+
+  <edge> ::= '('<edge-cons> <node> <node>{ <attr>}')'|'('<multi-edge-cons>{ <node>}')'|'(?' <node>{ <attr>}')'
+  <edge-cons> ::= '->'|'--'
+  <multi-edge-cons> ::= '-->'|'->>'|'---'|'-<'|'O'
+
+  <rank> ::= '(rank' <rank-keyword>{ <node>}')'|'(~'{ <node>}')'
+  <rank-keyword> ::= :same|:min|:max|:source|:sink
+
+  <with> ::= '('<with-op> <attr-list> <graph-elts> ')'
+  <with-op> ::= 'with-node'|'with-edge'
+
+  <html-like-label> ::= '(html'{ <tag>| <txt>}')'
+  <txt> ::= string|number
+  <tag> ::= '('<tag-cons> <tag-body>')'
+  <tag-cons> ::= 'table'|'font'|'i'|'b'|'u'|'sub'|'sup'|'br'|'hr'|'tr'|'vr'|'td'|'img'
+  <tag-body> ::= <tag>|<attr>|<txt>|<tag-body>{ <tag-body>}
+#+END_SRC
++ <attr>: cf. http://www.graphviz.org/content/attrs
+    + レイアウトアルゴリズムごとにサポートしている属性が異なる。
+    + <attr-keyword>はキーワードであり, <attr-value>との間に空白' 'が必要。
+
++ <filed-port>
+    + <record-label>中で定義されている<filed-port>のみ用いることができる。
+    + <filed-port>の後の空白' 'を忘れずに。
+
++ <tag-cons>: cf. http://www.graphviz.org/node-shapes.html
+    + <tag-cons>ごとに属性の種類が限定されている。
+    + <tag-cons>ごとに引数として取ることのできる<tag>の種類が限定されている(ex. tr,td,hr,vrはtableタグ内でのみ用いることができる)。
+
++ 正確には、すべてのCommon Lisp文法を上述の文法に加えたものがDonuts文法となる。
+
+# #+BEGIN_SRC lisp :exports code
+#   <html-like-label> ::= '(html' {<tag>|<txt>} ')'
+#   <txt> ::= string|number
+#   <tag> ::= '(' <tag-cons> {<tag-body>} ')'
+#   <tag-cons> ::= 'table'|'font'|'i'|'b'|'u'|'sub'|'sup'|'br'|'hr'|'tr'|'vr'|'td'|'img'
+#   <tag-body> ::= {<tag>|<attr>|<txt>}
+
+#   <table> ::= '(table' <rows> ')'|'(font (table' <rows> '))'
+#   <rows> ::= <row>| 
+  
+#     label ::= txt | table
+#   txt ::= txtitem | txt txtitem
+#   txtitem ::= string
+#     | <BR/>
+#     | <FONT>txt</FONT>
+#     | <I>txt</I>
+#     | <B>txt</B>
+#     | <U>txt</U>
+#     | <SUB>txt</SUB>
+#     | <SUP>txt</SUP>
+#   table ::= [<FONT>]<TABLE>rows</TABLE>[</FONT>]
+#   rows  ::= row | rows row | rows<HR/>row
+#   row ::= <TR>cells</TR>
+#   cells ::= cell  | cellscell | cells<VR/>cell
+#   cell  ::= <TD>label</TD>  | <TD><IMG/></TD>
+  
+#   tag-body ::= text|<table>
+#   text ::= textitem|text textitem
+#   textitem ::= number|string|(br)|(font text)|(i text)|(b text)|(u text)|(sub text)|(sup text)
+#   table ::= (table rows)|(font (table rows))
+#   rows ::= row|rows row|rows (hr) row
+#   row ::= (tr cells)
+#   cells ::= cell|cells cell|cells (vr) cell
+#   cell ::= (td label)|(td (img))
 # #+END_SRC
-
-
 
 ##--------------------------------------------------------------------
 ** ノード
@@ -3818,18 +3882,25 @@ HTML-LIKEラベルはエッジのラベルとしても用いることができ�
 tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, sub, sup, table, tr, td)によってのみ生成される。
 
 
-# #+BEGIN_SRC lisp
-# html-like-label ::= (html tag-body)
-# tag-body ::= text|table
-# text ::= textitem|text textitem
-# textitem ::= number|string|(br)|(font text)|(i text)|(b text)|(u text)|(sub text)|(sup text)
-# table ::= (table rows)|(font (table rows))
-# rows ::= row|rows row|rows (hr) row
-# row ::= (tr cells)
-# cells ::= cell|cells cell|cells (vr) cell
-# cell ::= (td label)|(td (img))
+# #+BEGIN_SRC lisp :exports code
+#   <html-like-label> ::= '(html' {<tag>|<text>} ')'
+#   <text> ::= string|number
+#   <tag> ::= '(' <tag-cons> {<tag-body>} ')'
+#   <tag-cons> ::= 'table'|'font'|'i'|'b'|'u'|'sub'|'sup'|'br'|'hr'|'tr'|'vr'|'td'|'img'
+#   <tag-body> ::= {<tag>|<attr>|<text>}
+  
+  
+#   tag-body ::= text|table
+#   text ::= textitem|text textitem
+#   textitem ::= number|string|(br)|(font text)|(i text)|(b text)|(u text)|(sub text)|(sup text)
+#   table ::= (table rows)|(font (table rows))
+#   rows ::= row|rows row|rows (hr) row
+#   row ::= (tr cells)
+#   cells ::= cell|cells cell|cells (vr) cell
+#   cell ::= (td label)|(td (img))
 # #+END_SRC
- 
+
+
 
 　参考： http://www.graphviz.org/node-shapes.html
 

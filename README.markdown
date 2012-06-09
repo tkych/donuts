@@ -1,4 +1,4 @@
-Last Updated : 2012/06/02 11:47:36 tkych
+Last Updated : 2012/06/09 13:43:37 tkych
 
 
 Donuts: Graph DSL (or Graphviz interface) for Common Lisp
@@ -165,6 +165,47 @@ Examples
 
        ; Output example to Viewer
        NIL
+
+
+Grammar (by Extended BNF)
+-------------------------
+
+      donuts-code ::= '('<output-op> <graph>')'
+      <output-op> ::= 'dot-output'|'dot-pprint'|'$$'|'$' <attr-list>
+
+      <attr-list> ::= '('{<attr>}')'
+      <attr> ::= <attr-keyword> <attr-value>
+
+      <graph> ::= '(&&' <graph-elts>')'|'(&' <attr-list> <graph-elts>')'
+      <graph-elts> ::= nil|<node>|<pre-node>|<edge>|<graph>|<cluster>|<rank>|<with>|<graph-elts>{ <graph-elts>}
+      <cluster> ::= '([&]' <attr-list> <graph-elts>')'
+
+      <pre-node> ::= number|string
+      <node> ::= <pre-node>|'(<>' (<pre-node>|<html-like-label>){ <attr>}')'|<record>|'(@'<node> <port>[ <port>]')'
+
+      <record> ::= '([] "'<record-label>'"'{ <attr>}')'
+      <record-label> ::= <field>{'|'<field>}
+      <field> ::= [<filed-port> ]{char}|'{'<record-label>'}'
+      <filed-port> ::= keyword
+
+      <port> ::= <compass-port>|<filed-port>
+      <compass-port> ::= :n|:ne|:e|:se|:s|:sw|:w|:nw|:c|:_
+
+      <edge> ::= '('<edge-cons> <node> <node>{ <attr>}')'|'('<multi-edge-cons>{ <node>}')'|'(?' <node>{ <attr>}')'
+      <edge-cons> ::= '->'|'--'
+      <multi-edge-cons> ::= '-->'|'->>'|'---'|'-<'|'O'
+
+      <rank> ::= '(rank' <rank-keyword>{ <node>}')'|'(~'{ <node>}')'
+      <rank-keyword> ::= :same|:min|:max|:source|:sink
+
+      <with> ::= '('<with-op> <attr-list> <graph-elts> ')'
+      <with-op> ::= 'with-node'|'with-edge'
+
+      <html-like-label> ::= '(html'{ <tag>| <txt>}')'
+      <txt> ::= string|number
+      <tag> ::= '('<tag-cons> <tag-body>')'
+      <tag-cons> ::= 'table'|'font'|'i'|'b'|'u'|'sub'|'sup'|'br'|'hr'|'tr'|'vr'|'td'|'img'
+      <tag-body> ::= <tag>|<attr>|<txt>|<tag-body>{ <tag-body>}
 
 
 Author, License, Copyright

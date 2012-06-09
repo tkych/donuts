@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-06-03 23:40:16 JST"/>
+<meta name="generated" content="2012-06-09 13:32:46 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -157,11 +157,12 @@
 </li>
 <li><a href="#sec-6">6 リファレンスマニュアル</a>
 <ul>
-<li><a href="#sec-6-1">6.1 ノード</a></li>
-<li><a href="#sec-6-2">6.2 エッジ</a></li>
-<li><a href="#sec-6-3">6.3 グラフ</a></li>
-<li><a href="#sec-6-4">6.4 アウトプット</a></li>
-<li><a href="#sec-6-5">6.5 HTML-LIKEラベル</a></li>
+<li><a href="#sec-6-1">6.1 Donuts文法</a></li>
+<li><a href="#sec-6-2">6.2 ノード</a></li>
+<li><a href="#sec-6-3">6.3 エッジ</a></li>
+<li><a href="#sec-6-4">6.4 グラフ</a></li>
+<li><a href="#sec-6-5">6.5 アウトプット</a></li>
+<li><a href="#sec-6-6">6.6 HTML-LIKEラベル</a></li>
 </ul>
 </li>
 <li><a href="#sec-7">7 Todo</a></li>
@@ -2205,7 +2206,7 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 
 <ul>
-<li>リファレンスマニュアル：<a href="#sec-6-5">HTML-LIKEラベル</a>
+<li>リファレンスマニュアル：<a href="#sec-6-6">HTML-LIKEラベル</a>
 </li>
 </ul>
 
@@ -3463,11 +3464,91 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 
 
+</div>
+
+<div id="outline-container-6-1" class="outline-3">
+<h3 id="sec-6-1"><span class="section-number-3">6.1</span> Donuts文法</h3>
+<div class="outline-text-3" id="text-6-1">
+
 
 <p>
-　Graphvizで使用できる属性は大方のものをサポートしている。
-レイアウトアルゴリズムごとにサポートしている属性が異なるので注意。
+(拡張BNF記法による)
 </p>
+
+
+<pre class="src src-lisp">donuts-code <span style="color: #00ee76;">::=</span> '('&lt;output-op&gt; &lt;graph&gt;')'
+&lt;output-op&gt; <span style="color: #00ee76;">::=</span> 'dot-output'|'dot-pprint'|'$$'|'$' &lt;attr-list&gt;
+
+&lt;attr-list&gt; <span style="color: #00ee76;">::=</span> '('{&lt;attr&gt;}')'
+&lt;attr&gt; <span style="color: #00ee76;">::=</span> &lt;attr-keyword&gt; &lt;attr-value&gt;
+
+&lt;graph&gt; <span style="color: #00ee76;">::=</span> '(<span style="color: #eeee00;">&amp;&amp;</span>' &lt;graph-elts&gt;')'|'(&amp;' &lt;attr-list&gt; &lt;graph-elts&gt;')'
+&lt;graph-elts&gt; <span style="color: #00ee76;">::=</span> nil|&lt;node&gt;|&lt;pre-node&gt;|&lt;edge&gt;|&lt;graph&gt;|&lt;cluster&gt;|&lt;rank&gt;|&lt;with&gt;|&lt;graph-elts&gt;{ &lt;graph-elts&gt;}
+&lt;cluster&gt; <span style="color: #00ee76;">::=</span> '([&amp;]' &lt;attr-list&gt; &lt;graph-elts&gt;')'
+
+&lt;pre-node&gt; <span style="color: #00ee76;">::=</span> number|string
+&lt;node&gt; <span style="color: #00ee76;">::=</span> &lt;pre-node&gt;|'(&lt;&gt;' (&lt;pre-node&gt;|&lt;html-like-label&gt;){ &lt;attr&gt;}')'|&lt;record&gt;|'(@'&lt;node&gt; &lt;port&gt;[ &lt;port&gt;]')'
+
+&lt;record&gt; <span style="color: #00ee76;">::=</span> '([] "'&lt;record-label&gt;'"'{ &lt;attr&gt;}')'
+&lt;record-label&gt; <span style="color: #00ee76;">::=</span> &lt;field&gt;{'|'&lt;field&gt;}
+&lt;field&gt; <span style="color: #00ee76;">::=</span> [&lt;filed-port&gt; ]{char}|'{'&lt;record-label&gt;'}'
+&lt;filed-port&gt; <span style="color: #00ee76;">::=</span> keyword
+
+&lt;port&gt; <span style="color: #00ee76;">::=</span> &lt;compass-port&gt;|&lt;filed-port&gt;
+&lt;compass-port&gt; <span style="color: #00ee76;">::=</span> <span style="color: #00ee76;">:n</span>|<span style="color: #00ee76;">:ne</span>|<span style="color: #00ee76;">:e</span>|<span style="color: #00ee76;">:se</span>|<span style="color: #00ee76;">:s</span>|<span style="color: #00ee76;">:sw</span>|<span style="color: #00ee76;">:w</span>|<span style="color: #00ee76;">:nw</span>|<span style="color: #00ee76;">:c</span>|<span style="color: #00ee76;">:_</span>
+
+&lt;edge&gt; <span style="color: #00ee76;">::=</span> '('&lt;edge-cons&gt; &lt;node&gt; &lt;node&gt;{ &lt;attr&gt;}')'|'('&lt;multi-edge-cons&gt;{ &lt;node&gt;}')'|'(?' &lt;node&gt;{ &lt;attr&gt;}')'
+&lt;edge-cons&gt; <span style="color: #00ee76;">::=</span> '-&gt;'|'--'
+&lt;multi-edge-cons&gt; <span style="color: #00ee76;">::=</span> '--&gt;'|'-&gt;&gt;'|'---'|'-&lt;'|'O'
+
+&lt;rank&gt; <span style="color: #00ee76;">::=</span> '(rank' &lt;rank-keyword&gt;{ &lt;node&gt;}')'|'(~'{ &lt;node&gt;}')'
+&lt;rank-keyword&gt; <span style="color: #00ee76;">::=</span> <span style="color: #00ee76;">:same</span>|<span style="color: #00ee76;">:min</span>|<span style="color: #00ee76;">:max</span>|<span style="color: #00ee76;">:source</span>|<span style="color: #00ee76;">:sink</span>
+
+&lt;with&gt; <span style="color: #00ee76;">::=</span> '('&lt;with-op&gt; &lt;attr-list&gt; &lt;graph-elts&gt; ')'
+&lt;with-op&gt; <span style="color: #00ee76;">::=</span> 'with-node'|'with-edge'
+
+&lt;html-like-label&gt; <span style="color: #00ee76;">::=</span> '(html'{ &lt;tag&gt;| &lt;txt&gt;}')'
+&lt;txt&gt; <span style="color: #00ee76;">::=</span> string|number
+&lt;tag&gt; <span style="color: #00ee76;">::=</span> '('&lt;tag-cons&gt; &lt;tag-body&gt;')'
+&lt;tag-cons&gt; <span style="color: #00ee76;">::=</span> 'table'|'font'|'i'|'b'|'u'|'sub'|'sup'|'br'|'hr'|'tr'|'vr'|'td'|'img'
+&lt;tag-body&gt; <span style="color: #00ee76;">::=</span> &lt;tag&gt;|&lt;attr&gt;|&lt;txt&gt;|&lt;tag-body&gt;{ &lt;tag-body&gt;}
+</pre>
+
+<ul>
+<li>&lt;attr&gt;: cf. <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
+<ul>
+<li>レイアウトアルゴリズムごとにサポートしている属性が異なる。
+</li>
+<li>&lt;attr-keyword&gt;はキーワードであり, &lt;attr-value&gt;との間に空白' 'が必要。
+
+</li>
+</ul>
+
+</li>
+<li>&lt;filed-port&gt;
+<ul>
+<li>&lt;record-label&gt;中で定義されている&lt;filed-port&gt;のみ用いることができる。
+</li>
+<li>&lt;filed-port&gt;の後の空白' 'を忘れずに。
+
+</li>
+</ul>
+
+</li>
+<li>&lt;tag-cons&gt;: cf. <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+<ul>
+<li>&lt;tag-cons&gt;ごとに属性の種類が限定されている。
+</li>
+<li>&lt;tag-cons&gt;ごとに引数として取ることのできる&lt;tag&gt;の種類が限定されている(ex. tr,td,hr,vrはtableタグ内でのみ用いることができる)。
+
+</li>
+</ul>
+
+</li>
+<li>正確には、すべてのCommon Lisp文法を上述の文法に加えたものがDonuts文法となる。
+</li>
+</ul>
+
 
 
 
@@ -3475,9 +3556,11 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 </div>
 
-<div id="outline-container-6-1" class="outline-3">
-<h3 id="sec-6-1"><span class="section-number-3">6.1</span> ノード</h3>
-<div class="outline-text-3" id="text-6-1">
+</div>
+
+<div id="outline-container-6-2" class="outline-3">
+<h3 id="sec-6-2"><span class="section-number-3">6.2</span> ノード</h3>
+<div class="outline-text-3" id="text-6-2">
 
 
 <p>
@@ -3566,9 +3649,9 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 </div>
 
-<div id="outline-container-6-2" class="outline-3">
-<h3 id="sec-6-2"><span class="section-number-3">6.2</span> エッジ</h3>
-<div class="outline-text-3" id="text-6-2">
+<div id="outline-container-6-3" class="outline-3">
+<h3 id="sec-6-3"><span class="section-number-3">6.3</span> エッジ</h3>
+<div class="outline-text-3" id="text-6-3">
 
 
 
@@ -3716,9 +3799,9 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 </div>
 
-<div id="outline-container-6-3" class="outline-3">
-<h3 id="sec-6-3"><span class="section-number-3">6.3</span> グラフ</h3>
-<div class="outline-text-3" id="text-6-3">
+<div id="outline-container-6-4" class="outline-3">
+<h3 id="sec-6-4"><span class="section-number-3">6.4</span> グラフ</h3>
+<div class="outline-text-3" id="text-6-4">
 
 
 <p>
@@ -3786,9 +3869,9 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 
 </div>
 
-<div id="outline-container-6-4" class="outline-3">
-<h3 id="sec-6-4"><span class="section-number-3">6.4</span> アウトプット</h3>
-<div class="outline-text-3" id="text-6-4">
+<div id="outline-container-6-5" class="outline-3">
+<h3 id="sec-6-5"><span class="section-number-3">6.5</span> アウトプット</h3>
+<div class="outline-text-3" id="text-6-5">
 
 
 <p>
@@ -3838,9 +3921,9 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 
 </div>
 
-<div id="outline-container-6-5" class="outline-3">
-<h3 id="sec-6-5"><span class="section-number-3">6.5</span> HTML-LIKEラベル</h3>
-<div class="outline-text-3" id="text-6-5">
+<div id="outline-container-6-6" class="outline-3">
+<h3 id="sec-6-6"><span class="section-number-3">6.6</span> HTML-LIKEラベル</h3>
+<div class="outline-text-3" id="text-6-6">
 
 
 <p>
@@ -3854,6 +3937,9 @@ HTML-LIKEラベルはエッジのラベルとしても用いることができ�
  <code>html</code> はマクロ、 <code>tags-bodies</code> は任意の数のタグ型オブジェクトと文字列、数値を表す。
 tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, sub, sup, table, tr, td)によってのみ生成される。
 </p>
+
+
+
 
 
 
@@ -4093,7 +4179,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-06-03 23:40:16 JST</p>
+<p class="date">Date: 2012-06-09 13:32:46 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>

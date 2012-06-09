@@ -1,4 +1,4 @@
-### Last Updated : 2012/06/02 11:55:47 tkych
+### Last Updated : 2012/06/06 10:57:51 tkych
 
 ##====================================================================
 #+TITLE:  Donuts: Graph DSL for Common Lisp
@@ -21,7 +21,7 @@
 #+BEGIN_HTML
 <div align = "right">
 <p>
-<a href="./index-j.html">日本語</a>/English(under translation)
+<a href="./index-ja.html">日本語</a>/English(under translation)
 </p>
 </div>
 #+END_HTML
@@ -489,11 +489,6 @@ digraph GRAPH_T328 {
 [[file:./images/proparty2.png]]
 
 
-#+SRCNAME: minimum-graph.lisp
-#+BEGIN_SRC lisp
-(& () "")
-#+END_SRC
-
 
 - Node： http://www.graphviz.org/content/attrs
 - Node-Shape： http://www.graphviz.org/node-shapes.html
@@ -508,13 +503,7 @@ digraph GRAPH_T328 {
 
 #+SRCNAME: label.lisp
 #+BEGIN_SRC lisp
-  (& () (<> "12\\ 34\\n56\\l78\\r\\N" :shape :note))
-#+END_SRC
-
-#+BEGIN_SRC dot :file ./images/label.png
-digraph graph_T64 {
-  node_T63 [label="12\ 34\n56\l78\r\N",shape=note];
-}
+  (& () (<> "12\\ 34\\n56\\l78\\r\\N\\\\" :shape :note))
 #+END_SRC
 
 #+RESULTS:
