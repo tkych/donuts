@@ -1,33 +1,36 @@
-Last Updated : 2012/06/09 13:43:37 tkych
+Last Updated : 2012/06/15 21:35:56 tkych
+
+Current Version of Donuts is 0.3.1 (beta)
 
 
-Donuts: Graph DSL (or Graphviz interface) for Common Lisp
+Donuts: Graph DSL (or Graphviz Interface) for Common Lisp
 =========================================================
 
 
 Introduction
 ------------
 
-By donuts, the graph represented by s-expression is converted to image.
-How to use donuts is easy.
-<> creates a node.
--> puts an edge between two nodes.
-&& makes a graph by bundling some nodes, edges and graphs.
+By donuts, the graph represented by S-expression is converted to image. 
+How to use donuts is simple. 
+<> creates a node. 
+-> puts an edge two nodes. 
+&& makes a graph by bundling some nodes, edges and graphs. 
 $$ outputs an image of the graph.
 
-For further details, please see index (Under Translation) or index-ja (Japanease) in doc directory.
+For further details, please see index (Under Translation) or 
+index-ja (Japanease) in doc directory.
 
 
 The Goal of Donuts
 ------------------
 
-[Graphviz][] is a collection of libraries and utilities for drawing a graph.
-[Dot language][] is description language, used in Graphviz.
-Graphviz is very useful.
-However, I (as a lisp programmer) think there are some points to do kaizen.
+[Graphviz][] is a collection of libraries and utilities for drawing a
+graph.  [Dot language][] is description language, used in Graphviz.
+Graphviz is very useful.  However, I (as a lisp programmer) think
+there are some points to do kaizen.
 
-1.  Since dot language is not turing-complete,
-    when we draw a graph, we don't take full advantage of the pattern in the graph.
+1.  Since dot language is not Turing-complete, when we draw a graph,
+    we don't take full advantage of the pattern in the graph.
 
 2.  Because dot language is so-called compiled language,
     development cycle is inconvenient.
@@ -39,12 +42,6 @@ The goal of donuts is to draw graph in lispic way of thought
 
   [Graphviz]: http://www.graphviz.org/
   [Dot language]: http://www.graphviz.org/dot-language.html
-
-
-Current Version
----------------
-
-0.3.1 (beta)
 
 
 Dependencies
@@ -104,7 +101,7 @@ Examples
                      (->  "a3" "a0")
                      (->  "b2" "a3")))
 
-       ; Create cluster.pdf & Output image to viewer as shown on the right
+       ; Create cluster.pdf & Output image to viewer
        NIL
 
        DONUTS> 
@@ -112,24 +109,41 @@ Examples
        ;; num-day: total number of days in month
        ;; starting-day: 0 as Sun, 1 as Mon, ... , 6 as Sat
        (defun generate-monthly-calendar (month year num-days starting-day)
-         (let ((month (<> (format nil "~@(~A~)\\n~D" month year) :shape :Msquare))
-               (luminary7 (loop :for day :in '("Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat")
-                                :collect (<> day :shape :egg :style :filled :color :lightgray)))
-               (days (loop :for day :in (nconc (loop :repeat starting-day :collect "")
-                                               (loop :for d :from 1 :to num-days :collect d)
-                                               (loop :repeat (- (* 7 (if (and (= 28 num-days) (= 0 starting-day))
-                                                                         4 5)) ;for Feb starting Sun in common year 
-                                                                starting-day num-days)
-                                                     :collect ""))
-                           :collect (<> day :shape :box))))
-           ;; fn group from On Lisp, ex. (group '(1 2 3 4) 2) => ((1 2) (3 4))
+         (let ((month     (generate-month-nodes month year))
+               (luminary7 (generate-luminary7-nodes))
+               (days      (generate-day-nodes num-days starting-day)))
            (apply #'&& (loop :for week :in (cons luminary7 (group days 7)) 
                              :collect (apply #'--> month week)))))
 
-       GENERATE-MONTHLY-CALENDAR
+       (defun generate-month-nodes (month year)
+         (<> (format nil "~@(~A~)\\n~D" month year) :shape :Msquare))
 
-       DONUTS> ($$ (& (:size "8,6":rankdir :LR)
-                     (generate-monthly-calendar 'may 2012 31 2)))
+       (defun generate-luminary7-nodes ()
+         (loop :for day :in '("Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat")
+               :collect (<> day :shape :egg :style :filled :color :lightgray)))
+
+       (defun generate-day-nodes (num-days starting-day)
+         (loop :for day :in (nconc (loop :repeat starting-day :collect "")
+                                   (loop :for d :from 1 :to num-days :collect d)
+                                   (loop :repeat (- (* 7 (if (and (= 28 num-days) (= 0 starting-day))
+                                                             4 5)) ;for Feb starting Sun in common year 
+                                                         starting-day num-days)
+                                         :collect ""))
+               :collect (<> day :shape :box)))
+
+       ;; from On Lisp, e.g. (group '(1 2 3 4) 2) => ((1 2) (3 4))
+       (defun group (lst n)
+         (if (zerop n) (error "zero length"))
+         (labels ((rec (lst acc)
+                    (let ((rest (nthcdr n lst)))
+                      (if (consp rest)
+                          (rec rest (cons (subseq lst 0 n)
+                                          acc))
+                          (nreverse (cons lst acc))))))
+           (if lst (rec lst nil) nil)))
+
+       ($$ (& (:size "8,6":rankdir :LR)
+             (generate-monthly-calendar 'may 2012 31 2)))
 
        ; Output Calendar to Viewer
        NIL
@@ -167,26 +181,26 @@ Examples
        NIL
 
 
-Grammar (by Extended BNF)
--------------------------
+Grammar
+-------
 
-      donuts-code ::= '('<output-op> <graph>')'
+      <donuts-code> ::= '('<output-op> <graph>')'|<node>|<edge>|<graph>|<html-like-label>|<tag>|<common-lisp-code>
       <output-op> ::= 'dot-output'|'dot-pprint'|'$$'|'$' <attr-list>
 
       <attr-list> ::= '('{<attr>}')'
       <attr> ::= <attr-keyword> <attr-value>
 
-      <graph> ::= '(&&' <graph-elts>')'|'(&' <attr-list> <graph-elts>')'
-      <graph-elts> ::= nil|<node>|<pre-node>|<edge>|<graph>|<cluster>|<rank>|<with>|<graph-elts>{ <graph-elts>}
+      <graph> ::= '(&&' <graph-elts>')'|'(&' <attr-list> <graph-elts>')'|<cluster>
+      <graph-elts> ::= nil|<pre-node>|<node>|<edge>|<graph>|<cluster>|<rank>|<with>|<graph-elts>{ <graph-elts>}
       <cluster> ::= '([&]' <attr-list> <graph-elts>')'
 
-      <pre-node> ::= number|string
+      <pre-node> ::= <number>|<string>
       <node> ::= <pre-node>|'(<>' (<pre-node>|<html-like-label>){ <attr>}')'|<record>|'(@'<node> <port>[ <port>]')'
 
       <record> ::= '([] "'<record-label>'"'{ <attr>}')'
       <record-label> ::= <field>{'|'<field>}
       <field> ::= [<filed-port> ]{char}|'{'<record-label>'}'
-      <filed-port> ::= keyword
+      <filed-port> ::= <keyword>
 
       <port> ::= <compass-port>|<filed-port>
       <compass-port> ::= :n|:ne|:e|:se|:s|:sw|:w|:nw|:c|:_
@@ -202,7 +216,7 @@ Grammar (by Extended BNF)
       <with-op> ::= 'with-node'|'with-edge'
 
       <html-like-label> ::= '(html'{ <tag>| <txt>}')'
-      <txt> ::= string|number
+      <txt> ::= <string>|<number>
       <tag> ::= '('<tag-cons> <tag-body>')'
       <tag-cons> ::= 'table'|'font'|'i'|'b'|'u'|'sub'|'sup'|'br'|'hr'|'tr'|'vr'|'td'|'img'
       <tag-body> ::= <tag>|<attr>|<txt>|<tag-body>{ <tag-body>}
