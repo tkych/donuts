@@ -1,4 +1,4 @@
-Last Updated : 2012/06/15 21:35:56 tkych
+Last Updated : 2012/06/16 19:54:15 tkych
 
 Current Version of Donuts is 0.3.1 (beta)
 
@@ -41,7 +41,7 @@ The goal of donuts is to draw graph in lispic way of thought
 (REPL, macro, CLOS, multi-paradigm style, and so on). 
 
   [Graphviz]: http://www.graphviz.org/
-  [Dot language]: http://www.graphviz.org/dot-language.html
+  [Dot language]: http://www.graphviz.org/content/dot-language
 
 
 Dependencies

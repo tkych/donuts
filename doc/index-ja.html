@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-06-09 13:32:46 JST"/>
+<meta name="generated" content="2012-06-20 13:00:24 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -115,20 +115,14 @@
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1 はじめに</a></li>
-<li><a href="#sec-2">2 インストール</a>
-<ul>
-<li><a href="#sec-2-1">2.1 動作チェック済み環境</a></li>
-<li><a href="#sec-2-2">2.2 システム依存</a></li>
-<li><a href="#sec-2-3">2.3 ダウンロード &amp; インストール</a></li>
-<li><a href="#sec-2-4">2.4 動作確認</a></li>
-</ul>
-</li>
+<li><a href="#sec-2">2 インストール</a></li>
 <li><a href="#sec-3">3 Donutsの考え方 &mdash; &lt;&gt;, -&gt;, &amp;</a>
 <ul>
 <li><a href="#sec-3-1">3.1 Donutsのゴール</a></li>
-<li><a href="#sec-3-2">3.2 Donutsの構築指針</a></li>
-<li><a href="#sec-3-3">3.3 "グラフ作成"の抽象化 &mdash; ユーザインターフェイスの設計1</a></li>
-<li><a href="#sec-3-4">3.4 図形的な関数名やマクロ名 &mdash; ユーザインターフェイスの設計2</a></li>
+<li><a href="#sec-3-2">3.2 なめらかなDonuts</a></li>
+<li><a href="#sec-3-3">3.3 Donutsの構築指針</a></li>
+<li><a href="#sec-3-4">3.4 "グラフ作成"の抽象化 &mdash; ユーザインターフェイスの設計1</a></li>
+<li><a href="#sec-3-5">3.5 図形的な関数名やマクロ名 &mdash; ユーザインターフェイスの設計2</a></li>
 </ul>
 </li>
 <li><a href="#sec-4">4 チュートリアル</a>
@@ -145,7 +139,7 @@
 <li><a href="#sec-4-10">4.10 無向グラフ、レイアウトアルゴリズム</a></li>
 <li><a href="#sec-4-11">4.11 無向グラフに関するユーティリティ集</a></li>
 <li><a href="#sec-4-12">4.12 Html-Likeラベル</a></li>
-<li><a href="#sec-4-13">4.13 小さなプログラム &mdash; カレンダー、2分木、コンスセル、有限オートマトン</a></li>
+<li><a href="#sec-4-13">4.13 小さなプログラム &mdash; カレンダー、2分木、コンスセル、状態遷移図</a></li>
 <li><a href="#sec-4-14">4.14 Tips</a></li>
 </ul>
 </li>
@@ -188,14 +182,13 @@
 
 <p>
 　 <b>DonutsはCommon LispのためのグラフDSL(または、Graphvizインターフェイス)です。</b>
-Donutsは、S式で記述されたグラフ構造を<a href="http://www.graphviz.org/dot-language.html">Dot言語</a>のコードに変換し、画像としてビューアに出力します。
-すべてのLisp機能(REPL、マクロ、関数、CLOSなど)を利用できるので、複雑なグラフでも簡単に描くことができます(cf.<a href="#sec-4-13">小さなプログラム</a>)。
+Donutsは、S式で記述されたグラフ構造を<a href="http://www.graphviz.org/content/dot-language">Dot言語</a>のコードに変換し、画像としてビューアに出力します。
+グラフに内在する規則性やパターンを活用することで、複雑なグラフでも簡潔に描くことができます(e.g. <a href="#sec-4-13">小さなプログラム</a>)。
 </p>
-
 <p>
-　 <b>Donutsの使い方は簡単です。</b>
- <code>&lt;&gt;</code> でノードを作り、 <code>-&gt;</code> で2つのノード間にエッジを張り、 <code>&amp;</code> でノードやエッジ（やグラフ）を束ねグラフを作り、 <code>$$</code> で画像を出力します。
-例えば、左下のコードをLispのREPLに入力すると、ビューアが起動し右下の画像が出力されます。
+　 <b>Donutsの使用法はシンプルです。</b>
+ <code>&lt;&gt;</code> でノードを作り、 <code>-&gt;</code> で2つのノード間にエッジを張り、 <code>&amp;</code> でノードやエッジやグラフを束ねてグラフを作り、 <code>$$</code> で画像を出力します。
+例えば、左下のコードをLispのREPLに入力すると、右下の画像がビューアに出力されます。
 </p>
 <p>
 <img src="./images/small-donuts.png" alt="donuts image" title="donuts!" align="right" />
@@ -203,54 +196,45 @@ Donutsは、S式で記述されたグラフ構造を<a href="http://www.graphviz
 
 
 
-<pre class="src src-lisp">($$ (<span style="color: #eeee00;">let</span> ((o (&lt;&gt; <span style="color: #90ee90;">"o"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:fillcolor</span> <span style="color: #00ee76;">:chocolate4</span>)))   <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12481;&#12519;&#12467;&#12489;&#12540;&#12490;&#12484;&#12434;&#20316;&#12427;</span>
-      (&amp; (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Hello, Donuts!"</span> <span style="color: #00ee76;">:labelloc</span> t <span style="color: #00ee76;">:size</span> <span style="color: #90ee90;">"3,3"</span>)      <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12464;&#12521;&#12501;&#12434;&#29983;&#25104;&#12377;&#12427;</span>
-        (--&gt; <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"n"</span>)                                         <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#38291;&#12395;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
-        (-&gt;  <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:dotted</span>)                            <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#28857;&#32218;&#12398;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
-        (--&gt; <span style="color: #90ee90;">"u"</span> <span style="color: #90ee90;">"t"</span> <span style="color: #90ee90;">"s"</span>)                                       <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#38291;&#12395;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
-        (~ <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"t"</span>) (~ <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"s"</span> <span style="color: #90ee90;">"u"</span>))))                        <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#12398;&#39640;&#12373;&#12434;&#25539;&#12360;&#12427;</span>
+<pre class="src src-lisp">($$ (<span style="color: #eeee00;">let</span> ((o (&lt;&gt; <span style="color: #90ee90;">"o"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:fillcolor</span> <span style="color: #00ee76;">:chocolate4</span>))) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12481;&#12519;&#12467;&#12489;&#12540;&#12490;&#12484;&#12434;&#20316;&#12427;</span>
+      (&amp; (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Hello, Donuts!"</span> <span style="color: #00ee76;">:labelloc</span> t <span style="color: #00ee76;">:size</span> <span style="color: #90ee90;">"3,3"</span>)    <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12464;&#12521;&#12501;&#12434;&#29983;&#25104;&#12377;&#12427;</span>
+        (--&gt; <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"n"</span>)                                       <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#38291;&#12395;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
+        (-&gt;  <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"u"</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:dotted</span>)                          <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#28857;&#32218;&#12398;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
+        (--&gt; <span style="color: #90ee90;">"u"</span> <span style="color: #90ee90;">"t"</span> <span style="color: #90ee90;">"s"</span>)                                     <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#38291;&#12395;&#12456;&#12483;&#12472;&#12434;&#24373;&#12427;</span>
+        (~ <span style="color: #90ee90;">"d"</span> o <span style="color: #90ee90;">"t"</span>) (~ <span style="color: #90ee90;">"n"</span> <span style="color: #90ee90;">"s"</span> <span style="color: #90ee90;">"u"</span>))))                      <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12494;&#12540;&#12489;&#12398;&#39640;&#12373;&#12434;&#25539;&#12360;&#12427;</span>
 </pre>
 
 
 <p>
 　 <b>すぐにDonutsでグラフを描き始められるように。</b>
-Donutsの文法はDot言語のものと似ています。
-そこで、Dot言語になじみのある方ならDot言語との類推によって、すぐにグラフを描き始めることができるように、<a href="#sec-5">Examples from Graphviz manual</a>の章を用意しています。
-Dot言語になじみのない方でも、もちろん大丈夫です。
-Donutsですぐにグラフを描くことができるように、<a href="#sec-4">チュートリアル</a>の章があります。
+入力コードと出力結果から使用法を習得したい方や、Dot言語になじみのある方のために、<a href="#sec-5">サンプル集</a>を用意しています。
+また、じっくり使用法を知りたい方のためには、<a href="#sec-4">チュートリアル</a>を用意しています。
+形式的なところから始めたい方には、<a href="#sec-6">リファレンスマニュアル</a>をおすすめします。
 </p>
-
 <p>
 　 <b>DonutsはMITライセンスの元で配布されています。</b>
-したがって、あなたの望みが健全な常識の範囲内であれば、自由にDonutsを使うことができるはずです。
-また、Donutsの使用の結果として生じた、いかなる不利益に関しても作者は責任を持ちません。
-ライセンスの正確な文言についてはソースコードのヘッダー部分をご確認ください。
+したがって、基本的に常識の範囲内であれば自由にDonutsを使うことができるはずです。
+また、Donutsの使用の結果として生じた、いかなる不利益、不法行為等に関しても作者は責任を持ちません。
+ライセンスの正確な文言はソースコードのヘッダー部分をご確認ください。
 </p>
-
 <p>
 　 <b>Donutsの最新バージョンは0.3.1です。</b>
 現在のところDonutsはベータ版です。
 </p>
-
 <p>
 　 <b>Donutsは拡張性を重視して設計されています。</b>
-Donutsのコアはグラフ作成に関する基本的操作から構成されています。
-グラフ作成に関する基本的操作とは、 <span style="text-decoration:underline;">ノードを構築する操作</span> <code>&lt;&gt;</code> 、 <span style="text-decoration:underline;">エッジを構築する操作</span>  <code>-&gt;</code> 、 <span style="text-decoration:underline;">グラフを構築する操作</span>  <code>&amp;</code> の3つの操作のことです。
-およそいかなるグラフ構造もこれら3つの基本操作のみから作り上げることができます(グラフ画像の見た目やコーディングの手間を気にしなければ)。
-また、Donutsはなるべくlispとぶつからないことを重視して造られています。
-したがって、複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、
-ユーザが自分で好きなように追加できるはずです(cf.<a href="#sec-4-13">小さなプログラム</a>)。
+Donutsの抽象的なコアはグラフ作成に関する基本的操作で構成されています。
+グラフ作成に関する基本的操作とは、 <i>ノードを構築する操作</i> <code>&lt;&gt;</code> 、 <i>エッジを構築する操作</i>  <code>-&gt;</code> 、 <i>グラフを構築する操作</i>  <code>&amp;</code> の3つです。
+どのようなグラフ構造もこれら3つの基本操作のみから作り上げることができます(画像の見映えやコーディングの手間を気にしなければ)。
+複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、自分で好きなように追加できるはずです(e.g. <a href="#sec-4-13">小さなプログラム</a>)。
 </p>
-
 <p>
 　 <b>Donutsには実用的操作も加えられています。</b>
-実用的操作とは、主として基本操作を組み合わせた <span style="text-decoration:underline;">実用目的の便利機能</span> のことです。
+実用的操作とは、おもに基本操作を組み合わせた <i>実用目的の便利機能</i> のことです。
 基本的操作だけを使ってグラフを描くこともできます。
 しかし、実用的な操作も使用することで、より多彩なグラフを、より手軽に描くことができます(cf.<a href="#sec-4-9">ユーティリティ集</a>)。
 </p>
-<p>
-　
-</p>
+
 </div>
 
 </div>
@@ -261,34 +245,24 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 
 
 
-
 </div>
 
-<div id="outline-container-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 動作チェック済み環境</h3>
-<div class="outline-text-3" id="text-2-1">
+<div id="outline-container-2-1" class="outline-4">
+<h4 id="sec-2-1"><span class="section-number-4">2.1</span> 動作チェック済み環境</h4>
+<div class="outline-text-4" id="text-2-1">
 
-
-</div>
-
-<div id="outline-container-2-1-1" class="outline-4">
-<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> OS</h4>
-<div class="outline-text-4" id="text-2-1-1">
-
+<ul>
+<li id="sec-2-1-1">OS<br/>
 <ul>
 <li>linux-2.6.32-5-686
 </li>
 </ul>
 
 
-</div>
-
-</div>
-
-<div id="outline-container-2-1-2" class="outline-4">
-<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> CL処理系</h4>
-<div class="outline-text-4" id="text-2-1-2">
-
+</li>
+</ul>
+<ul>
+<li id="sec-2-1-2">CL処理系<br/>
 <ul>
 <li>sbcl-1.0.55
 </li>
@@ -297,22 +271,18 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 </ul>
 
 
+</li>
+</ul>
 </div>
-</div>
-
-</div>
-
-<div id="outline-container-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> システム依存</h3>
-<div class="outline-text-3" id="text-2-2">
-
 
 </div>
 
-<div id="outline-container-2-2-1" class="outline-4">
-<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> 外部システム</h4>
-<div class="outline-text-4" id="text-2-2-1">
+<div id="outline-container-2-2" class="outline-4">
+<h4 id="sec-2-2"><span class="section-number-4">2.2</span> システム依存</h4>
+<div class="outline-text-4" id="text-2-2">
 
+<ul>
+<li id="sec-2-2-1">外部システム<br/>
 <ol>
 <li><a href="http://www.graphviz.org/">Graphviz</a> by AT&amp;T Labs
 </li>
@@ -321,65 +291,54 @@ Donutsのコアはグラフ作成に関する基本的操作から構成され�
 </ol>
 
 
-</div>
-
-</div>
-
-<div id="outline-container-2-2-2" class="outline-4">
-<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> Common Lisp ライブラリ</h4>
-<div class="outline-text-4" id="text-2-2-2">
-
-<ol>
-<li><a href="http://weitz.de/cl-ppcre/">cl-ppcre</a> by Dr. Edmund Weitz
 </li>
-<li><a href="http://www.quicklisp.org/">trivial-shell</a> by Gary Warren King
+</ul>
+<ul>
+<li id="sec-2-2-2">Common Lisp ライブラリ<br/>
+<ol>
+<li><a href="http://weitz.de/cl-ppcre/">CL-PPCRE</a> by Dr. Edmund Weitz
+</li>
+<li><a href="http://common-lisp.net/project/trivial-shell/">Trivial-Shell</a> by Gary Warren King
 </li>
 </ol>
 
 
+</li>
+</ul>
 </div>
-</div>
-
-</div>
-
-<div id="outline-container-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> ダウンロード &amp; インストール</h3>
-<div class="outline-text-3" id="text-2-3">
-
 
 </div>
 
-<div id="outline-container-2-3-1" class="outline-4">
-<h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> quicklispによる自動ダウンロード &amp; インストール</h4>
-<div class="outline-text-4" id="text-2-3-1">
+<div id="outline-container-2-3" class="outline-4">
+<h4 id="sec-2-3"><span class="section-number-4">2.3</span> ダウンロード &amp; インストール</h4>
+<div class="outline-text-4" id="text-2-3">
 
-<p>2012年5月21日以降、<a href="http://www.quicklisp.org/">quicklisp</a>ライブラリに登録されています。
+<ul>
+<li id="sec-2-3-1">quicklispによる自動ダウンロード &amp; インストール<br/>
+2012年5月21日以降、<a href="http://www.quicklisp.org/">Quicklisp</a>ライブラリに登録されています。
 REPLに <code>(ql:quickload :donuts)</code> と打ち込むことで、自動的にダウンロード＆インストールされます。
-</p>
-</div>
 
-</div>
-
-<div id="outline-container-2-3-2" class="outline-4">
-<h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> asdfによる手動ダウンロード &amp; インストール</h4>
-<div class="outline-text-4" id="text-2-3-2">
-
-<p>現在の開発版は、<a href="https://github.com/tkych/donuts">https://github.com/tkych/donuts</a> からダウンロードできます。
+</li>
+</ul>
+<ul>
+<li id="sec-2-3-2">asdfによる手動ダウンロード &amp; インストール<br/>
+現在の開発版は、<a href="https://github.com/tkych/donuts">https://github.com/tkych/donuts</a> からダウンロードできます。
 ダウンロードしたdonutsディレクトリを、asdf:*central-registry*に設定されたパスに置き、REPLに <code>(asdf:operate 'asdf:load-op :donuts)</code> と打ち込むことで、インストールされます。
-</p>
+
+</li>
+</ul>
 </div>
-</div>
 
 </div>
 
-<div id="outline-container-2-4" class="outline-3">
-<h3 id="sec-2-4"><span class="section-number-3">2.4</span> 動作確認</h3>
-<div class="outline-text-3" id="text-2-4">
+<div id="outline-container-2-4" class="outline-4">
+<h4 id="sec-2-4"><span class="section-number-4">2.4</span> 動作確認</h4>
+<div class="outline-text-4" id="text-2-4">
 
 
 
 
-<pre class="src src-lisp">CL-USER&gt; (<span style="color: #eeee00;">in-package</span> <span style="color: #00ee76;">:donuts</span>)
+<pre class="src src-lisp">CL-REPL&gt; (<span style="color: #eeee00;">in-package</span> <span style="color: #00ee76;">:donuts</span>)
 
 DONUTS&gt; (dot-output (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2)))  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#27425;&#12398;&#12424;&#12358;&#12394;dot&#12467;&#12540;&#12489;&#12364;&#27161;&#28310;&#20986;&#21147;&#12395;&#34920;&#31034;&#12373;&#12428;&#12383;&#12425;OK</span>
 
@@ -396,9 +355,7 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 <p>
 <img src="./images/start.png"  alt="./images/start.png" />
 </p>
-<p>
-　
-</p>
+
 </div>
 </div>
 
@@ -410,11 +367,10 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 
 
 <p>
-<b>注：</b> この章は、Donutsのユーザインターフェイスがなぜこのようになっているのか、についての章です。
-この章はやや抽象的な部分が多いので、退屈だと感じた場合、とにかく手っ取り早くグラフを作成したい場合には、次章の<a href="#sec-4">チュートリアル</a>を読むことをおすすめします。
-</p>
-<p>
-　
+<b>注：</b> 
+この章は、なぜDonutsのユーザインターフェイスがこのようになっているのか、についての章です。
+この章を読まなくてもDonutsでグラフを描くことはできます。
+手っ取り早くグラフを作成したい場合や、退屈だと感じた場合には、次章の<a href="#sec-4">チュートリアル</a>を読むことをおすすめします。
 </p>
 
 </div>
@@ -424,6 +380,45 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 <div class="outline-text-3" id="text-3-1">
 
 
+<p>
+　Common Lispにはグラフ画像を作成する機能が備わっていません。
+そのため、Lispプログラマがグラフ画像を作成するには、何か他の言語やソフトウェアに頼らねばなりません。
+<a href="http://www.corp.att.com/attlabs/">AT&amp;T Labs</a>が開発したフリーウェア <a href="http://www.graphviz.org/">Graphviz</a>と<a href="http://www.graphviz.org/content/dot-language">Dot言語</a>は、そのような際に使用されるものの一つです。
+</p>
+<p>
+　Graphvizはグラフ作成のためのユーティリティ集で、Dot言語はGraphvizで使用される記述言語です。
+Graphvizの一般的な使用方法は、Dot言語のソースコードを書き、それをシェル上で(png,ps,svgなどの形式の)画像ファイルにコンパイルするというものです。
+Dot言語の文法は簡単に習得することができ、さらにグラフ画像の見えを細かく指定することもできるので、Graphvizは使い勝手のよい有益なソフトウェアです。
+</p>
+<p>
+　しかしながら、Dot言語は言語としてグラフ画像作成のための必要最低限の表現力しか備えていません。
+つまり、Dot言語はチューリング完全な言語ではなく、反復や分岐などの制御機構は備えていないのです。
+そのため、Dot言語のソースコードは、グラフに内在する規則性やパターンを活用することができず、いささか冗長なものになってしまいます。
+また、ソースコードを一々コンパイルしなければ画像を確認することができないので、グラフ画像にちょっとした修正を加えたいときには少々不便です。
+</p>
+<p>
+　そこで、これらの不便さを少しでも改善するべく、以下の3点の達成をゴールに設定しDonutsを開発しました。
+</p>
+<ol>
+<li>Common Lispにグラフ画像を <b>なめらかに</b> 作成する機能を備えさせること。
+</li>
+<li>グラフ内に現れる規則性やパターンを活用することで、簡潔なコードで複雑なグラフ画像が生成できるようにすること。
+</li>
+<li>REPL機能を備えたインクリメンタルで対話的な環境でグラフ画像が作成できるようにすること。
+</li>
+</ol>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> なめらかなDonuts</h3>
+<div class="outline-text-3" id="text-3-2">
+
+
 
 <p class="verse">
 人の思考は言語によって形作られる。<br/>
@@ -431,24 +426,21 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 </p>
 
 
-
-<hr/>
-
 <p>
-　グラフを作成するだけなら、Graphvizなど数あるソフトウェアをそのまま使えば達成できることです。
-それにもかかわらず、Donutsをあえて開発した一番の動機は <i>グラフを描くLispプログラマの生産性の向上のため</i> です。
+　
 </p>
+
 <p>
-　そこで、Donutsで達成したいゴールは、Common Lispでグラフ作成を <b>なめらかに</b> 行えるようにすることです。
-「なめらかに」とは <b>Lispの思考習慣の枠組を切り替えずに</b> ということを意味します。
-つまり、
- <i>Lispコード内であたかもC言語でコーディングするかのように思考を切り替えず、Lispの思考習慣のまま、グラフ作成を可能にすること</i> です。
-以下では、なぜこれが生産性に影響するのかについて説明します。
+　なぜCommon Lispにグラフ画像を作成する機能を備えさせねばならないのでしょうか？
+一言で答えると <i>グラフを描くLispプログラマの生産性の向上のため</i> です。
+では、なぜCommon Lispにグラフ画像を作成する機能を備えさせることがLispプログラマの生産性向上につながるのでしょうか？
+そのつながりについて見ていきます。
 </p>
+
 <p>
-　およそ、どのようなプログラミング言語でコードを書くとしても、プログラマはその言語特有の思考習慣の中で問題を考えます。
+　およそ、どのようなプログラミング言語でコードを書く場合でも、プログラマはその言語特有の思考習慣の中で問題を考えます。
 言語特有の思考習慣とは、その言語のシンタックスやセマンティックス、設計思想、コミュニティ文化などに根ざしたもので、そのすべてを文章化することは多分できないでしょう。
-それゆえ、LispとJavaによる具体例によって、それを見ていきましょう。
+そこで、LispとJavaによる具体例によって、その1つを見ていきましょう。
 </p>
 <p>
 <b>Lisp</b> ：
@@ -506,23 +498,24 @@ Hello World               <span style="color: #eeee00;">// </span><span style="c
 </p>
 <p>
 　ある言語Aのコードを書きながら途中で別な言語Bのコードを書くことの一番大きな理由は、言語Aの備えていない利点や機能を言語Bが備えているからです。
-例えば、Lispでコードを書きながらC言語を使うとしたら、LispよりCの方が実効速度が早いという利点があるからです。
+例えば、Lispでコードを書きながらコード中のある部分で局所的にC言語を使うとしたら、LispよりCの方が実効速度が早いという利点があるからです。
 同じように、Lispでコードを書きながらPostScriptを使うとしたら、Lispには画像を作成し出力する機能がないからです。
 </p>
 <p>
 　したがって問題は、 <b>Lispにはグラフ作成の機能がなく、代わりに他の言語を使うと思考の枠組の切り替えのために生産性が落ちてしまう</b> ことです。
-この問題を解決するために、 <b>Common Lispでグラフ作成を「なめらかに」行えるようにすること</b> こそが、Donutsのゴールなのです。
+この問題を解決するために、Common Lispでグラフ作成を <b>なめらかに</b> 行えるようにすることが、Donuts開発のゴールの1つなのです。
+「なめらかに」とは <b>Lispの思考習慣の枠組を切り替えずに</b> ということを意味します。
+つまり、Lispコード内であたかもC言語でコーディングするかのように思考を切り替えずに
+<b>Lispの思考習慣のまま、グラフ作成を可能にすること</b> です。
 </p>
-<p>
-　
-</p>
-</div>
 
 </div>
 
-<div id="outline-container-3-2" class="outline-3">
-<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Donutsの構築指針</h3>
-<div class="outline-text-3" id="text-3-2">
+</div>
+
+<div id="outline-container-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> Donutsの構築指針</h3>
+<div class="outline-text-3" id="text-3-3">
 
 
 
@@ -539,20 +532,20 @@ Lispは拡張可能なプログラムを書くために、とりわけみごと�
 </p>
 
 
-
-<hr/>
-
 <p>
-　前節で設定した目標を達成するために、どのような指針の基でソフトウェアを構築すると、うまくいくでしょうか？
+　
+</p>
+<p>
+　<a href="#sec-3-1">前々節で設定したゴール</a>を達成するために、どのような指針の基でソフトウェアを構築すればよいでしょうか？
 </p>
 <p>
 　採用した構築指針は <b>Lispの拡張を目指す</b> というものです。
 これは、「いっちょCLOSやloopやformatに匹敵するものをこさえるべぇ」というようなビッグドリームを語っているのでは <i>ありません</i> 。
+ポールグレアム氏が著書On Lispで提唱している <b>ボトムアップデザイン</b> によるプログラミング技法を指針として、ソフトウェアを作っていくということです。
 </p>
 <p>
-　ポールグレアム氏が著書On Lispで提唱している <b>ボトムアップデザイン</b> によるプログラミング技法を指針として、ソフトウェアを造っていくということです。
-ボトムアップデザインについては氏がOn Lispの中で詳しく解説しています。
-ここで私なりにボトムアップデザインのエッセンスを濃縮し、まとめてみると次のようになります。
+　ボトムアップデザインについては氏がOn Lispの中で詳しく解説しています。
+ここで私なりにボトムアップデザインのエッセンスを濃縮し、まとめてみたのが以下のものです。
 </p>
 <ol>
 <li>ソフトウェアに関する必要最低限の機能( <b>基礎的対象</b> や <b>基本操作</b> )のみをLispに追加し、それ以外の複雑な機能はLispに任せる。
@@ -568,9 +561,9 @@ Lispは拡張可能なプログラムを書くために、とりわけみごと�
 
 <p>
 　1&ndash;3はボトムアップデザインを行うためのガイドライン、4はボトムアップデザインの利点です。
-いずれの項目もLispでプログラムを書いたことのある方なら、当たり前だと感じるものでしょう。
+いずれの項目も「まあ普通だね」だと感じるような内容です。
 しかし、ここで4の拡張可能性について、もう少し掘り下げて考察していきたいと思います。
-なぜなら、4こそがLispを他の言語と違う、まったく異質なものにしていると私は考えるからです。
+なぜなら、4こそがLispを他の言語と異なる、まったく異質なものにしていると私は考えるからです。
 そして、この拡張可能性をソフトウェアに付与することで、「なめらかな」ソフトウェアを開発することができると私は考えているからです。
 </p>
 <p>
@@ -607,16 +600,14 @@ Lispの上に実現されたその機能は、基盤であるLispの拡張可能
 <p>
  <b>Lispは他の言語Lを吸収し、その言語が実現している機能Xを獲得することができる。結果、Lispには機能X'が追加される。しかし、この機能X'は、もはや言語Lの機能Xをはるかに超えたものになっている。 なぜなら、機能X'は機能Xと異なり、すべてのLisp機能を利用できるからである。</b>
 </p>
-<p>
-　
-</p>
-</div>
 
 </div>
 
-<div id="outline-container-3-3" class="outline-3">
-<h3 id="sec-3-3"><span class="section-number-3">3.3</span> "グラフ作成"の抽象化 &mdash; ユーザインターフェイスの設計1</h3>
-<div class="outline-text-3" id="text-3-3">
+</div>
+
+<div id="outline-container-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> "グラフ作成"の抽象化 &mdash; ユーザインターフェイスの設計1</h3>
+<div class="outline-text-3" id="text-3-4">
 
 
 
@@ -630,9 +621,9 @@ Lispの上に実現されたその機能は、基盤であるLispの拡張可能
 </p>
 
 
-
-<hr/>
-
+<p>
+　
+</p>
 <p>
 　ボトムアップにプログラムを書くために、グラフ作成に最低限必要な <b>基本操作</b> と 操作される <b>基本的対象</b> とは、どのようなものでしょうか？
 "グラフ作成" を抽象化して、それらを探していきました。
@@ -642,17 +633,12 @@ Lispの上に実現されたその機能は、基盤であるLispの拡張可能
 数学的な問題を解くには抽象化されたグラフ構造を扱い、 <i>グラフ構造を持つすべてのものに対し、これこれの命題が成り立つかどうか</i> を証明します。
 しかしながら、コンピュータにグラフ作成を命令するプログラムを書くためには、 <i>そもそもグラフ構造を構築するにはどうするか</i> を探さねばなりません。
 </p>
-
 <p>
 　ところで、 <i>探す</i> と言っても、答えが1つに確定している未知のものを探すと言っているわけではありません。
 ここでの <i>探す</i> という言葉の意味は、どのような対象や操作を基本とすれば <i>ユーザインターフェイスがシンプルで使いやすく美しいものになるか探す</i> ということです。
 したがって、以下の議論を論理の面だけから正当化することはできません。
 以下の議論は、それを踏まえたことでよいものができたかどうか、という結果の観点によってのみ判断される発見的なものです。
 </p>
-
-
-<hr/>
-
 <p>
 　まず、基本的対象から探していきました。
 その結果、グラフ作成に最低限必要な基本的対象を <b>ノードのアイデンティティ</b> にすると、シンプルで良いのではないかと考えました。
@@ -685,9 +671,6 @@ Lispの上に実現されたその機能は、基盤であるLispの拡張可能
 <p>
 　ここで、グラフ構築操作によって操作される対象にグラフも入れた理由は、「つながっていない2つのグラフから構成されるものも、またグラフである」と考えたからです。
 </p>
-
-<hr/>
-
 <p>
 　さて、グラフ作成のむずかしい部分は、自分ではじめから作るよりも、Graphvizを用いることにしました。
 Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz製作者の方も上と同じようなことを考えていたのだろうと思います。
@@ -698,35 +681,45 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 つまり、エッジやグラフに属性があれば、グラフの見えを多様なものにすることができるのです。
 そこで、Graphvizとの兼ね合いも考えて、以下のものをDonutsの基本対象と基本操作にすることにしました。
 </p>
-<dl>
-<dt><b>ノードの属性</b></dt><dd>ノードの名前や<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>、ラベル、色、形など。
-</dd>
-<dt><b>エッジの属性</b></dt><dd>エッジの名前や、ラベル、色、形など。
-</dd>
-<dt><b>グラフの属性</b></dt><dd>グラフの名前や、ラベル、色、形など。
+<ul>
+<li><b>ノードの属性</b>  ：　ノードの名前や<sup><a class="footref" name="fnr.5" href="#fn.5">5</a></sup>、ラベル、色、形など。
+</li>
+<li><b>エッジの属性</b>  ：　エッジの名前や、ラベル、色、形など。
+</li>
+<li><b>グラフの属性</b>  ：　グラフの名前や、ラベル、色、形など。
 
-</dd>
-<dt><b>ノード構築操作</b></dt><dd>ノードの属性 &mdash;&gt; ノード
-</dd>
-<dt><b>エッジ構築操作</b></dt><dd>ノード * ノード * エッジの属性 &mdash;&gt; エッジ
-</dd>
-<dt><b>グラフ構築操作</b></dt><dd>いくつかのノード * いくつかのエッジ * いくつかのグラフ * グラフの属性 &mdash;&gt; グラフ
-</dd>
-</dl>
+</li>
+<li><b>ノード構築操作</b>  ：　ノードの属性 &mdash;&gt; ノード
+</li>
+<li><b>エッジ構築操作</b>  ：　ノード * ノード * エッジの属性 &mdash;&gt; エッジ
+</li>
+<li><b>グラフ構築操作</b>  ：　いくつかのノード * いくつかのエッジ * いくつかのグラフ * グラフの属性 &mdash;&gt; グラフ
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3-5" class="outline-3">
+<h3 id="sec-3-5"><span class="section-number-3">3.5</span> 図形的な関数名やマクロ名 &mdash; ユーザインターフェイスの設計2</h3>
+<div class="outline-text-3" id="text-3-5">
+
+
+
+<p class="verse">
+よい記号というのは、あいまいでない、含蓄のある、しかも憶えやすいものでなければならない。<br/>
+それはまぎらわしい他の意味を表してはならず、よい意味では、しかしふくみのあるものでなければならない。<br/>
+記号の順序とくみ合わせはものごとの順序と組み合わせを示すものでなければならない。<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; &mdash; George Polya, How to solve it, (柿内賢信訳、いかにして問題をとくか, pp.120&ndash;1)<br/>
+</p>
 
 
 <p>
 　
 </p>
-</div>
-
-</div>
-
-<div id="outline-container-3-4" class="outline-3">
-<h3 id="sec-3-4"><span class="section-number-3">3.4</span> 図形的な関数名やマクロ名 &mdash; ユーザインターフェイスの設計2</h3>
-<div class="outline-text-3" id="text-3-4">
-
-
 <p>
 　さて、基本対象や基本操作は決まりましたが、それをlisp内でどのような名前で表すかは、まだ決まっていません。
 そこで、次の2点：
@@ -770,21 +763,6 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 それらの操作の詳細な意味は<a href="#sec-4">チュートリアル</a>または<a href="#sec-6">リファレンスマニュアル</a>を参照してください。
 </p>
 
-<hr/>
-
-<p>
-　
-</p>
-<p>
-　以上でDonutsの考え方の章は終わりです。
-抽象的で読みづらい章を最後まで読んでくださって、ありがとうございます。
-なるべく分かりやすい文章を心がけて書いたつもりですが、不明瞭な点や論理的展開の弱い点などは、すべて私の責任です。
-もしお手数でなけば、フィードバックを頂ければ幸甚です。
-特に、実効速度、使い勝手はどうか、実用操作のバランスはどうか、等の貴重な情報をいただけたら改良に役立てることができますので、大変ありがたいです。
-</p>
-<p>
-　
-</p>
 </div>
 </div>
 
@@ -806,24 +784,27 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </li>
 <li>シェルインターフェイス <code>$$</code> でグラフをビューアに出力する。 <code>($$ graph) ＝＞ NIL ;ビューアに画像を出力</code>
 </li>
-<li><code>dot-output</code> でグラフのdotコードを標準出力に表示する。  <code>(dot-output graph) ＝＞ NIL ;標準出力にdotコードを表示</code>
+<li><code>DOT-OUTPUT</code> でグラフのdotコードを標準出力に表示する。  <code>(DOT-OUTPUT graph) ＝＞ NIL ;標準出力にdotコードを表示</code>
 </li>
 </ul>
+
 
 
 <hr/>
 
 <p>
 <b>注：</b>
-この章内にある大部分のコードは、説明のため、グラフ型のオブジェクトを生成する部分のみであるのがほとんどです。
-グラフオブジェクトのdotコードを標準出力で見るには、 <code>(dot-output グラフオブジェクト)</code> のように <code>dot-output</code> を使う必要があります。
-また、 <code>dot-output</code> の代わりに <code>dot-pprint</code> を用いると整形されたdotコードを見ることができます。
-グラフオブジェクトの画像を直接ビューアで見るには、 <code>($$ グラフオブジェクト)</code> のようにシェルインターフェイス <code>$$</code> を使うと便利です。
-詳しくは<a href="#sec-4-4">出力</a>の節を参照してください。
+このチュートリアルは、かなり詳細に書かれているので、読むには時間がかかります。
+そこで、先を急ぐ方、入力コードと出力結果を見比べて動作を習得したい方、Dot言語に馴染みのある方は、まずは<a href="#sec-5">Examples</a>を見ることをおすすめします。
 </p>
 <p>
-　
+<b>注：</b>
+この章内にある大部分のコードは、グラフ型のオブジェクトを生成する部分のみ載せてあります。
+つまり、dotコードも画像も出力されません。
+dotコードを標準出力に表示するには <code>(dot-output グラフオブジェクト)</code> 、画像をビューアに出力するには <code>($$ グラフオブジェクト)</code> として下さい。
+詳しくは<a href="#sec-4-4">出力</a>の節を参照してください。
 </p>
+
 
 </div>
 
@@ -917,9 +898,6 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 しかし、グラフを再帰的に生成する際には、ヌルグラフは無くてはならないものです(cf. <a href="#sec-4-13-2">2分木</a>)。
 </p>
 
-<p>
-　
-</p>
 </div>
 
 </div>
@@ -934,9 +912,6 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 前節までで扱ってきたラベルも実は属性の一つです。
 属性の値を指定することで、グラフの見えをさまざまに変化させることができます。
 </p>
-
-<hr/>
-
 <p>
 　次のコードによって生成されるグラフは、下の様に出力されます(グラフ属性値を指定するには <code>&amp;&amp;</code> ではなく <code>&amp;</code> を用います)。
 コードの内容を詳しく見ていきましょう。
@@ -957,7 +932,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </p>
 
 <p>
-　まず1行目、グラフコンストラクタ <code>&amp;&amp;</code> が <code>&amp;</code> に置き換えられ、 <code>&amp;</code> の次(グラフ構成要素の前)にグラフ属性リスト <code>(:label "Proparty Example")</code> が置かれています。
+　1行目、グラフコンストラクタ <code>&amp;&amp;</code> が <code>&amp;</code> に置き換えられ、 <code>&amp;</code> の次(グラフ構成要素の前)にグラフ属性リスト <code>(:label "Proparty Example")</code> が置かれています。
 このグラフ属性リストによってグラフの見えを調整することができるのです。
 ここでは、グラフの属性 <code>:label</code> が値 "<code>Proparty Example</code>" に指定されていますので、出力されるグラフにラベル"<code>Proparty Example</code>"が付くことになります。
 </p>
@@ -998,27 +973,22 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 すなわち、このノードは、孤立ノードとなります。
 このノードはグラフ中の右上に出力されているものです。
 </p>
-
-<hr/>
-
 <p>
 　属性についての詳細は、以下のGraphvizマニュアルをご確認ください。
 少し注意が必要な点は、Graphvizで属性値を指定するには <code>属性=値</code> ですが、Donutsでは <code>:属性 値</code> である点です( <code>値</code> はキーワード、文字列、数値のいずれかです)。
 </p><ul>
 <li>属性について： <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
 </li>
-<li>ノードのshape属性について： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+<li>ノードのshape属性について： <a href="http://www.graphviz.org/content/node-shapes">http://www.graphviz.org/content/node-shapes</a>
 </li>
-<li>エッジのshape属性について： <a href="http://www.graphviz.org/arrow-shapes.html">http://www.graphviz.org/arrow-shapes.html</a>
+<li>エッジのshape属性について： <a href="http://www.graphviz.org/content/arrow-shapes">http://www.graphviz.org/content/arrow-shapes</a>
 </li>
-<li>色属性について： <a href="http://www.graphviz.org/color-names.html">http://www.graphviz.org/color-names.html</a>
+<li>色属性について： <a href="http://www.graphviz.org/content/color-names">http://www.graphviz.org/content/color-names</a>
 </li>
 </ul>
 
 
-<p>
-　
-</p>
+
 </div>
 
 </div>
@@ -1027,7 +997,9 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <h3 id="sec-4-3"><span class="section-number-3">4.3</span> ラベル</h3>
 <div class="outline-text-3" id="text-4-3">
 
-<p>　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>。
+
+<p>
+　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>。
 </p>
 <ul>
 <li><code>\\無</code>  空白が印字される<sup><a class="footref" name="fnr.9" href="#fn.9">9</a></sup>('無'はスペースを表す)。
@@ -1057,9 +1029,6 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <p>
 <img src="./images/label.png"  alt="./images/label.png" />
 </p>
-<p>
-　
-</p>
 </div>
 
 </div>
@@ -1077,12 +1046,12 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 </div>
 
 <div id="outline-container-4-4-1" class="outline-4">
-<h4 id="sec-4-4-1"><span class="section-number-4">4.4.1</span> <b>dot-output</b>, <b>dot-pprint</b></h4>
+<h4 id="sec-4-4-1"><span class="section-number-4">4.4.1</span> <b>DOT-OUTPUT</b>, <b>DOT-PPRINT</b></h4>
 <div class="outline-text-4" id="text-4-4-1">
 
 
 <p>
-　dot-output, dot-pprintは引数にグラフオブジェクトを取り、標準出力にそのグラフオブジェクトのdotコードを表示します。
+　DOT-OUTPUT, DOT-PPRINTは引数にグラフオブジェクトを取り、標準出力にそのグラフオブジェクトのdotコードを表示します。
 </p>
 
 
@@ -1110,9 +1079,8 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 
 
 <p>
-　dot-outputの代わりにdot-pprintを用いるとdotコードが整形され、標準出力に表示されます。
-dot-pprintは、Graphvizライブラリの整形用ユーティリティnopによって処理を行うため、dot-outputに比べ実行コストがかかります。
-dot-outputによる表示が見づらい場合に使うと便利です。
+　DOT-OUTPUTの代わりにDOT-PPRINTを用いるとdotコードが整形され、標準出力に表示されます。
+DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopによって処理を行うため、DOT-OUTPUTに比べ実行コストがかかります。
 </p>
 </div>
 
@@ -1124,8 +1092,7 @@ dot-outputによる表示が見づらい場合に使うと便利です。
 
 
 <p>
-　次のコードを評価すると、画像ファイルdiamond.pngが生成され、
-ビューアが立ち上がり、diamond.pngが表示されます(下の画像)。
+　次のコードを評価すると、画像ファイルdiamond.pngが生成され、ビューアが立ち上がり、diamond.pngが表示されます(下の画像)。
 </p>
 
 
@@ -1179,7 +1146,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 　生成できる画像ファイルの種類については、次のGraphvizマニュアルをご確認ください。
 </p>
 <ul>
-<li><a href="http://www.graphviz.org/output-formats.html">http://www.graphviz.org/output-formats.html</a>
+<li><a href="http://www.graphviz.org/content/output-formats">http://www.graphviz.org/content/output-formats</a>
 </li>
 </ul>
 
@@ -1205,9 +1172,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 詳細は<a href="#sec-4-10">無向グラフ、レイアウトアルゴリズム</a>の節で解説します。
 </p>
 
-<p>
-　
-</p>
 </div>
 </div>
 
@@ -1243,9 +1207,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 重要なのでもう一度繰り返しますが、 <b>グラフの属性はトップレベルのもののみが有効になります</b> 。
 部分グラフsmallのラベルが無効になり、トップレベルグラフBIGのラベルが有効になっていることをご確認ください。
 </p>
-
-<hr/>
-
 <p>
 　 <b>クラスタ</b> は、特別な部分グラフです。
 長方形の枠で囲われ、外部と独立に内部のレイアウトを指定することができます。
@@ -1277,9 +1238,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <p>
 　5行目、クラスタ外部のノード'Out of cluster'から、クラスタ内部のノードcへのエッジを生成します。
 </p>
-<p>
-　
-</p>
+
 </div>
 
 </div>
@@ -1308,8 +1267,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 
-<hr/>
-
 <p>
 　下のコードの5行目でランクオペレータ <code>rank</code> が使用されています。
  <code>(rank :same a c e)</code> によってレキシカル変数 <code>a</code>, <code>c</code>, <code>e</code> にそれぞれ束縛された偶数ノードの高さが揃えられ、
@@ -1336,10 +1293,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 </p>
 <p>
 (ノードの高さを揃える操作は使用頻度が高いので、ユーティリティとして再定義しています。cf.<a href="#sec-4-9-3">ユーティリティ：~</a>)
-</p>
-
-<p>
-　
 </p>
 </div>
 
@@ -1368,7 +1321,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 
-<hr/>
 <p>
 　ポートの使い方を次の例で見ていきましょう。
 </p>
@@ -1408,10 +1360,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 レコードでは、ポート（フィールドポート）の場所を自分で設定することができます。
 </p>
 
-
-<p>
-　
-</p>
 </div>
 
 </div>
@@ -1444,9 +1392,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 　区切り <code>|</code> を含む2つ以上のフィールドを中括弧 <code>{</code> , <code>}</code> でくくることで、出力されるノードの区切り方向の縦横を変えることができます。
 ネストされた <code>{</code> , <code>}</code> に囲まれた部分は、深さにつれて縦、横、縦、横のように順次、変更されていきます。
 </p>
-
-<hr/>
-
 <p>
 　フィールドの設定の仕方を次の例で見ていきましょう。
 </p>
@@ -1493,6 +1438,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 フィールドg｝フィールド4）フィールドh」
 になります。
 </p>
+
 </div>
 
 </div>
@@ -1534,9 +1480,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 結局のところ、 <code>|:port-name</code> <b>の後にはいつも空白が必要だ</b> と覚えておけば無難です。
 </p>
 
-
-<hr/>
-
 <p>
 　前節<a href="#sec-4-8-1">フィールド</a>の例にフィールドポートを追加したものが以下のコードです。
 </p>
@@ -1576,9 +1519,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <a href="#Html-like">html-likeラベル</a>によって達成することができるかもしれません。)
 </p>
 
-<p>
-　
-</p>
 </div>
 </div>
 
@@ -1601,14 +1541,14 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 <p>
-　with-node, with-edgeによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
+　WITH-NODE, WITH-EDGEによって、ノードやエッジの属性値のデフォルト値が変更されたコンテキストを作り出すことができます。
 コンテキスト内で生成されるノードやエッジのデフォルト属性値はすべて同じ値になるので、多数のノードやエッジの属性をまとめて指定したい場合に役立ちます。
- with-node,  with-edgeをネストした場合、属性値は上書きされます。
+ WITH-NODE,  WITH-EDGEをネストした場合、属性値は上書きされます。
 </p>
 <p>
- <b>注: with-node, with-edgeは、暗黙のグラフを生成します。</b> 
+ <b>注: WITH-NODE, WITH-EDGEは、暗黙のグラフを生成します。</b> 
 部分グラフのグラフ属性は無視されるのでした (cf. <a href="#sec-4-5">部分グラフ、クラスタ</a>)。
-そのため、with-node, with-edgeによるコンテキスト内で生成されるグラフのグラフ属性は無効になります。
+そのため、WITH-NODE, WITH-EDGEによるコンテキスト内で生成されるグラフのグラフ属性は無効になります。
 次の上のコードは期待通りに動作しますが、下のコードの動作には注意が必要です。
 </p>
 
@@ -1625,13 +1565,11 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 </pre>
 
 <p>
-細かいことを気するのはいやだ、というのであれば、 <b>with-node, with-edgeは、&amp;,[&amp;],&amp;&amp;の内部でのみ、使用した方が無難です。</b>
+細かいことを気するのはいやだ、というのであれば、 <b>WITH-NODE, WITH-EDGEは、&amp;,[&amp;],&amp;&amp;の内部でのみ、使用した方が無難です。</b>
 </p>
-
-<hr/>
-
 <ul>
 <li id="sec-4-9-1-1">with-node<br/>
+
 
 
 
@@ -1698,8 +1636,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 
-
-<hr/>
 </li>
 </ul>
 <ul>
@@ -1727,8 +1663,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <img src="./images/with-edge.png"  alt="./images/with-edge.png" />
 </p>
 
-
-
 </li>
 </ul>
 </div>
@@ -1755,7 +1689,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <p>
 <img src="./images/self-loop.png"  alt="./images/self-loop.png" />
 </p>
-
 
 </div>
 
@@ -1790,6 +1723,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <div id="outline-container-4-9-4" class="outline-4">
 <h4 id="sec-4-9-4"><span class="section-number-4">4.9.4</span> 複数のノードを数珠つなぎに結ぶ関数：&ndash;&gt;</h4>
 <div class="outline-text-4" id="text-4-9-4">
+
 
 
 
@@ -1855,10 +1789,6 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 <p>
 <img src="./images/converge-edge.png"  alt="./images/converge-edge.png" />
-</p>
-
-<p>
-　
 </p>
 </div>
 </div>
@@ -2015,9 +1945,6 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 <p>
 <img src="./images/layout-sfdp.png"  alt="./images/layout-sfdp.png" />
 </p>
-<p>
-　
-</p>
 </div>
 
 </div>
@@ -2025,7 +1952,6 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 <div id="outline-container-4-11" class="outline-3">
 <h3 id="sec-4-11"><span class="section-number-3">4.11</span> 無向グラフに関するユーティリティ集</h3>
 <div class="outline-text-3" id="text-4-11">
-
 
 
 
@@ -2068,7 +1994,6 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 
 
 
-
 </div>
 
 </div>
@@ -2095,9 +2020,7 @@ Donutsでは、シェルインターフェイス$のプロパティリスト中�
 <p>
 <img src="./images/radiate-path.png"  alt="./images/radiate-path.png" />
 </p>
-<p>
-　
-</p>
+
 </div>
 </div>
 
@@ -2121,11 +2044,6 @@ Donutsではhtmlタグの冗長性を排した <b>タグ関数</b> によって�
 　すべてのタグ関数は、引数として任意数の、属性と属性値、タグ本体(数値や文字列、タグオブジェクト)を取り、タグを生成します。
 タグ関数は、 <b>br</b>, <b>hr</b>, <b>vr</b>, <b>img</b>, <b>font</b>, <b>i</b>, <b>b</b>, <b>u</b>, <b>sub</b>, <b>sup</b>, <b>table</b>, <b>tr</b>, <b>td</b> です。
 </p>
-<p>
-　
-</p>
-
-<hr/>
 <p>
 　具体例によってhtml-likeラベルの使い方を見ていきましょう。
 </p>
@@ -2226,28 +2144,21 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 
 
-<p>
-　
-</p>
 </div>
 
 </div>
 
 <div id="outline-container-4-13" class="outline-3">
-<h3 id="sec-4-13"><span class="section-number-3">4.13</span> 小さなプログラム &mdash; カレンダー、2分木、コンスセル、有限オートマトン</h3>
+<h3 id="sec-4-13"><span class="section-number-3">4.13</span> 小さなプログラム &mdash; カレンダー、2分木、コンスセル、状態遷移図</h3>
 <div class="outline-text-3" id="text-4-13">
 
 
 <p>
 　グラフに規則性(パターン)が存在するなら、lisp組み込みの機能を使うことで簡単に描ける場合があります。
 この節では、Donutsによる小さなプログラムを4つ紹介します。
-カレンダーを描く関数generate-monthly-calendar、2分木を描く関数binary-tree-graph、ツリーのコンスセル構造を描くマクロcons-cell-of、有限オートマトンの遷移図を描くマクロtrans-diagramです。
-ざっくり言うと、これらはいずれも<a href="#sec-3-2">大きな言語Donutsで書かれた小さなプログラム</a>です。
+カレンダーを描く関数generate-monthly-calendar、2分木を描く関数binary-tree-graph、ツリーのコンスセル構造を描くマクロcons-cell-of、状態遷移図を描くマクロtrans-diagramです。
+ざっくり言うと、これらはいずれも<a href="#sec-3-3">大きな言語Donutsで書かれた小さなプログラム</a>です。
 </p>
-<p>
-　
-</p>
-
 
 </div>
 
@@ -2276,26 +2187,36 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 
 
 <pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">generate-monthly-calendar</span> (month year num-days starting-day)
-  (<span style="color: #eeee00;">let</span> ((month (&lt;&gt; (format nil <span style="color: #90ee90;">"~@(~A~)\\n~D"</span> month year) <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:Msquare</span>))
-        (luminary7 (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> day <span style="color: #00ee76;">:in</span> '(<span style="color: #90ee90;">"Sun"</span> <span style="color: #90ee90;">"Mon"</span> <span style="color: #90ee90;">"Tue"</span> <span style="color: #90ee90;">"Wed"</span> <span style="color: #90ee90;">"Thu"</span> <span style="color: #90ee90;">"Fri"</span> <span style="color: #90ee90;">"Sat"</span>)
-                         <span style="color: #00ee76;">:collect</span> (&lt;&gt; day <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:egg</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:lightgray</span>)))
-        (days (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> day <span style="color: #00ee76;">:in</span> (nconc (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:repeat</span> starting-day <span style="color: #00ee76;">:collect</span> <span style="color: #90ee90;">""</span>)
-                                        (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> d <span style="color: #00ee76;">:from</span> 1 <span style="color: #00ee76;">:to</span> num-days <span style="color: #00ee76;">:collect</span> d)
-                                        (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:repeat</span> (- (* 7 (<span style="color: #eeee00;">if</span> (and (= 28 num-days) (= 0 starting-day))
-                                                                  4 5)) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">for Feb starting Sun in common year </span>
-                                                         starting-day num-days)
-                                              <span style="color: #00ee76;">:collect</span> <span style="color: #90ee90;">""</span>))
-                    <span style="color: #00ee76;">:collect</span> (&lt;&gt; day <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:box</span>))))
-    (apply #'<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> week <span style="color: #00ee76;">:in</span> (cons luminary7 (group 7 days))
+  (<span style="color: #eeee00;">let</span> ((month     (generate-month-nodes month year))
+        (luminary7 (generate-luminary7-nodes))
+        (days      (generate-day-nodes num-days starting-day)))
+    (apply #'<span style="color: #eeee00;">&amp;&amp;</span> (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> week <span style="color: #00ee76;">:in</span> (cons luminary7 (group days 7)) 
                       <span style="color: #00ee76;">:collect</span> (apply #'--&gt; month week)))))
 
-<span style="color: #eeee00;">;; </span><span style="color: #eeee00;">from On Lisp</span>
-(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">group</span> (n lst)
+(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">generate-month-nodes</span> (month year)
+  (&lt;&gt; (format nil <span style="color: #90ee90;">"~@(~A~)\\n~D"</span> month year) <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:Msquare</span>))
+
+(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">generate-luminary7-nodes</span> ()
+  (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> day <span style="color: #00ee76;">:in</span> '(<span style="color: #90ee90;">"Sun"</span> <span style="color: #90ee90;">"Mon"</span> <span style="color: #90ee90;">"Tue"</span> <span style="color: #90ee90;">"Wed"</span> <span style="color: #90ee90;">"Thu"</span> <span style="color: #90ee90;">"Fri"</span> <span style="color: #90ee90;">"Sat"</span>)
+        <span style="color: #00ee76;">:collect</span> (&lt;&gt; day <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:egg</span> <span style="color: #00ee76;">:style</span> <span style="color: #00ee76;">:filled</span> <span style="color: #00ee76;">:color</span> <span style="color: #00ee76;">:lightgray</span>)))
+
+(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">generate-day-nodes</span> (num-days starting-day)
+  (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> day <span style="color: #00ee76;">:in</span> (nconc (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:repeat</span> starting-day <span style="color: #00ee76;">:collect</span> <span style="color: #90ee90;">""</span>)
+                            (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:for</span> d <span style="color: #00ee76;">:from</span> 1 <span style="color: #00ee76;">:to</span> num-days <span style="color: #00ee76;">:collect</span> d)
+                            (<span style="color: #eeee00;">loop</span> <span style="color: #00ee76;">:repeat</span> (- (* 7 (<span style="color: #eeee00;">if</span> (and (= 28 num-days) (= 0 starting-day))
+                                                      4 5)) <span style="color: #eeee00;">;</span><span style="color: #eeee00;">for Feb starting Sun in common year </span>
+                                                  starting-day num-days)
+                                  <span style="color: #00ee76;">:collect</span> <span style="color: #90ee90;">""</span>))
+        <span style="color: #00ee76;">:collect</span> (&lt;&gt; day <span style="color: #00ee76;">:shape</span> <span style="color: #00ee76;">:box</span>)))
+
+<span style="color: #eeee00;">;; </span><span style="color: #eeee00;">from On Lisp, e.g. (group '(1 2 3 4) 2) =&gt; ((1 2) (3 4))</span>
+(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">group</span> (lst n)
   (<span style="color: #eeee00;">if</span> (zerop n) (<span style="color: #ee0000;">error</span> <span style="color: #90ee90;">"zero length"</span>))
   (<span style="color: #eeee00;">labels</span> ((rec (lst acc)
              (<span style="color: #eeee00;">let</span> ((rest (nthcdr n lst)))
                (<span style="color: #eeee00;">if</span> (consp rest)
-                   (rec rest (cons (subseq lst 0 n) acc))
+                   (rec rest (cons (subseq lst 0 n)
+                                   acc))
                    (nreverse (cons lst acc))))))
     (<span style="color: #eeee00;">if</span> lst (rec lst nil) nil)))
 </pre>
@@ -2306,9 +2227,7 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 カレンダーを表すグラフを返します。
 '1日の曜日'とは、日曜を0、月曜を1、&hellip;土曜を6に、それぞれ対応させた数値です。
 </p>
-<p>
-　
-</p>
+
 </div>
 
 </div>
@@ -2362,10 +2281,6 @@ fontタグは:color属性によって文字色を、:faceによってフォン�
 14行目、ツリーがルートのみで構成されているかどうかをチェックします。
 </p>
 
-
-<p>
-　
-</p>
 </div>
 
 </div>
@@ -2452,15 +2367,12 @@ cons-cellは、nameを引数に取り、（レコードで表現された）コ�
 set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛されたコンスセルのcar（またはcdr）にobjを連結します。
 </p>
 
-<p>
-　
-</p>
 </div>
 
 </div>
 
 <div id="outline-container-4-13-4" class="outline-4">
-<h4 id="sec-4-13-4"><span class="section-number-4">4.13.4</span> 有限オートマトン</h4>
+<h4 id="sec-4-13-4"><span class="section-number-4">4.13.4</span> 状態遷移図</h4>
 <div class="outline-text-4" id="text-4-13-4">
 
 
@@ -2506,7 +2418,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 
 <p>
-　マクロtrans-diagramは、有限オートマトンの遷移図グラフを生成します。
+　マクロtrans-diagramは、有限オートマトンの状態遷移図を生成します。
 引数として、初期状態、最終状態のリスト、遷移関数リストの3つを取ります。
 遷移関数リストとは、遷移関数をリストで表現したものです。
 例えば、下表の遷移関数：
@@ -2524,9 +2436,7 @@ set-car（またはset-cdr）は、nameとobjを引数に取り、nameに束縛�
 
 は、リスト <code>((S1 (0 S1) (1 S2)) (S2 (0 S3) (1 S2)) (S3 (0 S2) (1 S1)))</code> によって表すことができます。
 
-<p>
-　
-</p>
+
 </div>
 </div>
 
@@ -2583,7 +2493,7 @@ letは、暗黙のprogn内の最後の式の値を返します。
 </div>
 
 <div id="outline-container-4-14-2" class="outline-4">
-<h4 id="sec-4-14-2"><span class="section-number-4">4.14.2</span> with-node, with-edgeは、暗黙のグラフを生成します。</h4>
+<h4 id="sec-4-14-2"><span class="section-number-4">4.14.2</span> WITH-NODE, WITH-EDGEは、暗黙のグラフを生成します。</h4>
 <div class="outline-text-4" id="text-4-14-2">
 
 
@@ -2653,7 +2563,6 @@ Donutsは <i>最適化していません</i> が、たとえ最適化しても�
 リアルタイムのグラフ生成などには多分向かないでしょう。
 </p>
 
-
 </div>
 </div>
 </div>
@@ -2664,12 +2573,16 @@ Donutsは <i>最適化していません</i> が、たとえ最適化しても�
 <h2 id="sec-5"><span class="section-number-2">5</span> Examples from Graphviz manual</h2>
 <div class="outline-text-2" id="text-5">
 
-<p>この章の例は、以下のGraphvizマニュアルより抜粋したものがほとんどです。
+
+<p>
+　この章の大部分の例は、以下のGraphvizマニュアルより抜粋したものです。
+Dot言語コードとの類推が容易になるように、グラフは単一のS式で表現しています。
+しかし、個々のグラフ要素をバラバラに生成した後に、グラフコンストラクタ <code>&amp;&amp;</code>, <code>&amp;</code> でそれらの要素をまとめても、出力される画像は同じものになります。
 </p>
 <ul>
 <li><a href="http://www.graphviz.org/pdf/dotguide.pdf">http://www.graphviz.org/pdf/dotguide.pdf</a>
 <ul>
-<li><a href="http://www.cbrc.jp/~tominaga/translations/index.html#dot">Tominaga氏による和訳</a>
+<li><a href="http://www.cbrc.jp/~tominaga/translations/index.html#dot">富永大介氏による和訳</a>
     (翻訳元の原文の版が少し古いので、html-likeラベル等の新しい機能は解説されていません。
     しかしながら、大方の部分で大変参考になるはずです)
 </li>
@@ -2687,11 +2600,13 @@ Donutsは <i>最適化していません</i> が、たとえ最適化しても�
 
 
 
+
 </div>
 
 <div id="outline-container-5-1" class="outline-3">
 <h3 id="sec-5-1"><span class="section-number-3">5.1</span> Examples from dot guide</h3>
 <div class="outline-text-3" id="text-5-1">
+
 
 
 </div>
@@ -2889,7 +2804,7 @@ Donutsは <i>最適化していません</i> が、たとえ最適化しても�
 <p>
 (各ノードは時系列に並んでいるので、おそらく'ksh&lt;-&gt;nmake'ではなく'ksh-&gt;nmake'ではないかと思います。
 しかしながら、元々の例中で'ksh&lt;-&gt;nmake'であり、私自身kshやnmakeに関して詳しくないため、そのままにしてあります。
-nmakeとkshのつながりに関して詳しい方がいらっしゃいましたら、どうかご助言を頂けるとありがたいです。)
+nmakeとkshのつながりに関して詳しい方がいらっしゃいましたら、ご助言を頂けるとありがたいです。)
 </p>
 
 </div>
@@ -3051,6 +2966,7 @@ nmakeとkshのつながりに関して詳しい方がいらっしゃいました
 <p>
 <img src="./images/example9.png"  alt="./images/example9.png" />
 </p>
+
 </div>
 
 </div>
@@ -3246,9 +3162,6 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 <p>
 <img src="./images/example12-3.png"  alt="./images/example12-3.png" />
 </p>
-<p>
-　
-</p>
 
 </div>
 </div>
@@ -3395,6 +3308,7 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 <p>
 <img src="./images/example15.png"  alt="./images/example15.png" />
 </p>
+
 </div>
 
 </div>
@@ -3402,6 +3316,7 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 <div id="outline-container-5-2-4" class="outline-4">
 <h4 id="sec-5-2-4"><span class="section-number-4">5.2.4</span> 例16</h4>
 <div class="outline-text-4" id="text-5-2-4">
+
 
 
 
@@ -3448,10 +3363,6 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 <img src="./images/example17.png"  alt="./images/example17.png" />
 </p>
 
-
-
-
-
 </div>
 </div>
 </div>
@@ -3476,23 +3387,23 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 </p>
 
 
-<pre class="src src-lisp">donuts-code <span style="color: #00ee76;">::=</span> '('&lt;output-op&gt; &lt;graph&gt;')'
+<pre class="src src-lisp">&lt;donuts-code&gt; <span style="color: #00ee76;">::=</span> '('&lt;output-op&gt; &lt;graph&gt;')'|&lt;node&gt;|&lt;edge&gt;|&lt;graph&gt;|&lt;html-like-label&gt;|&lt;tag&gt;|&lt;common-lisp-code&gt;
 &lt;output-op&gt; <span style="color: #00ee76;">::=</span> 'dot-output'|'dot-pprint'|'$$'|'$' &lt;attr-list&gt;
 
 &lt;attr-list&gt; <span style="color: #00ee76;">::=</span> '('{&lt;attr&gt;}')'
 &lt;attr&gt; <span style="color: #00ee76;">::=</span> &lt;attr-keyword&gt; &lt;attr-value&gt;
 
-&lt;graph&gt; <span style="color: #00ee76;">::=</span> '(<span style="color: #eeee00;">&amp;&amp;</span>' &lt;graph-elts&gt;')'|'(&amp;' &lt;attr-list&gt; &lt;graph-elts&gt;')'
-&lt;graph-elts&gt; <span style="color: #00ee76;">::=</span> nil|&lt;node&gt;|&lt;pre-node&gt;|&lt;edge&gt;|&lt;graph&gt;|&lt;cluster&gt;|&lt;rank&gt;|&lt;with&gt;|&lt;graph-elts&gt;{ &lt;graph-elts&gt;}
+&lt;graph&gt; <span style="color: #00ee76;">::=</span> '(<span style="color: #eeee00;">&amp;&amp;</span>' &lt;graph-elts&gt;')'|'(&amp;' &lt;attr-list&gt; &lt;graph-elts&gt;')'|&lt;cluster&gt;
+&lt;graph-elts&gt; <span style="color: #00ee76;">::=</span> nil|&lt;pre-node&gt;|&lt;node&gt;|&lt;edge&gt;|&lt;graph&gt;|&lt;cluster&gt;|&lt;rank&gt;|&lt;with&gt;|&lt;graph-elts&gt;{ &lt;graph-elts&gt;}
 &lt;cluster&gt; <span style="color: #00ee76;">::=</span> '([&amp;]' &lt;attr-list&gt; &lt;graph-elts&gt;')'
 
-&lt;pre-node&gt; <span style="color: #00ee76;">::=</span> number|string
+&lt;pre-node&gt; <span style="color: #00ee76;">::=</span> &lt;number&gt;|&lt;string&gt;
 &lt;node&gt; <span style="color: #00ee76;">::=</span> &lt;pre-node&gt;|'(&lt;&gt;' (&lt;pre-node&gt;|&lt;html-like-label&gt;){ &lt;attr&gt;}')'|&lt;record&gt;|'(@'&lt;node&gt; &lt;port&gt;[ &lt;port&gt;]')'
 
-&lt;record&gt; <span style="color: #00ee76;">::=</span> '([] "'&lt;record-label&gt;'"'{ &lt;attr&gt;}')'
+&lt;record&gt; <span style="color: #00ee76;">::=</span> '([] <span style="color: #90ee90;">"'&lt;record-label&gt;'"</span>'{ &lt;attr&gt;}')'
 &lt;record-label&gt; <span style="color: #00ee76;">::=</span> &lt;field&gt;{'|'&lt;field&gt;}
 &lt;field&gt; <span style="color: #00ee76;">::=</span> [&lt;filed-port&gt; ]{char}|'{'&lt;record-label&gt;'}'
-&lt;filed-port&gt; <span style="color: #00ee76;">::=</span> keyword
+&lt;filed-port&gt; <span style="color: #00ee76;">::=</span> &lt;keyword&gt;
 
 &lt;port&gt; <span style="color: #00ee76;">::=</span> &lt;compass-port&gt;|&lt;filed-port&gt;
 &lt;compass-port&gt; <span style="color: #00ee76;">::=</span> <span style="color: #00ee76;">:n</span>|<span style="color: #00ee76;">:ne</span>|<span style="color: #00ee76;">:e</span>|<span style="color: #00ee76;">:se</span>|<span style="color: #00ee76;">:s</span>|<span style="color: #00ee76;">:sw</span>|<span style="color: #00ee76;">:w</span>|<span style="color: #00ee76;">:nw</span>|<span style="color: #00ee76;">:c</span>|<span style="color: #00ee76;">:_</span>
@@ -3508,15 +3419,19 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 &lt;with-op&gt; <span style="color: #00ee76;">::=</span> 'with-node'|'with-edge'
 
 &lt;html-like-label&gt; <span style="color: #00ee76;">::=</span> '(html'{ &lt;tag&gt;| &lt;txt&gt;}')'
-&lt;txt&gt; <span style="color: #00ee76;">::=</span> string|number
+&lt;txt&gt; <span style="color: #00ee76;">::=</span> &lt;string&gt;|&lt;number&gt;
 &lt;tag&gt; <span style="color: #00ee76;">::=</span> '('&lt;tag-cons&gt; &lt;tag-body&gt;')'
 &lt;tag-cons&gt; <span style="color: #00ee76;">::=</span> 'table'|'font'|'i'|'b'|'u'|'sub'|'sup'|'br'|'hr'|'tr'|'vr'|'td'|'img'
 &lt;tag-body&gt; <span style="color: #00ee76;">::=</span> &lt;tag&gt;|&lt;attr&gt;|&lt;txt&gt;|&lt;tag-body&gt;{ &lt;tag-body&gt;}
 </pre>
 
 <ul>
+<li>&lt;number&gt;, &lt;string&gt;, &lt;keyword&gt;は、それぞれ、Common Lispの数、文字列、キーワードを表す。
+</li>
 <li>&lt;attr&gt;: cf. <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
 <ul>
+<li>ノード、エッジ、グラフ、タグ、それぞれでサポートしている属性が異なる。
+</li>
 <li>レイアウトアルゴリズムごとにサポートしている属性が異なる。
 </li>
 <li>&lt;attr-keyword&gt;はキーワードであり, &lt;attr-value&gt;との間に空白' 'が必要。
@@ -3535,19 +3450,17 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 </ul>
 
 </li>
-<li>&lt;tag-cons&gt;: cf. <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+<li>&lt;tag-cons&gt;: cf. <a href="http://www.graphviz.org/content/node-shapes">http://www.graphviz.org/content/node-shapes</a>
 <ul>
 <li>&lt;tag-cons&gt;ごとに属性の種類が限定されている。
 </li>
-<li>&lt;tag-cons&gt;ごとに引数として取ることのできる&lt;tag&gt;の種類が限定されている(ex. tr,td,hr,vrはtableタグ内でのみ用いることができる)。
-
+<li>&lt;tag-cons&gt;ごとに引数として取ることのできる&lt;tag&gt;の種類が限定されている(e.g. tr,td,hr,vrはtableタグ内でのみ用いることができる)。
 </li>
 </ul>
 
 </li>
-<li>正確には、すべてのCommon Lisp文法を上述の文法に加えたものがDonuts文法となる。
-</li>
 </ul>
+
 
 
 
@@ -3564,18 +3477,13 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 
 <p>
-　ノードコンストラクタ&lt;&gt;によって生成されるオブジェクトはnode型のオブジェクトである。
-プレノード(数値、ストリング)、[]によって生成されるレコードもnodeのオブジェクト型とみなされる。
-これら以外のものはnode型のオブジェクトではない。
-</p>
-<p>
 ノード属性の種類については、下記のリンク先を参照せよ。
 </p><ul>
 <li>属性について： <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
 </li>
-<li>shape属性について： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+<li>shape属性について： <a href="http://www.graphviz.org/content/node-shapes">http://www.graphviz.org/content/node-shapes</a>
 </li>
-<li>color属性について： <a href="http://www.graphviz.org/color-names.html">http://www.graphviz.org/color-names.html</a>
+<li>color属性について： <a href="http://www.graphviz.org/content/color-names">http://www.graphviz.org/content/color-names</a>
 </li>
 </ul>
 
@@ -3640,10 +3548,6 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 <p>　[Macro]　with-nodeは &amp;, &amp;&amp;, [&amp;]の引き数内で使うのが無難。
 </p>
-<p>
-　
-</p>
-
 
 </div>
 
@@ -3654,19 +3558,14 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 <div class="outline-text-3" id="text-6-3">
 
 
-
-
-<p>
-　エッジコンストラクタ-&gt;とエッジユーティリティ(&mdash;,&mdash;&gt;,-&mdash;,?,O)によって生成されるオブジェクトのみがedge型のオブジェクトである。
-</p>
 <p>
 エッジ属性の種類については、下記のリンク先を参照せよ。
 </p><ul>
 <li>属性について： <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
 </li>
-<li>shape属性について： <a href="http://www.graphviz.org/arrow-shapes.html">http://www.graphviz.org/arrow-shapes.html</a>
+<li>shape属性について： <a href="http://www.graphviz.org/content/arrow-shapes">http://www.graphviz.org/content/arrow-shapes</a>
 </li>
-<li>color属性について： <a href="http://www.graphviz.org/color-names.html">http://www.graphviz.org/color-names.html</a>
+<li>color属性について： <a href="http://www.graphviz.org/content/color-names">http://www.graphviz.org/content/color-names</a>
 </li>
 </ul>
 
@@ -3789,11 +3688,6 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 
 <p>　[Macro]　with-edgeは &amp;, &amp;&amp;, [&amp;]の引き数内で使うのが無難。
 </p>
-<p>
-　
-</p>
-
-
 
 </div>
 
@@ -3804,11 +3698,6 @@ from <a href="http://www.graphviz.org/doc/info/html2.gv">http://www.graphviz.org
 <div class="outline-text-3" id="text-6-4">
 
 
-<p>
-　グラフコンストラクタ&amp; (or &amp;&amp;)によって生成されるオブジェクトはgraph型のオブジェクトである。
-with-系のユーティリティの返り値、[&amp;]によって生成されるクラスタもgraph型のオブジェクトとみなされる。
-これら以外のものはgraph型のオブジェクトではない。
-</p>
 <p>
 　クラスター以外のグラフ属性値はトップレベルのもののみ有効。
 クラスター以外のサブグラフのグラフ属性は無視される。
@@ -3821,7 +3710,7 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 </p><ul>
 <li>属性について： <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
 </li>
-<li>クラスターのcolor属性について： <a href="http://www.graphviz.org/color-names.html">http://www.graphviz.org/color-names.html</a>
+<li>クラスターのcolor属性について： <a href="http://www.graphviz.org/content/color-names">http://www.graphviz.org/content/color-names</a>
 </li>
 </ul>
 
@@ -3857,13 +3746,6 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 
 <p>　[Macro]　グラフ属性リストとグラフ構成要素(ノード、エッジ、グラフ)からクラスターを生成する。
 </p>
-<p>
-　
-</p>
-
-
-
-
 
 </div>
 
@@ -3874,9 +3756,8 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 <div class="outline-text-3" id="text-6-5">
 
 
-<p>
-　
-</p>
+
+
 <dl>
 <dt><b>dot-output</b>  <i>graph</i> =&gt; NIL</dt><dd>
 </dd>
@@ -3916,8 +3797,7 @@ Graphvizがサポートする属性に加え、:name、:strictもグラフ属性
 </p>
 <p>
 　
-</p>
-</div>
+</p></div>
 
 </div>
 
@@ -3944,7 +3824,7 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 
 
 <p>
-　参考： <a href="http://www.graphviz.org/node-shapes.html">http://www.graphviz.org/node-shapes.html</a>
+　参考： <a href="http://www.graphviz.org/content/node-shapes">http://www.graphviz.org/content/node-shapes</a>
 </p>
 <p>
 　
@@ -3971,8 +3851,7 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 </p>
 <p>
 　
-</p>
-</div>
+</p></div>
 </div>
 
 </div>
@@ -3988,89 +3867,56 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 <ul>
 <li>開発環境以外での動作確認(windows, macなど)。
 <ul>
-<li>windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じてしまう。
-</li>
-</ul>
+<li>windowsのlispbox(ccl)ではシェルインターフェイス$でエラーが生じてしまう
 
 </li>
 </ul>
 
-
-
+</li>
+<li>ドキュメントの完成
 <ul>
-<li>日本語版ドキュメントの完成。
+<li>日本語版ドキュメントの完成
 <ul>
-<li>リファレンスマニュアル。
+<li>リファレンスマニュアル
+</li>
+<li>推敲
 </li>
 </ul>
 
 </li>
-</ul>
-
-
-
-<ul>
-<li>Graphviz機能の実装。
-<ul>
-<li>カスタムシェイプの実装。
-</li>
-</ul>
+<li>ドキュメントの英訳
 
 </li>
 </ul>
 
-
-
+</li>
+<li>Graphviz機能の実装
 <ul>
-<li>コードにコメントを付属させる。
-      コードが読みづらくなるので、もう少し実装が固まってから。
+<li>カスタムシェイプの実装
+
 </li>
 </ul>
 
-
-
-<ul>
-<li>ドキュメントの英訳。
-    日本語版ドキュメントの完成後。
 </li>
-</ul>
+<li>コードにコメントを付属させる
+      コードが読みづらくなるので、もう少し実装が固まってから
 
-
-
-<ul>
-<li>エラー処理の実装。
+</li>
+<li>エラー処理の実装
 <ul>
 <li>どこまでlispでエラーチェックするか？
 </li>
-<li>Graphvizに任せてもいい部分はGraphvizに。
-</li>
-</ul>
+<li>Graphvizに任せてもいい部分はGraphvizに
 
 </li>
 </ul>
 
-
-
-<ul>
-<li>セキュリティの考察。
-<ul>
-<li>現在のところ知識不足。要勉強。
 </li>
-<li>少なくとも任意のコマンドはshellに打ち込めないように。
-</li>
-</ul>
-
-</li>
-</ul>
-
-
-
+<li>最適化
 <ul>
-<li>最適化。
-<ul>
-<li>ボトルネックの発見。
+<li>ボトルネックの発見
 </li>
-<li>cons使用量の調査。
+<li>cons使用量の調査
 </li>
 </ul>
 
@@ -4130,7 +3976,7 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 Donutsでは、縦棒 <code>|</code> 、角カッコ <code>[</code>, <code>]</code> 、三角カッコ <code>&lt;</code>, <code>&gt;</code> をエスケープする必要はありません。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.9" href="#fnr.9">9</a></sup> 本当は何も印字されないのが空白さ。
+<p class="footnote"><sup><a class="footnum" name="fn.9" href="#fnr.9">9</a></sup> 本当は何も印字されないのが空白です。
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.10" href="#fnr.10">10</a></sup> もちろん、やや手間はかかりますが、画像ファイルをビューアで見るために、
@@ -4179,7 +4025,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-06-09 13:32:46 JST</p>
+<p class="date">Date: 2012-06-20 13:00:24 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
