@@ -1,10 +1,10 @@
-Last Updated : 2012/06/16 19:54:15 tkych
+Last Updated : 2012/06/23 08:56:32 tkych
 
-Current Version of Donuts is 0.3.1 (beta)
+Version : 0.3.1 (beta)
 
 
-Donuts: Graph DSL (or Graphviz Interface) for Common Lisp
-=========================================================
+Donuts: Graph DSL (or Graphviz Interface) for CL
+================================================
 
 
 Introduction
@@ -24,7 +24,7 @@ index-ja (Japanease) in doc directory.
 The Goal of Donuts
 ------------------
 
-[Graphviz][] is a collection of libraries and utilities for drawing a
+[Graphviz][] is a collection of library and utility for drawing a
 graph.  [Dot language][] is description language, used in Graphviz.
 Graphviz is very useful.  However, I (as a lisp programmer) think
 there are some points to do kaizen.

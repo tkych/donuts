@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-06-20 14:51:55 JST"/>
+<meta name="generated" content="2012-06-23 11:35:45 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -368,7 +368,7 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 
 <p>
 <b>注：</b> 
-この章は、なぜDonutsのユーザインターフェイスがこのようになっているのか、についての章です。
+この章はDonutsの設計についての章です。
 この章を読まなくてもDonutsでグラフを描くことはできます。
 手っ取り早くグラフを作成したい場合や、退屈だと感じた場合には、次章の<a href="#sec-4">チュートリアル</a>を読むことをおすすめします。
 </p>
@@ -382,8 +382,8 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 
 <p>
 　Common Lispにはグラフ画像を作成する機能が備わっていません。
-そのため、Lispプログラマがグラフ画像を作成するには、何か他の言語やソフトウェアに頼らねばなりません。
-<a href="http://www.corp.att.com/attlabs/">AT&amp;T Labs</a>が開発したフリーウェア <a href="http://www.graphviz.org/">Graphviz</a>と<a href="http://www.graphviz.org/content/dot-language">Dot言語</a>は、そのような際に使用されるものの一つです。
+そのため、Lispプログラマがグラフ画像を作成するには、他の言語やソフトウェアに頼らねばなりません。
+<a href="http://www.corp.att.com/attlabs/">AT&amp;T Labs</a>が開発したオープンソースのフリーウェア <a href="http://www.graphviz.org/">Graphviz</a>と<a href="http://www.graphviz.org/content/dot-language">Dot言語</a>は、そのような際に選択されるものの一つです。
 </p>
 <p>
 　Graphvizはグラフ作成のためのユーティリティ集で、Dot言語はGraphvizで使用される記述言語です。
@@ -394,7 +394,7 @@ Dot言語の文法は簡単に習得することができ、さらにグラフ�
 　しかしながら、Dot言語は言語としてグラフ画像作成のための必要最低限の表現力しか備えていません。
 つまり、Dot言語はチューリング完全な言語ではなく、反復や分岐などの制御構文は備えていないのです。
 そのため、Dot言語のソースコードは、グラフに内在する規則性やパターンを活用することができず、いささか冗長なものになってしまいます。
-また、ソースコードを一々コンパイルしなければ画像を確認することができないので、グラフ画像にちょっとした修正を加えたいときには少々不便です。
+また、ソースコードをいちいちコンパイルしなければ画像を確認することができないので、画像にちょっとした修正を加えたいときには少々不便です。
 </p>
 <p>
 　そこで、これらの不便さを少しでも改善するべく、以下の3点の達成をゴールに設定し、Donutsを開発しました。
@@ -402,7 +402,7 @@ Dot言語の文法は簡単に習得することができ、さらにグラフ�
 <ol>
 <li>Common Lispに、グラフ画像が <b>なめらかに</b> 作成できる機能を備えさせること。
 </li>
-<li>グラフ内に現れる規則性やパターンを活用することで、簡潔なコードで複雑なグラフ画像が生成できるようにすること。
+<li>グラフ構造に内在する規則性やパターンを活用することで、簡潔なコードで複雑なグラフ画像が生成できるようにすること。
 </li>
 <li>REPL機能を備えた対話的な環境で、インクリメンタルにグラフ画像が作成できるようにすること。
 </li>
@@ -432,6 +432,8 @@ Dot言語の文法は簡単に習得することができ、さらにグラフ�
 
 <p>
 　なぜCommon Lispにグラフ画像を作成する機能を備えさせねばならないのでしょうか？
+</p>
+<p>
 一言で答えると <i>グラフを描くLispプログラマの生産性の向上のため</i> です。
 では、なぜCommon Lispにグラフ画像を作成する機能を備えさせることがLispプログラマの生産性向上につながるのでしょうか？
 そのつながりについて見ていきます。
@@ -439,7 +441,7 @@ Dot言語の文法は簡単に習得することができ、さらにグラフ�
 
 <p>
 　およそ、どのようなプログラミング言語でコードを書く場合でも、プログラマはその言語特有の思考習慣の中で問題を考えます。
-言語特有の思考習慣とは、その言語のシンタックスやセマンティックス、設計思想、コミュニティ文化などに根ざしたもので、そのすべてを文章化することは多分できないでしょう。
+言語特有の思考習慣とは、その言語のシンタックスやセマンティックス、設計思想、コミュニティ文化などに根ざしたもので、そのすべてを明文化することは多分できないでしょう。
 そこで、LispとJavaによる具体例によって、その1つを見ていきましょう。
 </p>
 <p>
@@ -505,7 +507,7 @@ Hello World               <span style="color: #eeee00;">// </span><span style="c
 　したがって問題は、 <b>Lispにはグラフ作成の機能がなく、代わりに他の言語を使うと思考の枠組の切り替えのために生産性が落ちてしまう</b> ことです。
 この問題を解決するために、Common Lispでグラフ作成を <b>なめらかに</b> 行えるようにすることが、Donuts開発のゴールの1つなのです。
 つまり、Lispでコードを書いている途中で、あたかもC言語でコーディングするかのように
-<b>思考を切り替えずに、そのままLispで</b> コードが書けるということがDonutsの目指すところです。
+<b>思考を切り替えずに、そのままLispで</b> コードが書けるということがDonutsの目指すところなのです。
 </p>
 
 </div>
@@ -624,13 +626,15 @@ Lispの上に実現されたその機能は、基盤であるLispの拡張可能
 　
 </p>
 <p>
-　ボトムアップにプログラムを書くために、グラフ作成に最低限必要な <b>基本操作</b> と 操作される <b>基本的対象</b> とは、どのようなものでしょうか？
+　グラフ作成に最低限必要な <b>基本操作</b> と <b>基本的対象</b> とは、どのようなものでしょうか？
+</p>
+<p>
 "グラフ作成" を抽象化して、それらを探していきました。
 </p>
 <p>
 　ここで、まず注意してほしいことは、プログラムを書くために "グラフ作成" を抽象化するのであって、数学的な問題を解くために "グラフ" を抽象化するのではないことです。
 数学的な問題を解くには抽象化されたグラフ構造を扱い、 <i>グラフ構造を持つすべてのものに対し、これこれの命題が成り立つかどうか</i> を証明します。
-しかしながら、コンピュータにグラフ作成を命令するプログラムを書くためには、 <i>そもそもグラフ構造を構築するにはどうするか</i> を探さねばなりません。
+しかし、コンピュータにグラフ作成を命令するプログラムを書くためには、 <i>そもそもグラフ構造を構築するにはどうするか</i> を探さねばなりません。
 </p>
 <p>
 　ところで、 <i>探す</i> と言っても、答えが1つに確定している未知のものを探すと言っているわけではありません。
@@ -671,7 +675,7 @@ Lispの上に実現されたその機能は、基盤であるLispの拡張可能
 　ここで、グラフ構築操作によって操作される対象にグラフも入れた理由は、「つながっていない2つのグラフから構成されるものも、またグラフである」と考えたからです。
 </p>
 <p>
-　さて、グラフ作成のむずかしい部分は、自分ではじめから作るよりも、Graphvizを用いることにしました。
+　さて、グラフ作成のむずかしい部分は、自分ではじめから作るよりも、Graphvizを用いることにしています。
 Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz製作者の方も上と同じようなことを考えていたのだろうと思います。
 ノードのアイデンティティとして、 <b>属性</b> が用いられており、エッジやグラフにも属性が設定されていました。
 </p>
@@ -712,7 +716,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 それはまぎらわしい他の意味を表してはならず、よい意味では、しかしふくみのあるものでなければならない。<br/>
 記号の順序とくみ合わせはものごとの順序と組み合わせを示すものでなければならない。<br/>
 <br/>
-&nbsp;&nbsp;&nbsp;&nbsp; &mdash; George Polya, How to solve it, (柿内賢信訳、いかにして問題をとくか, pp.120&ndash;1)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; &mdash; George Polya, How to solve it, (柿内賢信訳, いかにして問題をとくか, pp.120&ndash;1, 丸善)<br/>
 </p>
 
 
@@ -720,19 +724,21 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 　
 </p>
 <p>
-　さて、基本対象や基本操作は決まりましたが、それをlisp内でどのような名前で表すかは、まだ決まっていません。
-そこで、次の2点：
+　さて、抽象的な機能である基本対象や基本操作は決まりました。
+つぎに、それらを具体的にLispの中でどのような名前で表現するか、を考えました。
+そこで重視したのは次の点です。
 </p><ol>
-<li>グラフ構造が一目瞭然となるような視覚的効果、
+<li>グラフ構造が一目瞭然となるような視覚的効果
 </li>
-<li>使用頻度の高い名前を短くすることによる、グラフ作成におけるコーディングとリーディングの両コストの低減、
+<li>憶えやすく親しみやすいこと
+</li>
+<li>使用頻度の高い名前を短くすることによって、グラフ作成におけるコーディングとリーディングの両コストの低減すること
 </li>
 </ol>
 
-<p>を考慮し、関数名やマクロ名は図形的なものを採用することにしました。
-</p>
+
 <p>
-　その結果、出来上がったDonutsの関数やマクロには、 下の表のように図形的な名前を多く使用しました。
+　その結果、関数名やマクロ名には、 下の表のように図形的な名前を多く使用することになりました。
 ノード構築操作に <code>&lt;&gt;</code> 、エッジ構築操作に <code>-&gt;</code> 、グラフ構築操作に <code>&amp;</code> をそれぞれ割り当てています。
 </p>
 
@@ -793,7 +799,7 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 
 <p>
 <b>注：</b>
-このチュートリアルは、かなり詳細に書かれているので、読むには時間がかかります。
+このチュートリアルは、かなり詳細に書かれているので、すべて読むには時間がかかります。
 そこで、先を急ぐ方、入力コードと出力結果を見比べて動作を習得したい方、Dot言語に馴染みのある方は、まずは<a href="#sec-5">Examples</a>を見ることをおすすめします。
 </p>
 <p>
@@ -812,6 +818,15 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 <div class="outline-text-3" id="text-4-1">
 
 
+<p>
+　まずは、もっともシンプルなグラフを作ってみましょう。
+最初はもちろん'Hello World'です。
+</p>
+<p>
+　次のコードは、 <i>Helloとラベルされたノードから、Worldとラベルされたノードへのエッジを持つ有向グラフを生成せよ</i> という命令です。
+このコードによって生成されたグラフオブジェクトを、シェルインターフェイス <code>$$</code> によって画像として出力したものが以下のものです。
+</p>
+
 
 
 
@@ -825,27 +840,26 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 <img src="./images/simple-graph.png"  alt="./images/simple-graph.png" />
 </p>
 <p>
-　上のコード全体が表す意味は、 <i>Helloとラベルされたノードから、Worldとラベルされたノードへのエッジを持つ有向グラフを生成せよ</i> というものです。
-コードの内容を詳しく解説します。
+コードの内容を詳しく解説していきます。
 </p>
 <p>
-　まず、S式 <code>(&lt;&gt; "Hello")</code> の意味は、 <i>Helloとラベルされたノードを生成せよ</i> です。
+　まず、S式 <code>(&lt;&gt; "Hello")</code> によって、 <i>Helloとラベルされたノードが生成</i> されます。
 <code>&lt;&gt;</code> を <b>ノードコンストラクタ</b> と呼んでいます。
 ノードコンストラクタ <code>&lt;&gt;</code> は、引数として文字列や数値を取り、それらでラベルされたノードを生成します。
 オプショナルな引数である属性キーワードによって属性値を指定することで、多様なノードを生成することもできます
 （属性については<a href="#sec-4-2">次節</a>で説明します）。
-説明のため <code>(&lt;&gt; "Hello")</code> によって生成されたノードを、ノードHelloのように記します（ノードWorldも同様です）。
+説明のため <code>(&lt;&gt; "Hello")</code> によって生成されたノードを、ノード'Hello'のように記します（ノード'World'も同様です）。
 </p>
 <p>
-　次に、S式 <code>(-&gt; (&lt;&gt; "Hello") (&lt;&gt; "World"))</code> の意味は、 <i>ノードHelloとノードWorldを矢印で結んだエッジを生成せよ</i> というものです。
-説明のため <code>(-&gt; (&lt;&gt; "Hello") (&lt;&gt; "World"))</code> によって生成されたエッジを、エッジHello-&gt;Worldのように記します。
-<code>-&gt;</code> を <b>エッジコンストラクタ</b> と呼びます。
+　次に、S式 <code>(-&gt; (&lt;&gt; "Hello") (&lt;&gt; "World"))</code> によって、 <i>ノード'Hello'とノード'World'を矢印で結んだエッジが生成</i> されます。
+説明のため <code>(-&gt; (&lt;&gt; "Hello") (&lt;&gt; "World"))</code> によって生成されたエッジを、'Hello-&gt;World'のように記します。
+<code>-&gt;</code> を <b>エッジコンストラクタ</b> と呼んでいます。
 エッジコンストラクタ <code>-&gt;</code> は、ノード2つを引数に取りエッジを生成します。
  <code>&lt;&gt;</code> と同様に、オプショナルな属性キーワードによって、生成されるエッジの属性を指定することもできます。
 </p>
 <p>
 　また、 <code>-&gt;</code> は、略記として、ノードの代わりに文字列や数値も引数に取ることができます。
-その場合、文字列や数値をラベルとするノードが自動生成されます<sup><a class="footref" name="fnr.6" href="#fn.6">6</a></sup>。
+その場合、それらの文字列や数値をラベルとするノードが自動生成されます<sup><a class="footref" name="fnr.6" href="#fn.6">6</a></sup>。
 つまり上のコードは、
 </p>
 
@@ -857,20 +871,22 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 のように、簡略化することもできます。
 </p>
 <p>
-　最後に、S式 <code>(&amp;&amp; ****)</code> の意味は、 <i>グラフ構成要素****を束ねたグラフを生成せよ</i> というものです(****は、任意の数のエッジやノードやグラフ)。
+　最後に、S式 <code>(&amp;&amp; ****)</code> は、 <i>グラフ構成要素****を束ねたグラフを生成せよ</i> という命令です(****は、任意の数のエッジやノードやグラフ)。
 <code>&amp;&amp;</code> は、任意数のグラフ構成要素を引数に取り、グラフオブジェクトを生成する関数で、 <b>グラフコンストラクタ</b> と呼んでいます。
 グラフコンストラクタ <code>&amp;&amp;</code> は、べき等な操作です。
 すなわち、 <code>(&amp;&amp; (&amp;&amp; ****))</code> &lt;=&gt; <code>(&amp;&amp; ****)</code> が成り立ちます。
 </p>
 <p>
-　この例では、グラフ構成要素としてエッジHello-&gt;Worldが <code>&amp;&amp;</code> に与えられています。
-その結果、ノードHelloからノードWorldへのエッジを構成要素とする(有向)グラフが生成されています。
+　この例では、グラフ構成要素として'Hello-&gt;World'が <code>&amp;&amp;</code> に与えられています。
+その結果、ノード'Hello'からノード'World'へのエッジを構成要素とする(有向)グラフが生成されています。
 </p>
 <p>
 　ところで、 <code>&amp;&amp;</code> の引数であるグラフ構成要素の中にグラフが含まれていることに、少し奇異な印象を受けるかもしれません。
-これは <span style="text-decoration:underline;">連結していない2つのグラフもまた1つのグラフである</span> という考えの基に、Donutsが設計されているためです。
+これは <span style="text-decoration:underline;">連結していない2つのグラフもまた1つのグラフである</span> という設計の基で、Donutsが実装されているためです。
 そのため、グラフコンストラクタ <code>&amp;&amp;</code> は、グラフも引数に取ることができるようになっているのです。
-そこで、グラフに構成要素を追加する場合、次のような方法を用いることができます。
+</p>
+<p>
+このことの利点は、グラフに構成要素を追加する場合、次のような方法を用いることができることです。
 </p>
 
 
@@ -881,7 +897,7 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 
 
 <p>
-　上の行で、変数hにエッジ'Hello-&gt;World'で構成されるグラフを束縛しています。
+　上の行で、変数hに'エッジHello-&gt;World'で構成されるグラフを束縛しています。
 下の行で、hに束縛されたグラフと、'こんにちは-&gt;World'で構成される新たなグラフを生成しています。
 結果、新しいグラフは下のように、'こんにちは-&gt;World'がグラフhに追加されたものとなります。
 </p>
@@ -974,7 +990,7 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 </p>
 <p>
 　属性についての詳細は、以下のGraphvizマニュアルをご確認ください。
-少し注意が必要な点は、Graphvizで属性値を指定するには <code>属性=値</code> ですが、Donutsでは <code>:属性 値</code> である点です( <code>値</code> はキーワード、文字列、数値のいずれかです)。
+その際に注意が必要な点は、Graphvizで属性値を指定するには <code>属性=値</code> ですが、Donutsでは <code>:属性 値</code> である点です( <code>値</code> はキーワード、文字列、数値のいずれかです)。
 </p><ul>
 <li>属性について： <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
 </li>
@@ -1038,14 +1054,14 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 
 
 <p>
-　dot-output, dot-pprintによって、生成したグラフオブジェクトのdotコードを標準出力に表示することができます。
+　DOT-OUTPUT, DOT-PPRINTによって、生成したグラフオブジェクトのdotコードを標準出力に表示することができます。
 また、生成したグラフオブジェクトをビューアで見るには、シェルインターフェイス $ が便利です<sup><a class="footref" name="fnr.10" href="#fn.10">10</a></sup>。
 </p>
 
 </div>
 
 <div id="outline-container-4-4-1" class="outline-4">
-<h4 id="sec-4-4-1"><span class="section-number-4">4.4.1</span> <b>DOT-OUTPUT</b>, <b>DOT-PPRINT</b></h4>
+<h4 id="sec-4-4-1"><span class="section-number-4">4.4.1</span> DOT-OUTPUT, DOT-PPRINT</h4>
 <div class="outline-text-4" id="text-4-4-1">
 
 
@@ -1117,7 +1133,7 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 <colgroup><col class="left" /><col class="left" /><col class="left" />
 </colgroup>
 <thead>
-<tr><th scope="col" class="left">キーワード</th><th scope="col" class="left">指定できるもの</th><th scope="col" class="left">デフォルト値</th></tr>
+<tr><th scope="col" class="left">プロパティキーワード</th><th scope="col" class="left">指定できるもの</th><th scope="col" class="left">デフォルト値</th></tr>
 </thead>
 <tbody>
 <tr><td class="left">:outfile</td><td class="left">生成する画像ファイル名</td><td class="left">"DONUTS-TMP.png"</td></tr>
@@ -1133,8 +1149,8 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 </dd>
 </dl>
 
-<p>　:outfile で出力ファイルを指定する場合、 <b>拡張子が必須</b> です。
-Donutsは拡張子によって生成する画像ファイルの種類を定めるためです。
+<p>　:outfile で生成する画像ファイル名を指定することができます。
+その際 <b>拡張子が必須</b> です(Donutsは拡張子によって生成する画像ファイルの種類を定めるためです)。
 </p>
 <p>
 　例えば、上の例では、ファイル名diamond.pngの <span style="text-decoration:underline;">pngファイル</span> が生成されました。
@@ -1142,7 +1158,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 また、出力ファイルの <b>拡張子がdotの場合</b> 、Graphvizライブラリのnopによって整形されたdotファイルが生成されます。
 </p>
 <p>
-　生成できる画像ファイルの種類については、次のGraphvizマニュアルをご確認ください。
+　生成できる画像ファイル形式については、次のGraphvizマニュアルをご確認ください。
 </p>
 <ul>
 <li><a href="http://www.graphviz.org/content/output-formats">http://www.graphviz.org/content/output-formats</a>
@@ -1168,6 +1184,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 </dl>
 
 <p>　レイアウトアルゴリズムを指定するキーワードです。
+レイアウトアルゴリズムとは、Graphvizがグラフ画像を生成する際に使用する、グラフ構成要素の配置方法のことです。
 詳細は<a href="#sec-4-10">無向グラフ、レイアウトアルゴリズム</a>の節で解説します。
 </p>
 
@@ -1216,7 +1233,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 
 
 <pre class="src src-lisp"><span class="linenr">1:  </span>(&amp; (<span style="color: #00ee76;">:rankdir</span> <span style="color: #00ee76;">:LR</span>)
-<span class="linenr">2:  </span>  ([&amp;] (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Here is in the cluster!"</span>)  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12463;&#12521;&#12473;&#12479;&#12399;&#37096;&#20998;&#12464;&#12521;&#12501;&#12289;&#12375;&#12363;&#12375;&#12289;&#23646;&#24615;&#12364;&#24120;&#12395;&#26377;&#21177;&#65281;&#65281;</span>
+<span class="linenr">2:  </span>  ([&amp;] (<span style="color: #00ee76;">:label</span> <span style="color: #90ee90;">"Here is in the cluster!"</span>)  <span style="color: #eeee00;">;</span><span style="color: #eeee00;">&#12463;&#12521;&#12473;&#12479;&#12399;&#37096;&#20998;&#12464;&#12521;&#12501;&#12289;&#12384;&#12364;&#12289;&#23646;&#24615;&#12399;&#24120;&#12395;&#26377;&#21177;&#65281;&#65281;</span>
 <span class="linenr">3:  </span>    (-&gt; <span style="color: #90ee90;">"a"</span> <span style="color: #90ee90;">"b"</span>)
 <span class="linenr">4:  </span>    (-&gt; <span style="color: #90ee90;">"b"</span> <span style="color: #90ee90;">"c"</span>))
 <span class="linenr">5:  </span>  (-&gt; <span style="color: #90ee90;">"Out of the cluster"</span> <span style="color: #90ee90;">"c"</span>))
@@ -1232,10 +1249,10 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 　2行目から4行目までが、クラスタを生成するコードです。
  <code>[&amp;]</code> の引数は、 <code>&amp;</code> と同様のものです。
 すなわち、必須引数がクラスタの属性リスト、rest引数がクラスタを構成するエッジ、ノード、部分グラフです。
-この例では、属性リスト <code>(:label "Here is in the cluster!")</code> 、クラスタ構成要素a-&gt;b,b-&gt;cが引数です。
+この例では、属性リスト <code>(:label "Here is in the cluster!")</code> 、クラスタ構成要素'a-&gt;b', 'b-&gt;c'が引数です。
 </p>
 <p>
-　5行目、クラスタ外部のノード'Out of cluster'から、クラスタ内部のノードcへのエッジを生成します。
+　5行目、クラスタ外部のノード'Out of cluster'から、クラスタ内部のノード'c'へのエッジを生成します。
 </p>
 
 </div>
@@ -1252,7 +1269,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 ノードのランクを指定するには <b>ランクオペレータ</b> <code>rank</code> を用います。
  <code>rank</code> は、副作用のために用いる関数で、グラフ内の配置方法を指定するランクキーワードと複数のノードを引数に取ります。
 ランクキーワードは、 <code>:same</code>, <code>:min</code>, <code>:max</code>, <code>:source</code>, <code>:sink</code> のいずれかです。
-ランクは同値関係です(例えば、ノードaとb、bとcが同じランクならば、aとcも同じランクです)。
+ランクは同値関係です(例えば、ノード'a'と'b'、'b'と'c'が同じランクならば、'a'と'c'も同じランクです)。
 </p>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption></caption>
@@ -1291,7 +1308,7 @@ Donutsは拡張子によって生成する画像ファイルの種類を定め�
 <img src="./images/rank.png"  alt="./images/rank.png" />
 </p>
 <p>
-(ノードの高さを揃える操作は使用頻度が高いので、ユーティリティとして再定義しています。cf.<a href="#sec-4-9-3">ユーティリティ：~</a>)
+(ノードの高さを揃える操作は使用頻度が高いので、ユーティリティとして定義しています。cf.<a href="#sec-4-9-3">ユーティリティ：~</a>)
 </p>
 </div>
 
@@ -3938,13 +3955,13 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 <p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> On Lispの原著はポールグレアム氏の<a href="http://www.paulgraham.com/onlisp.html">HP</a>にて公開されています。
 また、野田開氏による邦訳がオーム社より出版されています。
 ただし、引用文の訳は筆者によるものです。
-したがって、誤訳や誤読がありましたら、すべて筆者個人の責任です。
+したがって、誤訳や誤読がありましたら、すべて筆者の責任です。
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.3" href="#fnr.3">3</a></sup> Structure and Interpretarion of Computer Programs &ndash; 2nd ed. (SICP)の原著は<a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">MITPressのSICP HP</a>にて公開されています。
 また、和田英一氏による邦訳がピアソン社より出版されています(邦題は、計算機プログラムの構造と解釈 第二版)。
 ただし、引用文の訳は筆者によるものです。
-したがって、誤訳や誤読がありましたら、すべて筆者個人の責任です。
+したがって、誤訳や誤読がありましたら、すべて筆者の責任です。
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.4" href="#fnr.4">4</a></sup> グラフの:strict属性をtに指定すると、2つのノードの間に2本以上のエッジを張ることはできません。
@@ -3957,14 +3974,14 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 これは、生成された画像をビューアで見る場合、名前が画像のタイトルとして表示されることがあるためです。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.6" href="#fnr.6">6</a></sup> 自動生成についての詳しい解説です。
+<p class="footnote"><sup><a class="footnum" name="fn.6" href="#fnr.6">6</a></sup> ノードの自動生成についての詳しい解説です。
 文字列や数値から既にノードが自動生成されている場合、それらの文字列や数値による新たなノードの自動生成は起きません。
 文字列や数値が同じもの（lispの <code>equal</code> ）であれば、それらは同一のノードです。
 つまり、 <code>(-&gt; "a" "a")</code> によって自動生成されるのは1つのノードaのみです。
 したがって、 <code>(-&gt; "a" "a")</code> は自己ループを生成します。
 一方、 <code>(-&gt; (&lt;&gt; "a") (&lt;&gt; "a"))</code> は、aとラベルされた2つの異なるノードを生成し、それらの間にエッジを張ります。
 したがって、 <code>(-&gt; (&lt;&gt; "a") (&lt;&gt; "a"))</code> は、ノードaと別なノードaの間に張られたエッジを生成します。
-コード <code>(&lt;&gt; "a" :color :red)</code> により生成されるノードに自己ループを張るには、 <code>(let ((n (&lt;&gt; "a" :color :red))) (-&gt; n n))</code> とするか、またはユーティリティ<a href="#sec-4-9-2">?</a>を使って <code>(? (&lt;&gt; "a" :color :red))</code> とする必要があります。
+ <code>(&lt;&gt; "a" :color :red)</code> のようなコードにより生成されるノードに自己ループを張るには、 <code>(let ((n (&lt;&gt; "a" :color :red))) (-&gt; n n))</code> とするか、またはユーティリティ<a href="#sec-4-9-2">?</a>を使って <code>(? (&lt;&gt; "a" :color :red))</code> とする必要があります。
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.7" href="#fnr.7">7</a></sup> より正確には、属性を指定する順を変えた場合、出力されるdotコードは別のものです。
@@ -4024,7 +4041,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-06-20 14:51:55 JST</p>
+<p class="date">Date: 2012-06-23 11:35:45 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
