@@ -1,10 +1,10 @@
-Last Updated : 2012/06/23 08:56:32 tkych
+Last Updated : 2012/06/23 23:19:57 tkych
 
 Version : 0.3.1 (beta)
 
 
-Donuts: Graph DSL (or Graphviz Interface) for CL
-================================================
+Donuts: Graph Drawing DSL (or Graphviz Interface) for CL
+========================================================
 
 
 Introduction

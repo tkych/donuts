@@ -1,7 +1,7 @@
-### Last Updated : 2012/06/23 10:35:42 tkych
+### Last Updated : 2012/06/23 21:02:05 tkych
 
 ##====================================================================
-#+TITLE:  Donuts: Graph DSL for Common Lisp
+#+TITLE:  Donuts: Graph Drawing DSL for Common Lisp
 #+AUTHOR: Takaya OCHIAI
 #+EMAIL:  tkych.repl@gmail.com
 #+LANGUAGE: ja
@@ -156,8 +156,8 @@ digraph graph_T1555 {
 
 * はじめに
 
-　 *DonutsはCommon LispのためのグラフDSL(または、Graphvizインターフェイス)です。*
-Donutsは、S式で記述されたグラフ構造を[[http://www.graphviz.org/content/dot-language][Dot言語]]のコードに変換し、画像としてビューアに出力します。
+　 *DonutsはCommon Lispのためのグラフ画像作成DSL(または、Graphvizインターフェイス)です。*
+Donutsは、S式で記述されたグラフ構造を([[http://www.graphviz.org/content/dot-language][Dot言語]]のコードにコンパイルし、それを[[http://www.graphviz.org/][Graphviz]]によって)画像に変換し、ビューアに出力します。
 グラフに内在する規則性やパターンを活用することで、複雑なグラフでも簡潔に描くことができます(e.g. [[小さなプログラム --- カレンダー、2分木、コンスセル、状態遷移図][小さなプログラム]])。
 
 　 *Donutsの使用法はシンプルです。*
@@ -190,7 +190,7 @@ Donutsは、S式で記述されたグラフ構造を[[http://www.graphviz.org/co
 現在のところDonutsはベータ版です。
 
 　 *Donutsは拡張性を重視して設計されています。*
-Donutsの抽象的なコアはグラフ作成に関する基本的操作で構成されています。
+Donutsの抽象的なコアはグラフ作成に関する最小限の基本的操作で構成されています。
 グラフ作成に関する基本的操作とは、 /ノードを構築する操作/ =<>= 、 /エッジを構築する操作/  =->= 、 /グラフを構築する操作/  =&= の3つです。
 どのようなグラフ構造もこれら3つの基本操作のみから作り上げることができます(画像の見映えやコーディングの手間を気にしなければ)。
 複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、自分で好きなように追加できるはずです(e.g. [[小さなプログラム --- カレンダー、2分木、コンスセル、状態遷移図][小さなプログラム]])。
@@ -313,7 +313,7 @@ Dot言語の文法は簡単に習得することができ、さらにグラフ�
 
 *Lisp* ：
 #+BEGIN_SRC lisp :exports code
-  CL-USER> (princ "Hello World")
+  CL-REPL> (princ "Hello World")
   Hello World
   "Hello World"
 #+END_SRC

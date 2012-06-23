@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
 <head>
-<title>Donuts: Graph DSL for Common Lisp</title>
+<title>Donuts: Graph Drawing DSL for Common Lisp</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Donuts: Graph DSL for Common Lisp"/>
+<meta name="title" content="Donuts: Graph Drawing DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-06-23 11:35:45 JST"/>
+<meta name="generated" content="2012-06-23 21:43:31 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -92,7 +92,7 @@
 </div>
 
 <div id="content">
-<h1 class="title">Donuts: Graph DSL for Common Lisp</h1>
+<h1 class="title">Donuts: Graph Drawing DSL for Common Lisp</h1>
 
 
 
@@ -181,8 +181,8 @@
 
 
 <p>
-　 <b>DonutsはCommon LispのためのグラフDSL(または、Graphvizインターフェイス)です。</b>
-Donutsは、S式で記述されたグラフ構造を<a href="http://www.graphviz.org/content/dot-language">Dot言語</a>のコードに変換し、画像としてビューアに出力します。
+　 <b>DonutsはCommon Lispのためのグラフ画像作成DSL(または、Graphvizインターフェイス)です。</b>
+Donutsは、S式で記述されたグラフ構造を(<a href="http://www.graphviz.org/content/dot-language">Dot言語</a>のコードにコンパイルし、それを<a href="http://www.graphviz.org/">Graphviz</a>によって)画像に変換し、ビューアに出力します。
 グラフに内在する規則性やパターンを活用することで、複雑なグラフでも簡潔に描くことができます(e.g. <a href="#sec-4-13">小さなプログラム</a>)。
 </p>
 <p>
@@ -223,7 +223,7 @@ Donutsは、S式で記述されたグラフ構造を<a href="http://www.graphviz
 </p>
 <p>
 　 <b>Donutsは拡張性を重視して設計されています。</b>
-Donutsの抽象的なコアはグラフ作成に関する基本的操作で構成されています。
+Donutsの抽象的なコアはグラフ作成に関する最小限の基本的操作で構成されています。
 グラフ作成に関する基本的操作とは、 <i>ノードを構築する操作</i> <code>&lt;&gt;</code> 、 <i>エッジを構築する操作</i>  <code>-&gt;</code> 、 <i>グラフを構築する操作</i>  <code>&amp;</code> の3つです。
 どのようなグラフ構造もこれら3つの基本操作のみから作り上げることができます(画像の見映えやコーディングの手間を気にしなければ)。
 複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、自分で好きなように追加できるはずです(e.g. <a href="#sec-4-13">小さなプログラム</a>)。
@@ -449,7 +449,7 @@ Dot言語の文法は簡単に習得することができ、さらにグラフ�
 </p>
 
 
-<pre class="src src-lisp">CL-USER&gt; (princ <span style="color: #90ee90;">"Hello World"</span>)
+<pre class="src src-lisp">CL-REPL&gt; (princ <span style="color: #90ee90;">"Hello World"</span>)
 Hello World
 <span style="color: #90ee90;">"Hello World"</span>
 </pre>
@@ -4041,7 +4041,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-06-23 11:35:45 JST</p>
+<p class="date">Date: 2012-06-23 21:43:31 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
