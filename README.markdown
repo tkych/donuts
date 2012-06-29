@@ -1,4 +1,4 @@
-Last Updated : 2012/06/23 23:19:57 tkych
+Last Updated : 2012/06/29 21:28:17 tkych
 
 Version : 0.3.1 (beta)
 
@@ -10,14 +10,14 @@ Donuts: Graph Drawing DSL (or Graphviz Interface) for CL
 Introduction
 ------------
 
-By donuts, the graph represented by S-expression is converted to image. 
-How to use donuts is simple. 
-<> creates a node. 
--> puts an edge two nodes. 
-&& makes a graph by bundling some nodes, edges and graphs. 
+Donuts converts a graph represented by S-expression to the image.
+How to use donuts is simple.
+<> creates a node.
+-> puts an edge two nodes.
+&& makes a graph by bundling some nodes, edges and graphs.
 $$ outputs an image of the graph.
 
-For further details, please see index (Under Translation) or 
+For further details, please see index (Under Translation) or
 index-ja (Japanease) in doc directory.
 
 
@@ -37,8 +37,8 @@ there are some points to do kaizen.
 
 3.  Plain Common Lisp does not have ability to draw graph.
 
-The goal of donuts is to draw graph in lispic way of thought 
-(REPL, macro, CLOS, multi-paradigm style, and so on). 
+The goal of donuts is to draw graph in lispic way of thought
+(REPL, macro, CLOS, multi-paradigm style, and so on).
 
   [Graphviz]: http://www.graphviz.org/
   [Dot language]: http://www.graphviz.org/content/dot-language
@@ -126,7 +126,7 @@ Examples
          (loop :for day :in (nconc (loop :repeat starting-day :collect "")
                                    (loop :for d :from 1 :to num-days :collect d)
                                    (loop :repeat (- (* 7 (if (and (= 28 num-days) (= 0 starting-day))
-                                                             4 5)) ;for Feb starting Sun in common year 
+                                                             4 5)) ;for Feb starting Sun in common year
                                                          starting-day num-days)
                                          :collect ""))
                :collect (<> day :shape :box)))

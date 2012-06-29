@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Donuts: Graph Drawing DSL for Common Lisp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-06-23 21:43:31 JST"/>
+<meta name="generated" content="2012-06-29 21:25:58 JST"/>
 <meta name="author" content="Takaya OCHIAI"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -181,9 +181,10 @@
 
 
 <p>
-　 <b>DonutsはCommon Lispのためのグラフ画像作成DSL(または、Graphvizインターフェイス)です。</b>
-Donutsは、S式で記述されたグラフ構造を(<a href="http://www.graphviz.org/content/dot-language">Dot言語</a>のコードにコンパイルし、それを<a href="http://www.graphviz.org/">Graphviz</a>によって)画像に変換し、ビューアに出力します。
-グラフに内在する規則性やパターンを活用することで、複雑なグラフでも簡潔に描くことができます(e.g. <a href="#sec-4-13">小さなプログラム</a>)。
+　 <b>DonutsはCommon Lispでグラフを描くためのライブラリです。</b>
+こじゃれた言い方をすれば、グラフ画像作成DSL、または、Graphvizインターフェイスです。
+DonutsはS式で記述されたグラフ構造を(<a href="http://www.graphviz.org/content/dot-language">Dot言語</a>のコードにコンパイルし、それを<a href="http://www.graphviz.org/">Graphviz</a>によって)画像に変換し、ビューアに出力します。
+グラフに内在する規則性やパターンを活用することで、複雑なグラフでも簡潔なコードで書くことができます(e.g. <a href="#sec-4-13">小さなプログラム</a>)。
 </p>
 <p>
 　 <b>Donutsの使用法はシンプルです。</b>
@@ -208,7 +209,7 @@ Donutsは、S式で記述されたグラフ構造を(<a href="http://www.graphvi
 <p>
 　 <b>すぐにDonutsでグラフを描き始められるように。</b>
 入力コードと出力結果から使用法を習得したい方や、Dot言語になじみのある方のために、<a href="#sec-5">サンプル集</a>を用意しています。
-また、じっくり使用法を知りたい方のためには、<a href="#sec-4">チュートリアル</a>を用意しています。
+じっくり使用法を知りたい方のためには、<a href="#sec-4">チュートリアル</a>を用意しています。
 形式的なところから始めたい方には、<a href="#sec-6">リファレンスマニュアル</a>をおすすめします。
 </p>
 <p>
@@ -220,13 +221,14 @@ Donutsは、S式で記述されたグラフ構造を(<a href="http://www.graphvi
 <p>
 　 <b>Donutsの最新バージョンは0.3.1です。</b>
 現在のところDonutsはベータ版です。
+既知のバクや今後の更新予定については<a href="#sec-7">Todo</a>をご確認下さい。
 </p>
 <p>
 　 <b>Donutsは拡張性を重視して設計されています。</b>
 Donutsの抽象的なコアはグラフ作成に関する最小限の基本的操作で構成されています。
 グラフ作成に関する基本的操作とは、 <i>ノードを構築する操作</i> <code>&lt;&gt;</code> 、 <i>エッジを構築する操作</i>  <code>-&gt;</code> 、 <i>グラフを構築する操作</i>  <code>&amp;</code> の3つです。
 どのようなグラフ構造もこれら3つの基本操作のみから作り上げることができます(画像の見映えやコーディングの手間を気にしなければ)。
-複雑なグラフ作成機能は、基本操作とlispの機能を組み合わせることで、自分で好きなように追加できるはずです(e.g. <a href="#sec-4-13">小さなプログラム</a>)。
+複雑なグラフ作成機能は、基本操作とCommon Lisp組み込みの機能を組み合わせることで、自分で好きなように追加できます(e.g. <a href="#sec-4-13">小さなプログラム</a>)。
 </p>
 <p>
 　 <b>Donutsには実用的操作も加えられています。</b>
@@ -367,7 +369,7 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 
 
 <p>
-<b>注：</b> 
+<b>注：</b>
 この章はDonutsの設計についての章です。
 この章を読まなくてもDonutsでグラフを描くことはできます。
 手っ取り早くグラフを作成したい場合や、退屈だと感じた場合には、次章の<a href="#sec-4">チュートリアル</a>を読むことをおすすめします。
@@ -387,7 +389,7 @@ DONUTS&gt; ($$ (<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; 1 2))) <s
 </p>
 <p>
 　Graphvizはグラフ作成のためのユーティリティ集で、Dot言語はGraphvizで使用される記述言語です。
-Graphvizの一般的な使用方法は、Dot言語のソースコードを書き、それをシェル上で(png,ps,svgなどの形式の)画像ファイルにコンパイルするというものです。
+Graphvizの一般的な使用方法は、Dot言語でソースコードを書き、それをシェル上で(png,ps,svgなどの形式の)画像ファイルにコンパイルするというものです。
 Dot言語の文法は簡単に習得することができ、さらにグラフ画像の見えを細かく指定することもできるので、Graphvizは使い勝手の良い便利なソフトウェアです。
 </p>
 <p>
@@ -800,13 +802,13 @@ Graphvizのマニュアルを読んでみたところ、おそらく、Graphviz�
 <p>
 <b>注：</b>
 このチュートリアルは、かなり詳細に書かれているので、すべて読むには時間がかかります。
-そこで、先を急ぐ方、入力コードと出力結果を見比べて動作を習得したい方、Dot言語に馴染みのある方は、まずは<a href="#sec-5">Examples</a>を見ることをおすすめします。
+そこで、先を急ぐ方、入力コードと出力結果を見比べて動作を習得したい方、Dot言語に馴染みのある方は、まずは<a href="#sec-5">サンプル集</a>を見ることをおすすめします。
 </p>
 <p>
 <b>注：</b>
 この章内にある大部分のコードは、グラフ型のオブジェクトを生成する部分のみ載せてあります。
 つまり、dotコードも画像も出力されません。
-dotコードを標準出力に表示するには <code>(dot-output グラフオブジェクト)</code> 、画像をビューアに出力するには <code>($$ グラフオブジェクト)</code> として下さい。
+dotコードを標準出力に表示するには <code>(Dot-Output グラフオブジェクト)</code> 、画像をビューアに出力するには <code>($$ グラフオブジェクト)</code> として下さい。
 詳しくは<a href="#sec-4-4">出力</a>の節を参照してください。
 </p>
 
@@ -819,12 +821,12 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 
 
 <p>
-　まずは、もっともシンプルなグラフを作ってみましょう。
+まずは、もっともシンプルなグラフを作ってみましょう。
 最初はもちろん'Hello World'です。
 </p>
 <p>
 　次のコードは、 <i>Helloとラベルされたノードから、Worldとラベルされたノードへのエッジを持つ有向グラフを生成せよ</i> という命令です。
-このコードによって生成されたグラフオブジェクトを、シェルインターフェイス <code>$$</code> によって画像として出力したものが以下のものです。
+このコードによって生成されたグラフオブジェクトをシェルインターフェイス <code>$$</code> によって画像として出力したものが下のものです。
 </p>
 
 
@@ -843,50 +845,47 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 コードの内容を詳しく解説していきます。
 </p>
 <p>
-　まず、S式 <code>(&lt;&gt; "Hello")</code> によって、 <i>Helloとラベルされたノードが生成</i> されます。
+　まずS式 <code>(&lt;&gt; "Hello")</code> によって <i>Helloとラベルされたノードが生成</i> されます。
 <code>&lt;&gt;</code> を <b>ノードコンストラクタ</b> と呼んでいます。
-ノードコンストラクタ <code>&lt;&gt;</code> は、引数として文字列や数値を取り、それらでラベルされたノードを生成します。
-オプショナルな引数である属性キーワードによって属性値を指定することで、多様なノードを生成することもできます
-（属性については<a href="#sec-4-2">次節</a>で説明します）。
-説明のため <code>(&lt;&gt; "Hello")</code> によって生成されたノードを、ノード'Hello'のように記します（ノード'World'も同様です）。
+ノードコンストラクタ <code>&lt;&gt;</code> は引数として文字列や数値を取り、それらでラベルされたノードを生成します。
+オプショナルな引数である属性キーワードによって属性値を指定することで多様なノードを生成することもできます（属性については<a href="#sec-4-2">次節</a>で説明します）。
+説明のため <code>(&lt;&gt; "Hello")</code> によって生成されたノードをノード'Hello'のように記します（ノード'World'も同様です）。
 </p>
 <p>
-　次に、S式 <code>(-&gt; (&lt;&gt; "Hello") (&lt;&gt; "World"))</code> によって、 <i>ノード'Hello'とノード'World'を矢印で結んだエッジが生成</i> されます。
-説明のため <code>(-&gt; (&lt;&gt; "Hello") (&lt;&gt; "World"))</code> によって生成されたエッジを、'Hello-&gt;World'のように記します。
+　次にS式 <code>(-&gt; (&lt;&gt; "Hello") (&lt;&gt; "World"))</code> によって <i>ノード'Hello'とノード'World'を矢印で結んだエッジが生成</i> されます。
+説明のため <code>(-&gt; (&lt;&gt; "Hello") (&lt;&gt; "World"))</code> によって生成されたエッジを'Hello-&gt;World'のように記します。
 <code>-&gt;</code> を <b>エッジコンストラクタ</b> と呼んでいます。
-エッジコンストラクタ <code>-&gt;</code> は、ノード2つを引数に取りエッジを生成します。
- <code>&lt;&gt;</code> と同様に、オプショナルな属性キーワードによって、生成されるエッジの属性を指定することもできます。
+エッジコンストラクタ <code>-&gt;</code> はノード2つを引数に取りエッジを生成します。
+<code>&lt;&gt;</code> と同様にオプショナルな属性キーワードによって、生成されるエッジの属性を指定することもできます。
 </p>
 <p>
-　また、 <code>-&gt;</code> は、略記として、ノードの代わりに文字列や数値も引数に取ることができます。
-その場合、それらの文字列や数値をラベルとするノードが自動生成されます<sup><a class="footref" name="fnr.6" href="#fn.6">6</a></sup>。
-つまり上のコードは、
+　コーディングの手間を省くため、 <code>-&gt;</code> は略記としてノードの代わりに文字列や数値も引数に取ることができます。
+その場合それらの文字列や数値をラベルとするノードが自動生成されます<sup><a class="footref" name="fnr.6" href="#fn.6">6</a></sup>。
+つまり上のコードは次のように簡略化することもできます。
 </p>
 
 
 <pre class="src src-lisp">(<span style="color: #eeee00;">&amp;&amp;</span> (-&gt; <span style="color: #90ee90;">"Hello"</span> <span style="color: #90ee90;">"World"</span>))
 </pre>
 
+
 <p>
-のように、簡略化することもできます。
-</p>
-<p>
-　最後に、S式 <code>(&amp;&amp; ****)</code> は、 <i>グラフ構成要素****を束ねたグラフを生成せよ</i> という命令です(****は、任意の数のエッジやノードやグラフ)。
-<code>&amp;&amp;</code> は、任意数のグラフ構成要素を引数に取り、グラフオブジェクトを生成する関数で、 <b>グラフコンストラクタ</b> と呼んでいます。
+　最後にS式 <code>(&amp;&amp; ****)</code> は <i>グラフ構成要素****を束ねたグラフを生成せよ</i> という命令です。
+<code>&amp;&amp;</code> は任意の数だけグラフ構成要素を引数に取り、グラフオブジェクトを生成する関数で <b>グラフコンストラクタ</b> と呼んでいます。
 グラフコンストラクタ <code>&amp;&amp;</code> は、べき等な操作です。
-すなわち、 <code>(&amp;&amp; (&amp;&amp; ****))</code> &lt;=&gt; <code>(&amp;&amp; ****)</code> が成り立ちます。
+つまり <code>(&amp;&amp; (&amp;&amp; ****))</code> でも <code>(&amp;&amp; ****)</code> でも同じグラフが生成されます。
 </p>
 <p>
-　この例では、グラフ構成要素として'Hello-&gt;World'が <code>&amp;&amp;</code> に与えられています。
+　この例ではグラフ構成要素として'Hello-&gt;World'が <code>&amp;&amp;</code> に与えられています。
 その結果、ノード'Hello'からノード'World'へのエッジを構成要素とする(有向)グラフが生成されています。
 </p>
 <p>
-　ところで、 <code>&amp;&amp;</code> の引数であるグラフ構成要素の中にグラフが含まれていることに、少し奇異な印象を受けるかもしれません。
-これは <span style="text-decoration:underline;">連結していない2つのグラフもまた1つのグラフである</span> という設計の基で、Donutsが実装されているためです。
-そのため、グラフコンストラクタ <code>&amp;&amp;</code> は、グラフも引数に取ることができるようになっているのです。
+　ところで、 <code>&amp;&amp;</code> の引数であるグラフ構成要素の中にグラフが含まれていることに少し奇異な印象を受けるかもしれません。
+これは <span style="text-decoration:underline;">連結していない2つのグラフもまた1つのグラフである</span> という設計の基にDonutsが実装されているためです。
+そのためグラフコンストラクタ <code>&amp;&amp;</code> はグラフも引数に取ることができるようになっているのです。
 </p>
 <p>
-このことの利点は、グラフに構成要素を追加する場合、次のような方法を用いることができることです。
+これの利点は、グラフに構成要素を追加する場合、次のような方法を用いることができるという点です。
 </p>
 
 
@@ -897,9 +896,9 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 
 
 <p>
-　上の行で、変数hに'エッジHello-&gt;World'で構成されるグラフを束縛しています。
-下の行で、hに束縛されたグラフと、'こんにちは-&gt;World'で構成される新たなグラフを生成しています。
-結果、新しいグラフは下のように、'こんにちは-&gt;World'がグラフhに追加されたものとなります。
+　上の行で変数hに'エッジHello-&gt;World'で構成されるグラフを束縛しています。
+下の行でhに束縛されたグラフと'こんにちは-&gt;World'で構成される新たなグラフを生成しています。
+その結果、新しいグラフは下のように'こんにちは-&gt;World'がグラフhに追加されたものとなります。
 </p>
 
 <p>
@@ -908,9 +907,9 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 <p>
 　ちなみに、 <code>&amp;&amp;</code> にグラフ構成要素が何も与えられない場合、すなわち <code>(&amp;&amp;)</code> の場合、 <b>ヌルグラフ</b> が生成されます。
 また、グラフ構成要素としてnilを与えることもできますが、その場合nilは無視されます。
-したがって、 <code>(&amp;&amp; nil)</code> もヌルグラフを生成します。
+したがって <code>(&amp;&amp; nil)</code> もヌルグラフを生成します。
 一見、ヌルグラフの存在は無駄に見えます。
-しかし、グラフを再帰的に生成する際には、ヌルグラフは無くてはならないものです(cf. <a href="#sec-4-13-2">2分木</a>)。
+しかしグラフを再帰的に生成する際にはヌルグラフは無くてはならないものです(cf. <a href="#sec-4-13-2">2分木</a>)。
 </p>
 
 </div>
@@ -923,12 +922,12 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 
 
 <p>
-　 <b>属性</b> とは、色や形など様々な性質のことで、それぞれのグラフ、ノード、エッジに付随するものです。
+　 <b>属性</b> とは色や形など様々な性質のことで、それぞれのグラフ、ノード、エッジに付随するものです。
 前節までで扱ってきたラベルも実は属性の一つです。
-属性の値を指定することで、グラフの見えをさまざまに変化させることができます。
+属性の値を指定することでグラフの見えをさまざまに変化させることができます。
 </p>
 <p>
-　次のコードによって生成されるグラフは、下の様に出力されます(グラフ属性値を指定するには <code>&amp;&amp;</code> ではなく <code>&amp;</code> を用います)。
+　次のコードによって生成されるグラフは下の様に出力されます(グラフ属性値を指定するには <code>&amp;&amp;</code> ではなく <code>&amp;</code> を用います)。
 コードの内容を詳しく見ていきましょう。
 </p>
 
@@ -952,10 +951,10 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 ここでは、グラフの属性 <code>:label</code> が値 "<code>Proparty Example</code>" に指定されていますので、出力されるグラフにラベル"<code>Proparty Example</code>"が付くことになります。
 </p>
 <p>
-　他のグラフ属性値も指定したい場合、例えば、グラフのサイズを小さくしたい場合には、 <code>(:label "Proparty Example" :size "1,1")</code> の様に書きます。
+　他のグラフ属性値も指定したい場合、例えばグラフのサイズを小さくしたい場合には、 <code>(:label "Proparty Example" :size "1,1")</code> の様に書きます。
 サイズ属性値は縦横インチ単位、文字列で指定します。
-属性を指定する順番は、出力結果に影響しません<sup><a class="footref" name="fnr.7" href="#fn.7">7</a></sup>。
- <code>(:label "Proparty Example" :size "1,1")</code> でも、 <code>(:size "1,1" :label "Proparty Example")</code> でも、結果として出力されるグラフは次のものです。
+属性を指定する順番は出力結果に影響しません<sup><a class="footref" name="fnr.7" href="#fn.7">7</a></sup>。
+ <code>(:label "Proparty Example" :size "1,1")</code> でも <code>(:size "1,1" :label "Proparty Example")</code> でも、結果として出力されるグラフは次のものです。
 </p>
 
 
@@ -965,31 +964,31 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 
 <p>
 　次に、2行目を見ていきましょう。
-エッジコンストラクタ <code>-&gt;</code> は、文字列や数値もノードオブジェクトとして引数に取れたことを思い出してください。
+エッジコンストラクタ <code>-&gt;</code> は文字列や数値もノードオブジェクトとして引数に取れたことを思い出してください。
 その場合、文字列や数値をラベルとしたノードが自動的に生成されるのでした。
-この行では <code>-&gt;</code> にエッジの色属性を指定するキーワード <code>:color</code> とその値 <code>:red</code> が与えられています。
-したがって2行目の意味は、 <i>aとラベルづけされたノードとbとラベルされたノードの間を、赤い矢印で結んだエッジを生成せよ</i> というものです。
+この行では <code>-&gt;</code> にエッジの色属性を指定するキーワード <code>:color</code> と、その値 <code>:red</code> が与えられています。
+したがって2行目の意味は <i>aとラベルづけされたノードとbとラベルされたノードの間を赤い矢印で結んだエッジを生成せよ</i> というものです。
 </p>
 <p>
 　一般的に、属性の値は数値、キーワード、文字列のいずれかになります。
-属性の値を指定する文字列で、内部に空白や'-'がないものは、キーワードでも同じ値が指定できます。
-つまり、2行目の色属性値 <code>:red</code> は、"red"でも同じ値が指定できるのです。
-しかしながら、1行目のlabel属性値"Example 2"には空白が含まれていますので、キーワード <code>:Example 2</code> を用いて同様の値を指定することはできません。
+属性の値を指定する文字列で内部に空白や'-'がないものはキーワードでも同じ値が指定できます。
+つまり2行目の色属性値 <code>:red</code> は、"red"でも同じ値が指定できるのです。
+しかしながら1行目のlabel属性値"Example 2"には空白が含まれていますのでキーワード <code>:Example 2</code> を用いて同様の値を指定することはできません。
 </p>
 <p>
-　3行目で着目してもらいたい部分は、ノードコンストラクタ <code>&lt;&gt;</code> に与えられている属性キーワード <code>:shape</code> とその値 <code>:box</code> です。
+　3行目で着目してもらいたい部分は、ノードコンストラクタ <code>&lt;&gt;</code> に与えられている属性キーワード <code>:shape</code> と、その値 <code>:box</code> です。
 これにより、生成されるノードの形を箱型に変えることができるのです。
-したがって、 <code>(&lt;&gt; "c" :shape :box)</code> は、 <i>cとラベルされ、形が箱型のノードを生成せよ</i> という命令になります。
+したがって、 <code>(&lt;&gt; "c" :shape :box)</code> は <i>cとラベルされ、形が箱型のノードを生成せよ</i> という命令になります。
 </p>
 <p>
 　最後の4行目を見ていきましょう。
 今までの知識から考えてみると、この行の内容は <i>dとラベルされ、形が円型のノードを生成せよ</i> となりますね。
 少しだけ新奇な部分は、この行で生成されたノードがエッジによって、いかなるノードとも結ばれていないところです。
-すなわち、このノードは、孤立ノードとなります。
+すなわち、このノードは孤立ノードとなります。
 このノードはグラフ中の右上に出力されているものです。
 </p>
 <p>
-　属性についての詳細は、以下のGraphvizマニュアルをご確認ください。
+　属性についての詳細は以下のGraphvizマニュアルを、ご確認ください。
 その際に注意が必要な点は、Graphvizで属性値を指定するには <code>属性=値</code> ですが、Donutsでは <code>:属性 値</code> である点です( <code>値</code> はキーワード、文字列、数値のいずれかです)。
 </p><ul>
 <li>属性について： <a href="http://www.graphviz.org/content/attrs">http://www.graphviz.org/content/attrs</a>
@@ -1014,7 +1013,7 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 
 
 <p>
-　ラベル中では、以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>。
+　ラベル中では以下のエスケープされた文字が特別な意味を持ちます<sup><a class="footref" name="fnr.8" href="#fn.8">8</a></sup>。
 </p>
 <ul>
 <li><code>\\無</code>  空白が印字される<sup><a class="footref" name="fnr.9" href="#fn.9">9</a></sup>('無'はスペースを表す)。
@@ -1054,8 +1053,8 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 
 
 <p>
-　DOT-OUTPUT, DOT-PPRINTによって、生成したグラフオブジェクトのdotコードを標準出力に表示することができます。
-また、生成したグラフオブジェクトをビューアで見るには、シェルインターフェイス $ が便利です<sup><a class="footref" name="fnr.10" href="#fn.10">10</a></sup>。
+　DOT-OUTPUT, DOT-PPRINTによって生成したグラフオブジェクトのdotコードを標準出力に表示することができます。
+また、生成したグラフオブジェクトをビューアで見るにはシェルインターフェイス $ が便利です<sup><a class="footref" name="fnr.10" href="#fn.10">10</a></sup>。
 </p>
 
 </div>
@@ -1077,8 +1076,8 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 
 
 <p>
-　上のコードを評価すると、次のようなdotコードが標準出力に出力され、NILが返ります。
-コード2行目のグラフ属性 <code>:rankdir</code> は、出力するグラフのレイアウト方向を定める属性です(デフォルト値は上下方向 <code>:TB</code> )。
+　上のコードを評価すると次のようなdotコードが標準出力に出力され、NILが返ります。
+コード2行目のグラフ属性 <code>:rankdir</code> は出力するグラフのレイアウト方向を定める属性です(デフォルト値は上下方向 <code>:TB</code> )。
 ここでは左右方向 <code>:LR</code> に指定されています。
 </p>
 
@@ -1095,7 +1094,7 @@ dotコードを標準出力に表示するには <code>(dot-output グラフオ�
 
 <p>
 　DOT-OUTPUTの代わりにDOT-PPRINTを用いるとdotコードが整形され、標準出力に表示されます。
-DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopによって処理を行うため、DOT-OUTPUTに比べ実行コストがかかります。
+DOT-PPRINTはGraphvizライブラリの整形用ユーティリティnopによって処理を行うため、DOT-OUTPUTに比べ実行コストがかかります。
 </p>
 </div>
 
@@ -1149,16 +1148,16 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 </dd>
 </dl>
 
-<p>　:outfile で生成する画像ファイル名を指定することができます。
+<p>　キーワード:outfile によって生成する画像ファイル名を指定することができます。
 その際 <b>拡張子が必須</b> です(Donutsは拡張子によって生成する画像ファイルの種類を定めるためです)。
 </p>
 <p>
-　例えば、上の例では、ファイル名diamond.pngの <span style="text-decoration:underline;">pngファイル</span> が生成されました。
+　例えば、上の例でファイル名diamond.pngの <span style="text-decoration:underline;">pngファイル</span> が生成されました。
 もし、:outfileを"diamond.ps"に指定すると、ファイル名diamond.psの <span style="text-decoration:underline;">psファイル</span> が生成されます。
 また、出力ファイルの <b>拡張子がdotの場合</b> 、Graphvizライブラリのnopによって整形されたdotファイルが生成されます。
 </p>
 <p>
-　生成できる画像ファイル形式については、次のGraphvizマニュアルをご確認ください。
+　生成できる画像ファイル形式については次のGraphvizマニュアルをご確認ください。
 </p>
 <ul>
 <li><a href="http://www.graphviz.org/content/output-formats">http://www.graphviz.org/content/output-formats</a>
@@ -1176,7 +1175,7 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 </dl>
 
 <p>　:show がtの場合、ビューアが起動し画像が出力されます(デフォルトはt)。
-ただし、:outfileで指定した出力ファイルが <b>拡張子dot</b> を持つ場合、:show がtなら <span style="text-decoration:underline;">標準出力</span> にdotファイルの内容が表示されます。
+ただし:outfileで指定した出力ファイルが <b>拡張子dot</b> を持つ場合、:show がtなら <span style="text-decoration:underline;">標準出力</span> にdotファイルの内容が表示されます。
 </p>
 <dl>
 <dt><b>:layout</b></dt><dd>
@@ -1201,8 +1200,8 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 <p>
 　 <b>部分グラフ</b> とは、グラフ中の限定された領域内にある、ノードやエッジや部分グラフの集まりから構成されるグラフのことです。
 平たく言うと、グラフ中の適当な部分のことです。
-部分グラフを生成するには、グラフコンストラクタを次のようにネストすれば良いだけです。
-ただし、部分グラフのグラフ属性は無効になります。
+部分グラフを生成するにはグラフコンストラクタを次のようにネストすれば良いだけです。
+ただし部分グラフのグラフ属性は無効になります。
 </p>
 
 
@@ -1219,12 +1218,12 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 <img src="./images/subgraph.png"  alt="./images/subgraph.png" />
 </p>
 <p>
-　属性:labellocをtに指定すると、グラフのラベル配置が上部になります。
-重要なのでもう一度繰り返しますが、 <b>グラフの属性はトップレベルのもののみが有効になります</b> 。
+　属性:labellocをtに指定するとグラフのラベル配置が上部になります。
+重要なのでもう一度繰り返しますが <b>グラフの属性はトップレベルのもののみが有効になります</b> 。
 部分グラフsmallのラベルが無効になり、トップレベルグラフBIGのラベルが有効になっていることをご確認ください。
 </p>
 <p>
-　 <b>クラスタ</b> は、特別な部分グラフです。
+　 <b>クラスタ</b> は特別な部分グラフです。
 長方形の枠で囲われ、外部と独立に内部のレイアウトを指定することができます。
 <b>クラスタの属性はトップレベルでなくとも常に有効になります。</b>
 クラスタを生成するにはクラスタコンストラクタ <code>[&amp;]</code> を使います。
@@ -1246,13 +1245,13 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 <img src="./images/subgraph-cluster.png"  alt="./images/subgraph-cluster.png" />
 </p>
 <p>
-　2行目から4行目までが、クラスタを生成するコードです。
- <code>[&amp;]</code> の引数は、 <code>&amp;</code> と同様のものです。
+　2行目から4行目までがクラスタを生成するコードです。
+ <code>[&amp;]</code> の引数は <code>&amp;</code> と同様のものです。
 すなわち、必須引数がクラスタの属性リスト、rest引数がクラスタを構成するエッジ、ノード、部分グラフです。
-この例では、属性リスト <code>(:label "Here is in the cluster!")</code> 、クラスタ構成要素'a-&gt;b', 'b-&gt;c'が引数です。
+この例では属性リスト <code>(:label "Here is in the cluster!")</code> 、クラスタ構成要素'a-&gt;b', 'b-&gt;c'が引数です。
 </p>
 <p>
-　5行目、クラスタ外部のノード'Out of cluster'から、クラスタ内部のノード'c'へのエッジを生成します。
+　5行目、クラスタ外部のノード'Out of cluster'からクラスタ内部のノード'c'へのエッジを生成します。
 </p>
 
 </div>
@@ -1265,11 +1264,11 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 
 
 <p>
-　 <b>ランク</b> とは、ノードの（グラフ中の）配置のことです。
+　 <b>ランク</b> とはノードの（グラフ中の）配置のことです。
 ノードのランクを指定するには <b>ランクオペレータ</b> <code>rank</code> を用います。
- <code>rank</code> は、副作用のために用いる関数で、グラフ内の配置方法を指定するランクキーワードと複数のノードを引数に取ります。
-ランクキーワードは、 <code>:same</code>, <code>:min</code>, <code>:max</code>, <code>:source</code>, <code>:sink</code> のいずれかです。
-ランクは同値関係です(例えば、ノード'a'と'b'、'b'と'c'が同じランクならば、'a'と'c'も同じランクです)。
+ <code>rank</code> は副作用のために用いる関数でグラフ内の配置方法を指定するランクキーワードと複数のノードを引数に取ります。
+ランクキーワードは <code>:same</code>, <code>:min</code>, <code>:max</code>, <code>:source</code>, <code>:sink</code> のいずれかです。
+ランクは同値関係です(例えばノード'a'と'b'、'b'と'c'が同じランクならば、'a'と'c'も同じランクです)。
 </p>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption></caption>
@@ -1308,7 +1307,7 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 <img src="./images/rank.png"  alt="./images/rank.png" />
 </p>
 <p>
-(ノードの高さを揃える操作は使用頻度が高いので、ユーティリティとして定義しています。cf.<a href="#sec-4-9-3">ユーティリティ：~</a>)
+(ノードの高さを揃える操作は使用頻度が高いのでユーティリティとして定義しています。cf.<a href="#sec-4-9-3">ユーティリティ：~</a>)
 </p>
 </div>
 
@@ -1321,8 +1320,8 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 
 <p>
 　 <b>ポート</b> とは、エッジの始点や終点となるノードの出入り口のことです。
-エッジコンストラクタ <code>-&gt;</code> でエッジを生成する際に、 <b>ポートオペレータ</b> <code>@</code> によって、ポートを指定することができます。
- <code>(@ node compass-keyword)</code> によって、 <i>compass-keyword</i> と対応する方位のポートが指定されたnodeが返されます。
+エッジコンストラクタ <code>-&gt;</code> でエッジを生成する際に <b>ポートオペレータ</b> <code>@</code> によって、ポートを指定することができます。
+ <code>(@ node compass-keyword)</code> によって <i>compass-keyword</i> と対応する方位のポートが指定されたnodeが返されます。
  <i>compass-keyword</i> と方位の対応は次の表のようになっています。
 </p>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
@@ -1372,8 +1371,8 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 </p>
 
 <p>
-　次の節では、特別なノードであるレコードを導入します。
-レコードでは、ポート（フィールドポート）の場所を自分で設定することができます。
+　次の節では特別なノードであるレコードを導入します。
+レコードではポート（フィールドポート）の場所を自分で設定することができます。
 </p>
 
 </div>
@@ -1388,7 +1387,7 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 <p>
 　 <b>レコード</b> とは、内部構造を持つ特別なノードです。
 レコードを用いることで、<a href="#sec-5-1-6">例6 Binary search tree using records</a>や、<a href="#sec-5-1-8">例8 Hash table</a>のような複雑なグラフを描くことができます。
-レコードを生成するには、 <code>&lt;&gt;</code> の代わりに <b>レコードコンストラクタ</b> <code>[]</code> を使用します。
+レコードを生成するには <code>&lt;&gt;</code> の代わりに <b>レコードコンストラクタ</b> <code>[]</code> を使用します。
  <code>[]</code> の使用方法は <code>&lt;&gt;</code> とほとんど変わりませんが、ラベル中で特別な意味を持つ文字 <code>|</code>, <code>{</code>, <code>}</code> , <code>:</code> を使用することができます。
 </p>
 
@@ -1424,26 +1423,26 @@ DOT-PPRINTは、Graphvizライブラリの整形用ユーティリティnopに�
 <img src="./images/record-field.png"  alt="./images/record-field.png" />
 </p>
 <p>
-　コードの2行目は、 <code>([] "a|b|c")</code> の部分で、3つのフィールドを持つレコードを生成します。
-そのレコードの出力されたものが、上のグラフの左下の部分です。
+　コードの2行目は <code>([] "a|b|c")</code> の部分で、3つのフィールドを持つレコードを生成します。
+そのレコードの出力されたものが上のグラフの左下の部分です。
 フィールドは、それぞれa、b、cとラベルづけされています。
 </p>
 <p>
 　コードの3行目のラベル <code>d|{1|{e|{2|f|3}|g}|4}|h</code> を見ていきましょう（上のグラフの右下の部分に対応しています）。
 一見、複雑ですが丁寧に外側から一枚一枚 <code>{</code> , <code>}</code> を剥いでいけば簡単に理解できます。
-まず、ラベルの真ん中を***と置いて、 <code>d|***|h</code> のように外側から見ると、「左から右向きにフィールドd、***、フィールドh」となります。
+まずラベルの真ん中を***と置いて <code>d|***|h</code> のように外側から見ると「左から右向きにフィールドd、***、フィールドh」となります。
 </p>
 <p>
 　次に***部分 <code>{1|{e|{2|f|3}|g}|4}</code> を見ていきましょう。
-この部分も同じように外側から見てみると、 <code>{1|****|4}</code> となります。
+この部分も同じように外側から見てみると <code>{1|****|4}</code> となります。
 <code>{</code> , <code>}</code> に囲まれているので、縦横が入れ替わり「上から下向きにフィールド1、****、フィールド4」となります。
 </p>
 <p>
-　次の****部分 <code>{e|{2|f|3}|g}</code> も外側から見てみると、 <code>{e|*****|g}</code> となります。
-<code>{</code> , <code>}</code> に囲まれているので、縦横が入れ替わり「左から右向きにフィールドe、*****、フィールドg」となります。
+　次の****部分 <code>{e|{2|f|3}|g}</code> も外側から見てみると <code>{e|*****|g}</code> となります。
+<code>{</code> , <code>}</code> に囲まれているので縦横が入れ替わり「左から右向きにフィールドe、*****、フィールドg」となります。
 </p>
 <p>
-　最後の*****部分={2|f|3}= は、 「上から下向きにフィールド2、フィールドf、フィールド3」となります。
+　最後の*****部分={2|f|3}= は 「上から下向きにフィールド2、フィールドf、フィールド3」となります。
 </p>
 <p>
 　以上をまとめると
@@ -2856,16 +2855,16 @@ nmakeとkshのつながりに関して詳しい方がいらっしゃいました
 
 <p>
 　上のグラフには規則性(パターン)が存在します。
-そこで、以下の様に関数bst-graphを定義すると、任意の二分探索木をグラフとして出力することができます。
-関数bst-graphは、リスト形式(parent left-child right-child)で表現される二分探索木を再帰的に下り、グラフを生成します(cf. <a href="#sec-4-13-2">2分木</a>)。
+そこで、以下の関数bst-graphを定義することで、任意の二分探索木をグラフとして出力することができます。
+関数bst-graphは、リスト(parent left-child right-child)で表現される二分探索木を再帰的に下り、グラフを生成します(cf. <a href="#sec-4-13-2">2分木</a>)。
 </p>
 
 
 <pre class="src src-lisp">(<span style="color: #eeee00;">defun</span> <span style="color: #00ee76; font-weight: bold;">bst-graph</span> (tree)
   (<span style="color: #eeee00;">if</span> (null tree)
       (<span style="color: #eeee00;">&amp;&amp;</span>)
-      (<span style="color: #eeee00;">labels</span> ((bst-node (symb)
-                 ([] (format nil <span style="color: #90ee90;">"~@{~A~}"</span> <span style="color: #90ee90;">":left |:center "</span> symb <span style="color: #90ee90;">"|:right"</span>)))
+      (<span style="color: #eeee00;">labels</span> ((bst-node (label)
+                 ([] (format nil <span style="color: #90ee90;">"~@{~A~}"</span> <span style="color: #90ee90;">":left |:center "</span> label <span style="color: #90ee90;">"|:right"</span>)))
                (pedigree (port parent child)
                  (<span style="color: #eeee00;">when</span> child
                    (<span style="color: #eeee00;">if</span> (atom child)
@@ -3880,6 +3879,20 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 <p>
 <b>優先度順</b>
 </p>
+
+<p>
+<b>既知のバグ</b>
+</p>
+<ul>
+<li>現在、既知のバグはありません。
+</li>
+</ul>
+
+
+
+<p>
+<b>更新予定</b>
+</p>
 <ul>
 <li>開発環境以外での動作確認(windows, macなど)。
 <ul>
@@ -3977,10 +3990,10 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 <p class="footnote"><sup><a class="footnum" name="fn.6" href="#fnr.6">6</a></sup> ノードの自動生成についての詳しい解説です。
 文字列や数値から既にノードが自動生成されている場合、それらの文字列や数値による新たなノードの自動生成は起きません。
 文字列や数値が同じもの（lispの <code>equal</code> ）であれば、それらは同一のノードです。
-つまり、 <code>(-&gt; "a" "a")</code> によって自動生成されるのは1つのノードaのみです。
-したがって、 <code>(-&gt; "a" "a")</code> は自己ループを生成します。
-一方、 <code>(-&gt; (&lt;&gt; "a") (&lt;&gt; "a"))</code> は、aとラベルされた2つの異なるノードを生成し、それらの間にエッジを張ります。
-したがって、 <code>(-&gt; (&lt;&gt; "a") (&lt;&gt; "a"))</code> は、ノードaと別なノードaの間に張られたエッジを生成します。
+つまり <code>(-&gt; "a" "a")</code> によって自動生成されるのは1つのノードaのみです。
+したがって <code>(-&gt; "a" "a")</code> は自己ループを生成します。
+一方、 <code>(-&gt; (&lt;&gt; "a") (&lt;&gt; "a"))</code> はaとラベルされた2つの異なるノードを生成し、それらの間にエッジを張ります。
+したがって <code>(-&gt; (&lt;&gt; "a") (&lt;&gt; "a"))</code> はノードaと別なノードaの間に張られたエッジを生成します。
  <code>(&lt;&gt; "a" :color :red)</code> のようなコードにより生成されるノードに自己ループを張るには、 <code>(let ((n (&lt;&gt; "a" :color :red))) (-&gt; n n))</code> とするか、またはユーティリティ<a href="#sec-4-9-2">?</a>を使って <code>(? (&lt;&gt; "a" :color :red))</code> とする必要があります。
 </p>
 
@@ -3989,13 +4002,13 @@ tag型のオブジェクトは、タグ関数(br, hr, vr, img, font, i, b, u, su
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.8" href="#fnr.8">8</a></sup> Dot言語に詳しい方のための補足です。
-Donutsでは、縦棒 <code>|</code> 、角カッコ <code>[</code>, <code>]</code> 、三角カッコ <code>&lt;</code>, <code>&gt;</code> をエスケープする必要はありません。
+Donutsでは縦棒 <code>|</code> 、角カッコ <code>[</code>, <code>]</code> 、三角カッコ <code>&lt;</code>, <code>&gt;</code> をエスケープする必要はありません。
 </p>
 
 <p class="footnote"><sup><a class="footnum" name="fn.9" href="#fnr.9">9</a></sup> 本当は何も印字されないのが空白です。
 </p>
 
-<p class="footnote"><sup><a class="footnum" name="fn.10" href="#fnr.10">10</a></sup> もちろん、やや手間はかかりますが、画像ファイルをビューアで見るために、
+<p class="footnote"><sup><a class="footnum" name="fn.10" href="#fnr.10">10</a></sup> もちろん、やや手間はかかりますが画像ファイルをビューアで見るために、
 with-open-file内で*standart-output*を束縛し、
 dot-outputによってdotファイルを出力し、そのdotファイルをGraphvizで画像ファイルに変換し、
 それをビューアで見るという方法もあります。
@@ -4041,7 +4054,7 @@ SDRAWは、ループ構造も含む任意のリストを引数に取り、その
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-06-23 21:43:31 JST</p>
+<p class="date">Date: 2012-06-29 21:25:58 JST</p>
 <p class="author">Author: Takaya OCHIAI</p>
 <p class="email"><a href="mailto:tkych.repl@gmail.com">tkych.repl@gmail.com</a></p>
 <p class="creator">Org version 7.8.05 with Emacs version 23</p>
