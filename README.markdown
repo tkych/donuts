@@ -10,34 +10,36 @@ Donuts: Graph Drawing DSL (or Graphviz Interface) for CL
 Introduction
 ------------
 
-Donuts converts a graph represented by S-expression to the image.
-How to use donuts is simple.
-<> creates a node.
--> puts an edge two nodes.
-&& makes a graph by bundling some nodes, edges and graphs.
-$$ outputs an image of the graph.
+Donuts converts a graph represented by an S-expression into an image.
+
+Donuts is simple to use.
+
+* `<>` creates a node.
+* `->` puts an edge between two nodes.
+* `&&` makes a graph by bundling some nodes, edges and graphs.
+* `$$` outputs an image of the graph.
 
 For further details, please see index (Under Translation) or
-index-ja (Japanease) in doc directory.
+index-ja (Japanese) in doc directory.
 
 
 The Goal of Donuts
 ------------------
 
-[Graphviz][] is a collection of library and utility for drawing a
-graph.  [Dot language][] is description language, used in Graphviz.
-Graphviz is very useful.  However, I (as a lisp programmer) think
-there are some points to do kaizen.
+[Graphviz][] is a collection of libraries and utilities for drawing
+graphs.  The [Dot language][] is the graph-description language used
+in Graphviz.  Graphviz is very useful.  However, I (as a lisp programmer) think
+there is some room for improvement.
 
 1.  Since dot language is not Turing-complete, when we draw a graph,
     we don't take full advantage of the pattern in the graph.
 
-2.  Because dot language is so-called compiled language,
+2.  Because dot language is a so-called compiled language, the
     development cycle is inconvenient.
 
-3.  Plain Common Lisp does not have ability to draw graph.
+3.  Plain Common Lisp does not have ability to draw graphs.
 
-The goal of donuts is to draw graph in lispic way of thought
+The goal of donuts is to draw graphs in lispy way of thought
 (REPL, macro, CLOS, multi-paradigm style, and so on).
 
   [Graphviz]: http://www.graphviz.org/
@@ -66,11 +68,11 @@ Installation & Start
 Usage
 -----
 
-* Node-Constructor, <> makes node from node's identity.   `(<> label) => node`
-* Edge-Constructor, -> makes edge between nodes.   `(-> node1 node2) => edge`
-* Graph-Constructor, &&, &, [&] makes graph with nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
-* Shell-Interface, $$, $ outputs graph to viewer.   `($$ graph) => NIL ;output image to viewer`
-* DOT-OUTPUT outputs dot code in standart-output.   `(DOT-OUTPUT graph) => NIL ;output dot code`
+* Node-Constructor, `<>` makes a node from node's identity.   `(<> label) => node`
+* Edge-Constructor, `->` makes an edge between nodes.   `(-> node1 node2) => edge`
+* Graph-Constructor, &&, &, [&] makes a graph from nodes, edges, graphs.   `(&& . nodes-edges-graphs) => graph`
+* Shell-Interface, $$, $ outputs image of graph to viewer.   `($$ graph) => NIL ;output image to viewer`
+* DOT-OUTPUT outputs dot code to standard out.   `(DOT-OUTPUT graph) => NIL ;output dot code`
 
 
 Examples
