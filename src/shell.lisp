@@ -31,7 +31,7 @@
 
 (defparameter *viewer* #+windows                  "start"
                        #+(or darwin macos macosx) "open"
-                       #+linux                    "xdg-open")
+                       #+(or linux freebsd)       "xdg-open")
 
 (defun make-dot-file (graph &optional
                       (file-name "DONUTS-DOT-TMP.dot")
